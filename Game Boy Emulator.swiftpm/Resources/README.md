@@ -14,6 +14,7 @@ It may be needed to up `PreferredFrameRate` to 120 on swift playground, as it ru
 
 ### Components dependency tree
 
+```
 - GB
     MB
 
@@ -43,6 +44,7 @@ It may be needed to up `PreferredFrameRate` to 120 on swift playground, as it ru
     I/O
     Interrups
     PaletteManager
+```
 
 ## Useful links
 
