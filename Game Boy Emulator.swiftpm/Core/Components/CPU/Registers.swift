@@ -1,0 +1,93 @@
+/**
+ * CPU raisable flags
+ */
+public enum CPUFlag: Byte {
+    case ZERO       =  0b1000_0000
+    case NEGATIVE   =  0b0100_0000
+    case HALF_CARRY =  0b0010_0000
+    case CARRY      =  0b0001_0000
+}
+
+class Registers: Describable {
+    private var _AF:EnhancedShort = EnhancedShort()
+    
+    //accumulator
+    public var A:Byte { get { return self._AF.msb } set { self._AF.msb = newValue} }
+    //flags
+    public var F:Byte { get { return self._AF.lsb } set { self._AF.lsb = newValue} }
+    public var AF:Short { get { return self._AF.value } set { self._AF.value = newValue } }
+    
+    private var _BC:EnhancedShort = EnhancedShort()
+    public var B:Byte { get { return self._BC.msb } set { self._BC.msb = newValue} }
+    public var C:Byte { get { return self._BC.lsb } set { self._BC.lsb = newValue} }
+    public var BC:Short { get { return self._BC.value } set { self._BC.value = newValue } }
+    
+    private var _DE:EnhancedShort = EnhancedShort()
+    public var D:Byte { get { return self._DE.msb } set { self._DE.msb = newValue} }
+    public var E:Byte { get { return self._DE.lsb } set { self._DE.lsb = newValue} }
+    public var DE:Short { get { return self._DE.value } set { self._DE.value = newValue } }
+    
+    private var _HL:EnhancedShort = EnhancedShort()
+    public var H:Byte { get { return self._HL.msb } set { self._HL.msb = newValue} }
+    public var L:Byte { get { return self._HL.lsb } set { self._HL.lsb = newValue} }
+    public var HL:Short { get { return self._HL.value } set { self._HL.value = newValue } }
+    
+    public var SP:Short = 0
+    public var PC:Short = 0
+    
+    ///set a flag to 1
+    public func raiseFlag(_ flag:CPUFlag) {
+        self.F |= flag.rawValue
+    }
+    
+    /// raise flags
+    public func raiseFlags(_ flags:CPUFlag...) {
+        for flag in flags {
+            self.raiseFlag(flag)
+        }
+    }
+    
+    ///set a flag to 0
+    public func clearFlag(_ flag:CPUFlag) {
+        self.F &= ~flag.rawValue
+    }
+    
+    /// clear flags
+    public func clearFlags(_ flags:CPUFlag...) {
+        for flag in flags {
+            self.clearFlag(flag)
+        }
+    }
+    
+    ///true if given flag is set
+    public func isFlagSet(_ flag:CPUFlag) -> Bool {
+        return (self.F & flag.rawValue) > 0
+    }
+    
+    /// true if all input flags are set, (overload provided as array splatting is not yet available in swift)
+    public func areFlagsSet(_ flags:[CPUFlag]) -> Bool {
+        var res = true
+        for flag in flags {
+            res = res && self.isFlagSet(flag) 
+        }
+        return res
+    }
+    
+    /// true if all input flags are set
+    public func areFlagsSet(_ flags:CPUFlag...) -> Bool {
+        return self.areFlagsSet(flags)
+    }
+    
+    /// raise or clear flag on condition
+    public func conditionalSet(cond:Bool, flag:CPUFlag) {
+        cond ? self.raiseFlag(flag) : self.clearFlag(flag)
+    }
+    
+    public func describe() -> String {
+        return String(format: "A: 0x%02X, F: 0x%02X, B: 0x%02X, C: 0x%02X, D: 0x%02X, E: 0x%02X, H: 0x%02X, L: 0x%02X, SP: 0x%02X, PC: 0x%04X, flags (z:%d, n:%d, hc:%d, c:%d)",
+                              self.A,self.F,self.B,self.C,self.D,self.E,self.H,self.L,
+                              self.SP,
+                              self.PC,
+                              self.isFlagSet(.ZERO),self.isFlagSet(.NEGATIVE),self.isFlagSet(.HALF_CARRY),self.isFlagSet(.CARRY))
+    }
+}
