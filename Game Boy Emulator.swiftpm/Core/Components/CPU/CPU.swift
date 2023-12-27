@@ -114,7 +114,7 @@ class CPU: Component, Clockable, GameBoyInstructionSet {
     
     /// poll and trigger interrupts by priority
     public func handleInterrupts() {
-        if(self.interrupts.IME && self.interrupts.enabledInterrupts > 0 && self.interrupts.flaggedInterrupts > 0 ){
+        if(self.interrupts.IME && self.interrupts.IE > 0 && self.interrupts.IF > 0){
             if(self.interrupts.isInterruptEnabled(.VBlank) && self.interrupts.isInterruptFlagged(.VBlank)){
                 self.handleInterrupt(.VBlank, ReservedMemoryLocationAddresses.INTERRUPT_VBLANK.rawValue)
             }

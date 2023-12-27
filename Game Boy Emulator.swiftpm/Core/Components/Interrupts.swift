@@ -24,12 +24,6 @@ class Interrupts: Component {
     
     /// Interrupt Enabled
     public var IE:Byte  {
-        /*get {
-            return self.enabledInterrupts
-        }
-        set {
-            self.enabledInterrupts = newValue
-        }*/
         get {
             return self.mmu[MMUAddresses.INTERRUPT_ENABLE_REGISTER.rawValue]
         }
@@ -46,40 +40,30 @@ class Interrupts: Component {
         set {
             self.mmu[MMUAddresses.INTERRUPT_FLAG_REGISTER.rawValue] = newValue
         }
-        /*get {
-            return self.flaggedInterrupts
-        }
-        set {
-            self.flaggedInterrupts = newValue
-        }*/
     }
     
     /// if false no interrupt can occur
     private var masterEnable:Bool = true
-    ///stores in its 5 lsb which interrupts are flagged (ready to fire)
-    public private(set) var flaggedInterrupts:Byte = 0
-    ///stores in its 5 lsb which interrupts are enabled
-    public private(set) var enabledInterrupts:Byte = 0
     
     private init() {
     }
     
     public func reset() {
         self.masterEnable = true
-        self.enabledInterrupts = 0x00
-        self.flaggedInterrupts = 0xE1
+        self.IE = 0x00
+        self.IF = 0xE1
     }
     
     /// set interrrupt enabled value
     public func setInterruptEnableValue(_ interrupt:InterruptFlag, _ enable:Bool) {
-        let res:Byte = enable ? self.enabledInterrupts | interrupt.rawValue : self.enabledInterrupts & ~interrupt.rawValue;
-        self.IE = res
+        self.IE = enable ? self.IE | interrupt.rawValue
+                         : self.IE & ~interrupt.rawValue;
     }
     
     /// set interrrupt flagged value
     public func setInterruptFlagValue(_ interrupt:InterruptFlag, _ enable:Bool) {
-        let res:Byte = enable ? self.IF | interrupt.rawValue : self.IF & ~interrupt.rawValue;
-        self.IF = res
+        self.IF = enable ? self.IF | interrupt.rawValue
+                         : self.IF & ~interrupt.rawValue;
     }
     
     /// true if interrupt is enabled
