@@ -115,6 +115,7 @@ class CPU: Component, Clockable, GameBoyInstructionSet {
     /// poll and trigger interrupts by priority
     public func handleInterrupts() {
         if(self.interrupts.IME && self.interrupts.IE > 0 && self.interrupts.IF > 0){
+            //check interrupt following IE, IF corresponding bit order, 0 VBLANK -> 4 Joypad
             if(self.interrupts.isInterruptEnabled(.VBlank) && self.interrupts.isInterruptFlagged(.VBlank)){
                 self.handleInterrupt(.VBlank, ReservedMemoryLocationAddresses.INTERRUPT_VBLANK.rawValue)
             }
