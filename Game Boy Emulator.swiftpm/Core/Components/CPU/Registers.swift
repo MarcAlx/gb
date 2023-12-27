@@ -8,7 +8,7 @@ public enum CPUFlag: Byte {
     case CARRY      =  0b0001_0000
 }
 
-class Registers: Describable {
+class Registers: Component,Describable {
     private var _AF:EnhancedShort = EnhancedShort()
     
     //accumulator
@@ -34,6 +34,10 @@ class Registers: Describable {
     
     public var SP:Short = 0
     public var PC:Short = 0
+    
+    public init(){
+        self.reset()
+    }
     
     ///set a flag to 1
     public func raiseFlag(_ flag:CPUFlag) {
@@ -81,6 +85,18 @@ class Registers: Describable {
     /// raise or clear flag on condition
     public func conditionalSet(cond:Bool, flag:CPUFlag) {
         cond ? self.raiseFlag(flag) : self.clearFlag(flag)
+    }
+    
+    func reset() {
+        self.A = 0x11
+        self.F = 0x00
+        self.B = 0x00
+        self.C = 0x00
+        self.D = 0x00
+        self.E = 0x08
+        self.HL = 0x007C
+        self.PC = UInt16(CHAddresses.ENTRY_POINT.rawValue)
+        self.SP = 0xFFFE
     }
     
     public func describe() -> String {

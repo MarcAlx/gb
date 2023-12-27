@@ -31,20 +31,8 @@ class CPU: Component, Clockable, GameBoyInstructionSet {
     
     public func reset() {
         self.cycles = 0
-        self.initRegisters()
+        self.registers.reset()
         self.state = CPUState.RUNNING
-    }
-    
-    private func initRegisters() {
-        self.registers.A = 0x11
-        self.registers.F = 0x00
-        self.registers.B = 0x00
-        self.registers.C = 0x00
-        self.registers.D = 0x00
-        self.registers.E = 0x08
-        self.registers.HL = 0x007C
-        self.registers.PC = UInt16(CHAddresses.ENTRY_POINT.rawValue)
-        self.registers.SP = 0xFFFE
     }
     
     public func tick(_ masterCycles:Int) {
