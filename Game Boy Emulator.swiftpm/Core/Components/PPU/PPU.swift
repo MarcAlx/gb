@@ -73,7 +73,7 @@ class PPU: Component, Clockable {
         }
         
         // if true stat interrupt will be Flagged (fired)
-        var statInterruptFlagged:Bool = false
+        var statInterruptTriggered:Bool = false
         //lcd stat mode
         let curMode:LCDStatMode = ios.readLCDStatMode()
         var newMode:LCDStatMode = curMode
@@ -81,12 +81,17 @@ class PPU: Component, Clockable {
         //all scanline have been rendered we are now in VBLANK
         if(ScreenHeight <= ios.LY) {
             newMode = LCDStatMode.VBLANK
-            statInterruptFlagged = ios.readLCDStatusFlag(.VBlankInterruptSource)
+            //trigger VBlank
+            self.interrupts.setInterruptFlagValue(.VBlank,true);
+            //trigger stat interrupt if VBlank LCDStatus bit is set
+            statInterruptTriggered = ios.readLCDStatusFlag(.VBlankInterruptSource)
+            //yes there's two VBlank interrupt sources (STAT and VBLANK)
         }
         //OAM hasn't finish
         else if(self.currentScanlineTiming < PPUTimings.OAM_SEARCH_LENGTH.rawValue) {
             newMode = LCDStatMode.OAM_SEARCH
-            statInterruptFlagged = ios.readLCDStatusFlag(.OAMInterruptSource)
+            //trigger stat interrupt if OAM LCDStatus bit is set
+            statInterruptTriggered = ios.readLCDStatusFlag(.OAMInterruptSource)
         }
         //PIXEL RENDER hasn't finish
         else if(self.currentScanlineTiming < PPUTimings.PIXEL_RENDER_LENGTH.rawValue) {
@@ -99,12 +104,14 @@ class PPU: Component, Clockable {
         //HBLANK hasn't finish
         else if(self.currentScanlineTiming < PPUTimings.HBLANK_LENGTH.rawValue) {
             newMode = LCDStatMode.HBLANK
-            statInterruptFlagged = ios.readLCDStatusFlag(.HBlankInterruptSource)
+            //trigger stat interrupt if HBLANK LCDStatus bit is set
+            statInterruptTriggered = ios.readLCDStatusFlag(.HBlankInterruptSource)
         }
         
         // LY === LYC is constantly checked
         if(ios.LY == ios.LYC) {
-            statInterruptFlagged = statInterruptFlagged ||  ios.readLCDStatusFlag(.LYCeqLYInterruptSource)
+            //trigger stat interrupt if LYeqLYC LCDStatus bit is set
+            statInterruptTriggered = statInterruptTriggered ||  ios.readLCDStatusFlag(.LYCeqLYInterruptSource)
             ios.setLCDStatFlag(.LYCeqLY, enabled: true)
         }
         else {
@@ -118,7 +125,7 @@ class PPU: Component, Clockable {
         
         //Trigger LCD STAT
         if(curMode != newMode) {
-            self.interrupts.setInterruptFlagValue(.LCDStat, statInterruptFlagged)
+            self.interrupts.setInterruptFlagValue(.LCDStat, statInterruptTriggered)
         }
         
         //update LCD STATUS -> mode
