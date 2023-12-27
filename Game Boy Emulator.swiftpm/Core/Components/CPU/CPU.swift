@@ -48,9 +48,9 @@ class CPU: Component, Clockable, GameBoyInstructionSet {
             
             //to ease PC debugging in Xcode
             let pc = self.registers.PC
-            if(pc == 0x02CD){
-                print("add breakpoint here")
-            }
+            //if(pc == 0x01D2){
+            //    print("add breakpoint here")
+            //}
             
             //fetch
             let op = self.fetch() //on real hardware fetch are done during last 4 cycles of previous instuction, but as cycles are incremented during execute don't care
