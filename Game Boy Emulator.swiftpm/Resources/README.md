@@ -92,13 +92,13 @@ It may be needed to up `PreferredFrameRate` to 120 on swift playground, as it ru
 - [The Gameboy Emulator Development Guide](https://hacktix.github.io/GBEDG/)
 - [Tetris Title Screen](https://nnarain.github.io/2016/09/24/GameboyEmulator-TitleScreen.html)
 - [Reverse Engineering the Gameboy Boot Screen](https://catskull.net/gameboy-boot-screen-logo.html)
-
+- [Programming A Gameboy Color Emulator](https://mattbruv.github.io/gameboy-crust/)
 - [Writting an emulator: the first steps](https://blog.tigris.fr/2019/07/09/writing-an-emulator-the-first-steps/)
 - [Writing an emulator: memory management](https://blog.tigris.fr/2019/07/28/writing-an-emulator-memory-management/)
 - [Writing an emulator: the first pixel](https://blog.tigris.fr/2019/09/15/writing-an-emulator-the-first-pixel/)
 - [Writing an emulator: the first (real) pixel](https://blog.tigris.fr/2019/10/30/writing-an-emulator-the-first-real-pixel/)
 - [Writing an emulator: timing is key](https://blog.tigris.fr/2021/07/28/writing-an-emulator-timing-is-key/)
-
+- [GameRoy: JIT compilation in High-Accuracy Game Boy Emulation](https://rodrigodd.github.io/2023/09/02/gameroy-jit.html)
 - [A Visual Guide to the Gameboy's Half-Carry Flag](https://robdor.com/2016/08/10/gameboy-emulator-half-carry-flag/)
 
 ### forums / threads / questions
