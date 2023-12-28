@@ -88,13 +88,15 @@ class Registers: Component,Describable {
     }
     
     func reset() {
-        self.A = 0x11
-        self.F = 0x00
+        //same as DMG, @see: https://gbdev.io/pandocs/Power_Up_Sequence.html
+        self.A = 0x01
+        self.F = 0b1000_0000//ony Z set
         self.B = 0x00
-        self.C = 0x00
+        self.C = 0x13
         self.D = 0x00
-        self.E = 0x08
-        self.HL = 0x007C
+        self.E = 0xD8
+        self.H = 0x01
+        self.L = 0x4D
         self.PC = UInt16(CHAddresses.ENTRY_POINT.rawValue)
         self.SP = 0xFFFE
     }

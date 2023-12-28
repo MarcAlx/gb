@@ -32,6 +32,9 @@ class CPU: Component, Clockable, GameBoyInstructionSet {
     public func reset() {
         self.cycles = 0
         self.registers.reset()
+        //@see https://gbdev.io/pandocs/Power_Up_Sequence.html
+        self.registers.conditionalSet(cond: self.mmu.currentCartridge.headers.headerChecksum != 0x00, flag: .HALF_CARRY)
+        self.registers.conditionalSet(cond: self.mmu.currentCartridge.headers.headerChecksum != 0x00, flag: .CARRY)
         self.state = CPUState.RUNNING
     }
     

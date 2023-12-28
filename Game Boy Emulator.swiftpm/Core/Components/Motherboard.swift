@@ -26,8 +26,8 @@ class Motherboard: Clockable {
     }
     
     private func reset() {
-        self.cpu.reset()
         self.mmu.reset()
+        self.cpu.reset()
         self.ppu.reset()
         self.ios.reset()
         self.interrupts.reset()
