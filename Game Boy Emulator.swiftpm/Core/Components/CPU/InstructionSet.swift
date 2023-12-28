@@ -704,7 +704,7 @@ protocol StandardInstructionSet {
     /// return if C flag is raised 
     func ret_c() -> Void
     
-    /// same as ret + ei 
+    /// same as ret + ei (but ei are enabled directly whereas ei())
     func reti() -> Void
     
     /// push PC to stack and jump to NN if C raised
@@ -782,7 +782,7 @@ protocol StandardInstructionSet {
     /// loads value pointed by address into A
     func ld_a_nnp(address:EnhancedShort) -> Void
     
-    /// set IME to true (enable interrupts)
+    /// set IME to true (enable interrupts), only enabled after next op executed
     func ei() -> Void
     
     /// compare A with val, result observed in flags 

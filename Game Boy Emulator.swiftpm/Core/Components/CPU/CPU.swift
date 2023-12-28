@@ -24,6 +24,9 @@ class CPU: Component, Clockable, GameBoyInstructionSet {
     
     public private(set) var state:CPUState = CPUState.RUNNING
     
+    //if true interrupt can't be handled (are skipped)
+    private var interruptsJustEnabled:Bool = false //@see InstrusctionSet.ei
+    
     private init() {
         self.registers = Registers()
         self.instructionDecoder.setup(gbInstructions: self)
@@ -48,6 +51,8 @@ class CPU: Component, Clockable, GameBoyInstructionSet {
             //do nothing
         }
         else if(self.state == CPUState.RUNNING) {
+            //clear this flag, as handleInterrupt will only execute after the next op complete
+            self.interruptsJustEnabled = false;
             
             //to ease PC debugging in Xcode
             let pc = self.registers.PC
@@ -117,7 +122,8 @@ class CPU: Component, Clockable, GameBoyInstructionSet {
     
     /// poll and trigger interrupts by priority
     public func handleInterrupts() {
-        if(self.interrupts.IME && self.interrupts.IE > 0 && self.interrupts.IF > 0){
+        //handle interrupt only if not just enabled (cpu should wait one op on ei()), IME, enabled, flagged
+        if(!self.interruptsJustEnabled && self.interrupts.IME && self.interrupts.IE > 0 && self.interrupts.IF > 0){
             //check interrupt following IE, IF corresponding bit order, 0 VBLANK -> 4 Joypad
             if(self.interrupts.isInterruptEnabled(.VBlank) && self.interrupts.isInterruptFlagged(.VBlank)){
                 self.handleInterrupt(.VBlank, ReservedMemoryLocationAddresses.INTERRUPT_VBLANK.rawValue)
@@ -295,7 +301,13 @@ class CPU: Component, Clockable, GameBoyInstructionSet {
     /// return and enable interrupt, same as RET+EI
     private func ret_i() {
         self.ret()
-        self.ei()
+        self.e_i(false)//reti enable directly
+    }
+    
+    /// enable interupt and skip next op
+    private func e_i(_ skipNextOp:Bool = true) -> Void {
+        interrupts.IME = true
+        self.interruptsJustEnabled = skipNextOp
     }
     
     /// left rotate value, if circular msb is put in both lsb and carry flag, else carry flag is put into lsb
@@ -650,7 +662,7 @@ class CPU: Component, Clockable, GameBoyInstructionSet {
     }
     func ld_sp_hl() -> Void { self.registers.SP = self.registers.HL }
     func ld_a_nnp(address:EnhancedShort) -> Void { self.registers.A = mmu.read(address: address.value) }
-    func ei() -> Void { interrupts.IME = true }
+    func ei() -> Void { self.e_i(true) }
     func cp_a_n(val:Byte) -> Void { self.cp_a(val) }
     func rst_38h() -> Void { self.call(ReservedMemoryLocationAddresses.RESTART_38.rawValue) }
     
