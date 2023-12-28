@@ -23,7 +23,7 @@ class MMU:Component {
     private var hram:MemoryBank = MemoryBank(size: Int(MMUAddresses.HIGH_RAM_END.rawValue - MMUAddresses.HIGH_RAM.rawValue)  + 1,name: "hram")*/
     
     /// current cartridge
-    private var currentCartridge:Cartridge = Cartridge()
+    public private(set) var currentCartridge:Cartridge = Cartridge()
     
     private let ram:MemoryBank = MemoryBank(size: RAMSize,name: "ram")
         
