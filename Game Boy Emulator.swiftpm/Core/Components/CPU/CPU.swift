@@ -281,7 +281,7 @@ class CPU: Component, Clockable, GameBoyInstructionSet {
     private func xor_a(_ val: Byte) {
         self.registers.A ^= val
         self.registers.conditionalSet(cond: self.registers.A == 0, flag: .ZERO)
-        self.registers.clearFlags(.CARRY,.HALF_CARRY,.CARRY)
+        self.registers.clearFlags(.NEGATIVE,.HALF_CARRY,.CARRY)
     }
     
     /// return by taking care of flags, if any flag branching occurs a cycle overhead of +12 is applied
