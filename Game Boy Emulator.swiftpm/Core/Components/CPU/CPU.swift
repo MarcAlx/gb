@@ -381,8 +381,8 @@ class CPU: Component, Clockable, GameBoyInstructionSet {
     
     /// read a byte from stack along with PC increment
     public func readFromStack() -> Byte {
-        let res:Byte = mmu.read(address: self.registers.SP)
         self.registers.SP += 1
+        let res:Byte = mmu.read(address: self.registers.SP)
         return res
     }
     
@@ -395,8 +395,8 @@ class CPU: Component, Clockable, GameBoyInstructionSet {
     
     /// write a byte to stack along with PC decrement
     public func writeToStack(_ val:Byte) -> Void {
-        self.registers.SP -= 1
         mmu.write(address: self.registers.SP, val: val)
+        self.registers.SP -= 1
     }
     
     /// write a short to stack along with PC decrements
