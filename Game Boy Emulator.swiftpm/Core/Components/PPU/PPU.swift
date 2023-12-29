@@ -81,8 +81,6 @@ class PPU: Component, Clockable {
         //all scanline have been rendered we are now in VBLANK
         if(ScreenHeight <= ios.LY) {
             newMode = LCDStatMode.VBLANK
-            //trigger VBlank
-            self.interrupts.setInterruptFlagValue(.VBlank,true);
             //trigger stat interrupt if VBlank LCDStatus bit is set
             statInterruptTriggered = ios.readLCDStatusFlag(.VBlankInterruptSource)
             //yes there's two VBlank interrupt sources (STAT and VBLANK)
@@ -121,6 +119,10 @@ class PPU: Component, Clockable {
         //update LY
         if(self.newLine) {
             ios.LY += 1 // circularity of LY is handled in ios
+            //trigger VBlank
+            if(ScreenHeight==ly){
+                self.interrupts.setInterruptFlagValue(.VBlank,true);
+            }
         }
         
         //Trigger LCD STAT
