@@ -463,7 +463,7 @@ class CPU: Component, Clockable, GameBoyInstructionSet {
     func dec_l() -> Void { self.registers.L = self.dec(self.registers.L) }
     func ld_l_n(val:Byte) -> Void { self.registers.L = val }
     func cpl() -> Void { self.registers.A ^= self.registers.A }
-    func jr_nc_n(val:Byte) -> Void { jumpRelative(val, .NEGATIVE, .CARRY) }
+    func jr_nc_n(val:Byte) -> Void { jumpRelative(val, .CARRY, inverseFlag: true) }
     func ld_sp_nn(val:EnhancedShort) -> Void { self.registers.SP = val.value }
     func ld_hlpd_a() -> Void { mmu.write(address: self.registers.HL, val: self.registers.A); self.registers.HL-=1 }
     func inc_sp() -> Void { self.registers.SP = self.inc(self.registers.SP) }
@@ -622,9 +622,9 @@ class CPU: Component, Clockable, GameBoyInstructionSet {
     func call_nn(address:EnhancedShort) -> Void { self.call(address) }
     func adc_a_n(val:Byte) -> Void { self.adc_a(val) }
     func rst_08h() -> Void { self.call(ReservedMemoryLocationAddresses.RESTART_08.rawValue) }
-    func ret_nc() -> Void { self.retrn(.NEGATIVE,.CARRY) }
+    func ret_nc() -> Void { self.retrn(.CARRY, inverseFlag: true) }
     func pop_de() -> Void { self.registers.DE = self.readFromStack() }
-    func jp_nc_nn(address:EnhancedShort) -> Void { jumpTo(address,.NEGATIVE,.CARRY) }
+    func jp_nc_nn(address:EnhancedShort) -> Void { jumpTo(address,.CARRY,inverseFlag: true) }
     func call_nc_nn(address:EnhancedShort) -> Void { self.call(address, .CARRY, inverseFlag: true, branchingCycleOverhead: 12) }
     func push_de() -> Void { self.writeToStack(self.registers.DE) }
     func sub_a_n(val:Byte) -> Void { self.sub_a(val) }
