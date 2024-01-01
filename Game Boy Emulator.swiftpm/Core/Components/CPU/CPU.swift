@@ -299,7 +299,7 @@ class CPU: Component, Clockable, GameBoyInstructionSet {
         let oldPC = self.registers.PC
         self.jumpTo(EnhancedShort(self.readFromStack()), flags, inverseFlag, 12)
         if(oldPC != self.registers.PC){
-            self.popFromStack() as Short
+            self.registers.PC = self.popFromStack()
         }
     }
     
