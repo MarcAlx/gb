@@ -150,7 +150,7 @@ class CPU: Component, Clockable, GameBoyInstructionSet {
         //disable IME
         self.interrupts.IME = false
         //write PC to stack
-        self.writeToStack(self.registers.PC)
+        self.pushToStack(self.registers.PC)
         //move PC to associated interrupt address
         self.jumpTo(EnhancedShort(interruptLoc))
     }
@@ -269,13 +269,13 @@ class CPU: Component, Clockable, GameBoyInstructionSet {
         self.jumpTo(address, flags, inverseFlag, branchingCycleOverhead)
         //branching has succeed write PC
         if(oldPC != self.registers.PC) {
-            self.writeToStack(oldPC)
+            self.pushToStack(oldPC)
         }
     }
     
     /// save PC to stack then jump to address
     public func call(_ address: Short) {
-        self.writeToStack(self.registers.PC)
+        self.pushToStack(self.registers.PC)
         self.jumpTo(EnhancedShort(address))
     }
     
@@ -295,7 +295,11 @@ class CPU: Component, Clockable, GameBoyInstructionSet {
     
     /// return by taking care of flags, if any flag branching occurs a cycle overhead of +12 is applied
     private func retrn(_ flags:CPUFlag..., inverseFlag:Bool = false) {
+        let oldPC = self.registers.PC
         self.jumpTo(EnhancedShort(self.readFromStack()), flags, inverseFlag, 12)
+        if(oldPC != self.registers.PC){
+            self.popFromStack() as Short
+        }
     }
     
     /// return and enable interrupt, same as RET+EI
@@ -379,30 +383,40 @@ class CPU: Component, Clockable, GameBoyInstructionSet {
     
     // mark : stack related
     
+    /// read a byte from stack, an offset can be applied
+    public func readFromStack(_ pcOffset:UInt16 = 0) -> Byte {
+        return mmu.read(address: self.registers.SP+pcOffset)
+    }
+    
+    /// read a short from stack
+    public func readFromStack() -> Short {
+        return EnhancedShort(self.readFromStack(1),self.readFromStack(0)).value
+    }
+    
     /// read a byte from stack along with PC increment
-    public func readFromStack() -> Byte {
+    public func popFromStack() -> Byte {
+        let res:Byte = self.readFromStack(0)
         self.registers.SP += 1
-        let res:Byte = mmu.read(address: self.registers.SP)
         return res
     }
     
-    /// read a short from stack along with PC increments
-    public func readFromStack() -> Short {
-        let msb:Byte = self.readFromStack()
-        let lsb:Byte = self.readFromStack()
+    /// read a byte from stack along with PC increment
+    public func popFromStack() -> Short {
+        //must be done in two times as msb is retreived before lsb
+        let msb:Byte = self.popFromStack()
+        let lsb:Byte = self.popFromStack()
         return EnhancedShort(lsb,msb).value
     }
     
     /// write a byte to stack along with PC decrement
     public func writeToStack(_ val:Byte) -> Void {
-        mmu.write(address: self.registers.SP, val: val)
         self.registers.SP -= 1
+        mmu.write(address: self.registers.SP, val: val)
     }
     
     /// write a short to stack along with PC decrements
-    public func writeToStack(_ val:Short) -> Void {
-        let tmp = EnhancedShort(val)
-        self.writeToStack(tmp)
+    public func pushToStack(_ val:Short) -> Void {
+        self.writeToStack(EnhancedShort(val))
     }
     
     /// write a short to stack along with PC decrements
@@ -608,11 +622,11 @@ class CPU: Component, Clockable, GameBoyInstructionSet {
     func cp_a_hlp() -> Void { self.cp_a(mmu.read(address: self.registers.HL)) }
     func cp_a_a() -> Void { self.cp_a(self.registers.A) }
     func ret_nz() -> Void { self.retrn(.ZERO, inverseFlag: true) }
-    func pop_bc() -> Void { self.registers.BC = self.readFromStack() }
+    func pop_bc() -> Void { self.registers.BC = self.popFromStack() }
     func jp_nz_nn(address:EnhancedShort) -> Void { jumpTo(address,.ZERO,inverseFlag: true) }
     func jp_nn(address:EnhancedShort) -> Void { jumpTo(address) }
     func call_nz_nn(address:EnhancedShort) -> Void { self.call(address, .ZERO, inverseFlag: true, branchingCycleOverhead: 12) }
-    func push_bc() -> Void { self.writeToStack(self.registers.BC) }
+    func push_bc() -> Void { self.pushToStack(self.registers.BC) }
     func add_a_n(val:Byte) -> Void { self.add_a(val) }
     func rst_00h() -> Void { self.call(ReservedMemoryLocationAddresses.RESTART_00.rawValue) }
     func ret_z() -> Void { self.retrn(.ZERO) }
@@ -623,10 +637,10 @@ class CPU: Component, Clockable, GameBoyInstructionSet {
     func adc_a_n(val:Byte) -> Void { self.adc_a(val) }
     func rst_08h() -> Void { self.call(ReservedMemoryLocationAddresses.RESTART_08.rawValue) }
     func ret_nc() -> Void { self.retrn(.CARRY, inverseFlag: true) }
-    func pop_de() -> Void { self.registers.DE = self.readFromStack() }
+    func pop_de() -> Void { self.registers.DE = self.popFromStack() }
     func jp_nc_nn(address:EnhancedShort) -> Void { jumpTo(address,.CARRY,inverseFlag: true) }
     func call_nc_nn(address:EnhancedShort) -> Void { self.call(address, .CARRY, inverseFlag: true, branchingCycleOverhead: 12) }
-    func push_de() -> Void { self.writeToStack(self.registers.DE) }
+    func push_de() -> Void { self.pushToStack(self.registers.DE) }
     func sub_a_n(val:Byte) -> Void { self.sub_a(val) }
     func rst_10h() -> Void { self.call(ReservedMemoryLocationAddresses.RESTART_10.rawValue) }
     func ret_c() -> Void { self.retrn(.CARRY) }
@@ -636,9 +650,9 @@ class CPU: Component, Clockable, GameBoyInstructionSet {
     func sbc_a_n(val:Byte) -> Void { self.sbc_a(val) }
     func rst_18h() -> Void { self.call(ReservedMemoryLocationAddresses.RESTART_18.rawValue) }
     func ld_ff00pn_a(val:Byte) -> Void { mmu.write(address: 0xFF00+UInt16(val), val: self.registers.A) }
-    func pop_hl() -> Void { self.registers.HL = self.readFromStack() }
+    func pop_hl() -> Void { self.registers.HL = self.popFromStack() }
     func ld_ff00pc_a() -> Void { mmu.write(address: 0xFF00+UInt16(self.registers.C), val: self.registers.A) }
-    func push_hl() -> Void { self.writeToStack(self.registers.HL) }
+    func push_hl() -> Void { self.pushToStack(self.registers.HL) }
     func and_a_n(val:Byte) -> Void { self.and_a(val) }
     func rst_20h() -> Void { self.call(ReservedMemoryLocationAddresses.RESTART_20.rawValue) }
     func add_sp_n(val:EnhancedShort) -> Void { self.add_sp(val.value) }
@@ -647,10 +661,10 @@ class CPU: Component, Clockable, GameBoyInstructionSet {
     func xor_a_n(val:Byte) -> Void { self.xor_a(val) }
     func rst_28h() -> Void { self.call(ReservedMemoryLocationAddresses.RESTART_28.rawValue) }
     func ld_a_ff00pn(val:Byte) -> Void { self.registers.A = mmu.read(address: 0xFF00 &+ UInt16(val)) }
-    func pop_af() -> Void { self.registers.AF = self.readFromStack() }
+    func pop_af() -> Void { self.registers.AF = self.popFromStack() }
     func ld_a_ff00pc() -> Void { self.registers.A = mmu.read(address: 0xFF00 &+ UInt16(self.registers.C)) }
     func di() -> Void { interrupts.IME = false }
-    func push_af() -> Void { self.writeToStack(self.registers.AF) }
+    func push_af() -> Void { self.pushToStack(self.registers.AF) }
     func or_a_n(val:Byte) -> Void { self.or_a(val) }
     func rst_30h() -> Void { self.call(ReservedMemoryLocationAddresses.RESTART_30.rawValue) }
     func ld_hl_sppn(val:EnhancedShort) -> Void { 
