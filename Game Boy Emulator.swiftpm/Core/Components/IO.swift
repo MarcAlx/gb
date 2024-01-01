@@ -132,9 +132,8 @@ class IOInterface: Component {
             return mmu.read(address: IOAddresses.LCD_LY.rawValue)
         }
         set {
-            //new value match ScanLinesPerFrame (remember, 0 indexed)
-            let newFrame:Bool = (newValue == ScanlinesPerFrame)
-            mmu.write(address: IOAddresses.LCD_LY.rawValue, val: newFrame ? 0 : newValue)
+            //LY should be between 0 and ScanLinesPerFrame-1
+            mmu[IOAddresses.LCD_LY.rawValue] = newValue % UInt8(ScanlinesPerFrame)
         }
     }
     
