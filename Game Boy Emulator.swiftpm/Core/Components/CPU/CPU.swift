@@ -152,7 +152,7 @@ class CPU: Component, Clockable, GameBoyInstructionSet {
         //write PC to stack
         self.writeToStack(self.registers.PC)
         //move PC to associated interrupt address
-        self.registers.PC = interruptLoc
+        self.jumpTo(EnhancedShort(interruptLoc))
     }
     
     /// - mark : underlaying intructions
@@ -276,7 +276,7 @@ class CPU: Component, Clockable, GameBoyInstructionSet {
     /// save PC to stack then jump to address
     public func call(_ address: Short) {
         self.writeToStack(self.registers.PC)
-        self.registers.PC = address
+        self.jumpTo(EnhancedShort(address))
     }
     
     /// or val with A then stores result in A
@@ -642,7 +642,7 @@ class CPU: Component, Clockable, GameBoyInstructionSet {
     func and_a_n(val:Byte) -> Void { self.and_a(val) }
     func rst_20h() -> Void { self.call(ReservedMemoryLocationAddresses.RESTART_20.rawValue) }
     func add_sp_n(val:EnhancedShort) -> Void { self.add_sp(val.value) }
-    func jp_hl() -> Void { self.registers.PC = self.registers.HL }
+    func jp_hl() -> Void { self.jumpTo(EnhancedShort(self.registers.HL)) }
     func ld_nnp_a(address:EnhancedShort) -> Void { mmu.write(address: address.value, val: self.registers.A) }
     func xor_a_n(val:Byte) -> Void { self.xor_a(val) }
     func rst_28h() -> Void { self.call(ReservedMemoryLocationAddresses.RESTART_28.rawValue) }
