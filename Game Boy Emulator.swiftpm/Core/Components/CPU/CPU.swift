@@ -41,7 +41,7 @@ class CPU: Component, Clockable, GameBoyInstructionSet {
         self.state = CPUState.RUNNING
     }
     
-    public func tick(_ masterCycles:Int) {
+    public func tick(_ masterCycles:Int, _ frameCycles:Int) {
         //as cycles are incremented during execute, keep up with motherboard before doing the next instruction
         if(self.cycles > masterCycles) {
             return

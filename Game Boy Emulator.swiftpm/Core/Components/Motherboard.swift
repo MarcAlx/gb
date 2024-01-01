@@ -45,7 +45,7 @@ class Motherboard: Clockable {
         self.isOn = false
     }
     
-    public func tick(_ masterCycles:Int) {
+    public func tick(_ masterCycles:Int, _ frameCycles:Int) {
         self.cycles = self.cycles &+ 1
     }
     
@@ -53,11 +53,11 @@ class Motherboard: Clockable {
         if(self.isOn && self.hasCartridgeInserted) {
             var tmpCycles = 0
             while(tmpCycles < MCyclesPerFrame){
-                self.cpu.tick(self.cycles)
-                self.ppu.tick(self.cycles)
+                self.cpu.tick(self.cycles, tmpCycles)
+                self.ppu.tick(self.cycles, tmpCycles)
                 ////check interrupts
                 self.cpu.handleInterrupts()
-                self.tick(self.cycles)
+                self.tick(self.cycles, tmpCycles)
                 tmpCycles += 1
             }
             //frame as been computed
@@ -76,6 +76,6 @@ public protocol Clockable {
     ///cycles this clock has elapsed
     var cycles:Int {get}
     
-    /// perform a single tick on a clock, masterCycles are provided for synchronisation purpose
-    func tick(_ masterCycles:Int) -> Void
+    /// perform a single tick on a clock, masterCycles and frameCycles  are provided for synchronisation purpose
+    func tick(_ masterCycles:Int, _ frameCycles:Int) -> Void
 }

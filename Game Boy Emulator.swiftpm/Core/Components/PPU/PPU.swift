@@ -57,7 +57,7 @@ class PPU: Component, Clockable {
         }
     }
     
-    func tick(_ masterCycles:Int) -> Void {
+    func tick(_ masterCycles:Int, _ frameCycles:Int) -> Void {
         
         if(self.cycles > masterCycles) {
             return
