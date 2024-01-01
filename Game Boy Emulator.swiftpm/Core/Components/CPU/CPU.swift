@@ -55,7 +55,7 @@ class CPU: Component, Clockable, GameBoyInstructionSet {
             self.interruptsJustEnabled = false;
             
             //to ease PC debugging in Xcode
-            let pc = self.registers.PC
+            //let pc = self.registers.PC
             //if(pc == 0x01D2){
             //    print("add breakpoint here")
             //}
@@ -76,6 +76,7 @@ class CPU: Component, Clockable, GameBoyInstructionSet {
                 self.state = CPUState.PANIC
                 ErrorService.report(error: errors.unsupportedInstruction(opCode: op.opCode, isExtended: op.isExtended,fountAt: self.registers.PC-1-(op.isExtended ? 1 : 0)))
             }
+            //print(self.registers.describe())
         }
     }
     
