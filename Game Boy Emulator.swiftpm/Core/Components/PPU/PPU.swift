@@ -17,7 +17,7 @@ class PPU: Component, Clockable {
     private let interrupts:Interrupts = Interrupts.sharedInstance
     private let pManager:PaletteManager = PaletteManager.sharedInstance
     
-    var cycles:Int = 0
+    private (set) var cycles:Int = 0
     
     private var _frameBuffer:Data = PPU.generateBlankFrame()
     // last commited frame, ready to display
