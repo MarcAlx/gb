@@ -102,10 +102,11 @@ class Registers: Component,Describable {
     }
     
     public func describe() -> String {
-        return String(format: "A: 0x%02X, F: 0x%02X, B: 0x%02X, C: 0x%02X, D: 0x%02X, E: 0x%02X, H: 0x%02X, L: 0x%02X, SP: 0x%02X, PC: 0x%04X, flags (z:%d, n:%d, hc:%d, c:%d)",
-                              self.A,self.F,self.B,self.C,self.D,self.E,self.H,self.L,
-                              self.SP,
-                              self.PC,
-                              self.isFlagSet(.ZERO),self.isFlagSet(.NEGATIVE),self.isFlagSet(.HALF_CARRY),self.isFlagSet(.CARRY))
+        return String(format: "A:%02X F:%02X B:%02X C:%02X D:%02X E:%02X H:%02X L:%02X SP:%02X PC:%04X PCMEM:%02X,%02X,%02X,%02X (z:%d,n:%d,hc:%d,c:%d)",
+                      self.A,self.F,self.B,self.C,self.D,self.E,self.H,self.L,
+                      self.SP,
+                      self.PC,
+                      MMU.sharedInstance[Short(self.PC)],MMU.sharedInstance[Short(self.PC+1)],MMU.sharedInstance[Short(self.PC+2)],MMU.sharedInstance[Short(self.PC+3)],
+                      self.isFlagSet(.ZERO),self.isFlagSet(.NEGATIVE),self.isFlagSet(.HALF_CARRY),self.isFlagSet(.CARRY))
     }
 }
