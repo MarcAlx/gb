@@ -35,106 +35,87 @@ class PPU: Component, Clockable {
     }
     
     public func reset() {
+        self.cycles = 0
         self._frameBuffer = PPU.generateBlankFrame()
     }
     
-    /// true if a new line is being drawn
-    private var newLine:Bool = true
-    private var _currentScanlineTiming:Int = 0
-    // to track where we are in term of scanline rendering
-    var currentScanlineTiming:Int {
+    private var _lineSync:Int = 0
+    //current timing of scanline
+    private var lineSync:Int {
         get {
-            return self._currentScanlineTiming
+            return self._lineSync
         }
         set {
-            self.newLine = (newValue == ScanlineRenderingLength)
-            if(self.newLine) {
-                self._currentScanlineTiming = 0
-            }
-            else {
-                self._currentScanlineTiming = newValue
-            }
+            self._lineSync = newValue % MCyclesPerScanline
         }
     }
     
     func tick(_ masterCycles:Int, _ frameCycles:Int) -> Void {
-        
-        if(self.cycles > masterCycles) {
-            return
-        }
-        
         //LCD disabled, do nothing
         if(!ios.readLCDControlFlag(LCDControlMask.LCD_AND_PPU_ENABLE)){
-            self.currentScanlineTiming = 0
-            ios.LY = 0
-            self.cycles = 0
-            ios.writeLCDStatMode(.HBLANK) // reset to mode 0
-            return
+            return;
         }
         
-        // if true stat interrupt will be Flagged (fired)
-        var statInterruptTriggered:Bool = false
+        //current timing in line draw
+        self.lineSync = frameCycles % MCyclesPerScanline;
+        //set LY
+        ios.LY = UInt8(frameCycles / MCyclesPerScanline);
+                
         //lcd stat mode
         let curMode:LCDStatMode = ios.readLCDStatMode()
         var newMode:LCDStatMode = curMode
+        // if true stat interrupt will be Flagged (fired)
+        var statInterruptTriggered:Bool = false
         
-        //all scanline have been rendered we are now in VBLANK
-        if(ScreenHeight <= ios.LY) {
+        if(frameCycles >= VBLANK_TRIGGER)
+        {
             newMode = LCDStatMode.VBLANK
             //trigger stat interrupt if VBlank LCDStatus bit is set
             statInterruptTriggered = ios.readLCDStatusFlag(.VBlankInterruptSource)
-            //yes there's two VBlank interrupt sources (STAT and VBLANK)
         }
-        //OAM hasn't finish
-        else if(self.currentScanlineTiming < PPUTimings.OAM_SEARCH_LENGTH.rawValue) {
+        else if(self.lineSync < PIXEL_RENDER_TRIGGER)
+        {
             newMode = LCDStatMode.OAM_SEARCH
             //trigger stat interrupt if OAM LCDStatus bit is set
             statInterruptTriggered = ios.readLCDStatusFlag(.OAMInterruptSource)
         }
-        //PIXEL RENDER hasn't finish
-        else if(self.currentScanlineTiming < PPUTimings.PIXEL_RENDER_LENGTH.rawValue) {
-            //print(self.currentScanlineTiming)
+        else if(self.lineSync < HBLANK_TRIGGER)
+        {
             newMode = LCDStatMode.PIXEL_TRANSFER
-            if(curMode.rawValue != newMode.rawValue) {
-                self.scanline()
-            }
         }
-        //HBLANK hasn't finish
-        else if(self.currentScanlineTiming < PPUTimings.HBLANK_LENGTH.rawValue) {
+        else if(self.lineSync < MCyclesPerScanline)
+        {
             newMode = LCDStatMode.HBLANK
             //trigger stat interrupt if HBLANK LCDStatus bit is set
             statInterruptTriggered = ios.readLCDStatusFlag(.HBlankInterruptSource)
         }
-        
+               
         // LY === LYC is constantly checked
-        if(ios.LY == ios.LYC) {
-            //trigger stat interrupt if LYeqLYC LCDStatus bit is set
-            statInterruptTriggered = statInterruptTriggered ||  ios.readLCDStatusFlag(.LYCeqLYInterruptSource)
-            ios.setLCDStatFlag(.LYCeqLY, enabled: true)
-        }
-        else {
-            ios.setLCDStatFlag(.LYCeqLY, enabled: false)
-        }
+        var lyEqLyc = (ios.LY == ios.LYC);
+        //trigger stat interrupt if LYeqLYC LCDStatus bit is set
+        statInterruptTriggered = statInterruptTriggered || (lyEqLyc && ios.readLCDStatusFlag(.LYCeqLYInterruptSource))
+        ios.setLCDStatFlag(.LYCeqLY, enabled: lyEqLyc)
         
-        //update LY
-        if(self.newLine) {
-            ios.LY += 1 // circularity of LY is handled in ios
-            //trigger VBlank
-            if(ScreenHeight==ly){
+        //mode has changed
+        if(curMode != newMode) {
+            //trigger LCD STAT
+            self.interrupts.setInterruptFlagValue(.LCDStat, statInterruptTriggered)
+            
+            //entering pixel transfer -> draw line
+            if(newMode == .PIXEL_TRANSFER){
+                self.scanline()
+            }
+            //entering vblank -> trigger
+            else if(newMode == .VBLANK){
+                //yes there's two VBlank interrupt sources (STAT and VBLANK)
                 self.interrupts.setInterruptFlagValue(.VBlank,true);
             }
-        }
-        
-        //Trigger LCD STAT
-        if(curMode != newMode) {
-            self.interrupts.setInterruptFlagValue(.LCDStat, statInterruptTriggered)
         }
         
         //update LCD STATUS -> mode
         ios.writeLCDStatMode(newMode)
         
         //operate at 4 m cycles speed as it's 1t cycle (minimal)
-        self.currentScanlineTiming += 4
         self.cycles = self.cycles &+ 4
     }
     

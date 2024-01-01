@@ -21,8 +21,10 @@ public let BGTileHeight:Int = 8
 
 // Nb of scanline drawn per frame (144 + 10 VBlank)
 public let ScanlinesPerFrame:Int = 154
-// Nb of m cycles to draw a scanline 
-public let MCyclesPerScanline:Int = 456
+// time needed (in M cycles) to render a scanline
+public let MCyclesPerScanline:Int = PPUTimings.OAM_SEARCH_LENGTH.rawValue
+                                  + PPUTimings.PIXEL_RENDER_LENGTH.rawValue
+                                  + PPUTimings.HBLANK_LENGTH.rawValue
 
 // MCycles than occurs each frame
 public let MCyclesPerFrame:Int = ScanlinesPerFrame * MCyclesPerScanline
@@ -479,10 +481,11 @@ enum PPUTimings:Int {
     case OAM_SEARCH_LENGTH = 80
     case PIXEL_RENDER_LENGTH = 172
     case HBLANK_LENGTH = 204
-    case VBLANK_TRIGGER = 65_664 //144 /*nb of line*/ * (80+172+204) (length of a scanline)
 }
 
-// time needed (in M cycles) to render a scanline
-let ScanlineRenderingLength = PPUTimings.OAM_SEARCH_LENGTH.rawValue
-                            + PPUTimings.PIXEL_RENDER_LENGTH.rawValue
-                            + PPUTimings.HBLANK_LENGTH.rawValue
+//M-Cycles at which PIXEL_RENDER starts
+public let PIXEL_RENDER_TRIGGER = PPUTimings.OAM_SEARCH_LENGTH.rawValue
+//M-Cycles at which H-Blank starts
+public let HBLANK_TRIGGER = PPUTimings.OAM_SEARCH_LENGTH.rawValue + PPUTimings.PIXEL_RENDER_LENGTH.rawValue
+//M-Cycles at which V-Blank starts
+public let VBLANK_TRIGGER:Int = ScreenHeight * MCyclesPerScanline //Vblank is triggered after all line has been rendered
