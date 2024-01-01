@@ -24,10 +24,10 @@ public let ScanlinesPerFrame:Int = 154
 // Nb of m cycles to draw a scanline 
 public let MCyclesPerScanline:Int = 456
 
-public let PreferredFrameRate:Float = Float(CPUSpeed) / Float(ScanlinesPerFrame * MCyclesPerScanline)//59.7275
-
 // MCycles than occurs each frame
-public let MCyclesPerFrame:Int = CPUSpeed / Int(ceil(PreferredFrameRate))
+public let MCyclesPerFrame:Int = ScanlinesPerFrame * MCyclesPerScanline
+
+public let PreferredFrameRate:Float = Float(CPUSpeed) / Float(MCyclesPerFrame)//59.7275
 
 //Ram size
 public let RAMSize:Int = 0xFFFF+1
