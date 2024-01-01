@@ -150,6 +150,7 @@ class PPU: Component, Clockable {
         {
             let scx = ios.SCX
             let scy = ios.SCY
+            let effectiveY:Int = Int(ly) + Int(scy)
             let bgWinPalette = ColorPalette(paletteData: ios.LCD_BGP, reference: pManager.currentPalette)
             
             //draw BG
@@ -163,7 +164,7 @@ class PPU: Component, Clockable {
             let bgTileMap = ios.readLCDControlFlag(.BG_TILE_MAP_AREA) ? MMUAddressSpaces.BG_TILE_MAP_AREA_1 : MMUAddressSpaces.BG_TILE_MAP_AREA_0
             
             //tile row considering viewport
-            let tileRow = (ly + scy) / 8 ;
+            let tileRow = UInt8(effectiveY / 8)
             var offsetX:UInt8 = scx
             //x drawn without considering viewport
             var effectiveX = scx
@@ -171,7 +172,7 @@ class PPU: Component, Clockable {
             //for each tile in BG
             for vpx in stride(from: UInt8(0), to: UInt8(ScreenWidth), by: UInt8.Stride(tw)) {
                 //tile column considering view port
-                let tileCol = ((vpx + scx) / 8)
+                let tileCol = UInt8((Int(vpx) + Int(scx)) / 8)
                 
                 //index of tile in BG, (inline 2d array indexing), x32 -> tilemap are 32x32 square
                 let index:UInt16 = (32 * UInt16(tileRow)) + UInt16(tileCol)
@@ -188,9 +189,10 @@ class PPU: Component, Clockable {
                                                           range: tiledata)
                 
                 //draw tile line
+                let tileLine:UInt8 = UInt8(effectiveY % Int(tw))
                 self.drawTileLine(tileAddress: tileAddress,
                                   withPalette: bgWinPalette,
-                                  tileLine: (ly + scy) % tw,
+                                  tileLine: tileLine,
                                   startX: vpx,
                                   startY: ly,
                                   offsetX: offsetX % tw,
