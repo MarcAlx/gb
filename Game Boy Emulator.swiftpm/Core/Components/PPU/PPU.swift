@@ -9,6 +9,11 @@ enum LCDStatMode: UInt8 {
 
 /// Pixel Processing Unit
 class PPU: Component, Clockable {
+    /// empty frame, for reset/init purpose
+    private static let blankFrame:Data = Data(stride(from: 0, to: PixelCount, by: 1).flatMap {
+        _ in return [255,255,255,255]//R,G,B,A
+    })
+    
     public static let sharedInstance = PPU()
     
     private let cpu:CPU = CPU.sharedInstance
@@ -19,8 +24,8 @@ class PPU: Component, Clockable {
     
     private (set) var cycles:Int = 0
     
-    private var _frameBuffer:Data = PPU.generateBlankFrame()
-    // last commited frame, ready to display
+    private var _frameBuffer:Data = PPU.blankFrame
+    /// last commited frame, ready to display
     public var frameBuffer:Data {
         get {
             //return a copy to avoid concurrent access
@@ -29,14 +34,16 @@ class PPU: Component, Clockable {
     }
     
     //next frame to be drawn (currently built by render scanline)
-    private var nextFrame:Data = PPU.generateBlankFrame()
+    private var nextFrame:Data = PPU.blankFrame
     
     private init() {
     }
     
     public func reset() {
         self.cycles = 0
-        self._frameBuffer = PPU.generateBlankFrame()
+        self.frameSync = 0
+        self.lineSync = 0
+        self._frameBuffer = PPU.blankFrame
     }
     
     private var _lineSync:Int = 0
@@ -50,24 +57,37 @@ class PPU: Component, Clockable {
         }
     }
     
+    private var _frameSync:Int = 0
+    //current timing of frame
+    private var frameSync:Int {
+        get {
+            return self._frameSync
+        }
+        set {
+            self._frameSync = newValue % MCyclesPerFrame
+        }
+    }
+    
     func tick(_ masterCycles:Int, _ frameCycles:Int) -> Void {
         //LCD disabled, do nothing
         if(!ios.readLCDControlFlag(LCDControlMask.LCD_AND_PPU_ENABLE)){
+            self.reset()
             return;
         }
         
         //current timing in line draw
-        self.lineSync = frameCycles % MCyclesPerScanline;
+        self.lineSync = self.frameSync % MCyclesPerScanline;
         //set LY
-        ios.LY = UInt8(frameCycles / MCyclesPerScanline);
-                
+        let ly = UInt8((self.frameSync) / MCyclesPerScanline);
+        ios.LY = ly
+        
         //lcd stat mode
         let curMode:LCDStatMode = ios.readLCDStatMode()
         var newMode:LCDStatMode = curMode
         // if true stat interrupt will be Flagged (fired)
         var statInterruptTriggered:Bool = false
         
-        if(frameCycles >= VBLANK_TRIGGER)
+        if(ly >= 144)
         {
             newMode = LCDStatMode.VBLANK
             //trigger stat interrupt if VBlank LCDStatus bit is set
@@ -91,7 +111,7 @@ class PPU: Component, Clockable {
         }
                
         // LY === LYC is constantly checked
-        var lyEqLyc = (ios.LY == ios.LYC);
+        let lyEqLyc = (ly == ios.LYC);
         //trigger stat interrupt if LYeqLYC LCDStatus bit is set
         statInterruptTriggered = statInterruptTriggered || (lyEqLyc && ios.readLCDStatusFlag(.LYCeqLYInterruptSource))
         ios.setLCDStatFlag(.LYCeqLY, enabled: lyEqLyc)
@@ -116,6 +136,7 @@ class PPU: Component, Clockable {
         ios.writeLCDStatMode(newMode)
         
         //operate at 4 m cycles speed as it's 1t cycle (minimal)
+        self.frameSync = self.frameSync &+ 4
         self.cycles = self.cycles &+ 4
     }
     
@@ -250,13 +271,6 @@ class PPU: Component, Clockable {
                 UInt8(drand48() * 255), // blue
                 UInt8(255)              // alpha
             ]
-        })
-    }
-    
-    /// generate a blank frame, for debug purpose
-    private static func generateBlankFrame() -> Data {
-        return Data(stride(from: 0, to: PixelCount, by: 1).flatMap {
-            _ in return [255,255,255,255]//R,G,B,A
         })
     }
     
