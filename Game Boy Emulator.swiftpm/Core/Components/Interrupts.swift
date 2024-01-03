@@ -8,7 +8,7 @@ public enum InterruptFlag : Byte {
 
 /// Interrupts controller
 ///
-/// i.e: an interrupt is raised if IME is true AND enabled (by code/game) via IE AND flag at runtime (by PPU) via IF
+/// i.e: an interrupt is raised if IME is true AND enabled (by code/game) via IE AND flagged at runtime (by PPU) via IF
 ///    for LCDStat on top of these conditions some bits must be set (by code/game) to true in LCD_STATUS (4 cases may trigger LCDStat : LYeqLYC, HBlank, VBLANK, OAM)
 class Interrupts: Component {
     public static let sharedInstance:Interrupts = Interrupts()
