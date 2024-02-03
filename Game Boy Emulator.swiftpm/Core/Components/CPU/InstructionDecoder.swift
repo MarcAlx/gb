@@ -26,14 +26,14 @@ func forward(_ three:ThreeBytesInstruction? = nil) -> VariableLengthInstruction?
 private func forward(_ one:OneByteInstruction? = nil,
              _ two:TwoBytesInstruction? = nil,
              _ three:ThreeBytesInstruction? = nil) -> VariableLengthInstruction? {
-    if(one != nil) {
-        return { _,_ in one!() }
+    if let oneBI = one {
+        return { _,_ in oneBI() }
     }
-    else if(two != nil) {
-        return { byte,short in two!(byte!) }
+    else if let twoBI = two {
+        return { byte,short in twoBI(byte!) }
     }
-    else if(three != nil) {
-        return { byte,short in three!(short!) }
+    else if let threeBI = three {
+        return { byte,short in threeBI(short!) }
     }
     return nil
 }
