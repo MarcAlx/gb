@@ -237,13 +237,10 @@ class CPU: Component, Clockable, GameBoyInstructionSet {
     }
     
     /// jump to address, any provided flag is checked in order to conditionnaly jump, (if so a cycle overhead is applied by default 4), if inverseFlag is true flag are checked at inverse
-    private func jumpTo(_ address:EnhancedShort, _ flags:[CPUFlag], _ inverseFlag:Bool = false, _ branchingCycleOverhead:Int = 4) {
-        if(flags.isEmpty){
-            self.registers.PC = address.value
-        }
-        else if((!inverseFlag &&  self.registers.areFlagsSet(flags))
-             ||   inverseFlag && !self.registers.areFlagsSet(flags)) {
-            self.registers.PC = address.value
+    private func jumpTo(_ address:EnhancedShort, _ flag:CPUFlag, inverseFlag:Bool = false, _ branchingCycleOverhead:Int = 4) {
+        if((!inverseFlag &&  self.registers.isFlagSet(flag))
+        ||   inverseFlag && !self.registers.isFlagSet(flag)) {
+            self.jumpTo(address)
             self.cycles += branchingCycleOverhead // jumping with condition implies some extra cycles
         }
         else {
@@ -251,23 +248,31 @@ class CPU: Component, Clockable, GameBoyInstructionSet {
         }
     }
     
-    /// - seealso: jumpTo (overload provided as array splatting is not yet available in swift)
-    private func jumpTo(_ address:EnhancedShort, _ flags:CPUFlag..., inverseFlag:Bool = false, branchingCycleOverhead:Int = 4) {
-        self.jumpTo(address, flags, inverseFlag, branchingCycleOverhead)
+    /// jump to address
+    private func jumpTo(_ address:EnhancedShort) {
+        self.registers.PC = address.value
     }
     
     /// jump relative by val, any provided flag is checked in order to conditionnaly jump, (if so a cycle overhead is applied by default +4)
-    private func jumpRelative(_ val:Byte, _ flags:CPUFlag..., inverseFlag:Bool = false, branchingCycleOverhead:Int = 4) {
+    private func jumpRelative(_ val:Byte, _ flag:CPUFlag, inverseFlag:Bool = false, branchingCycleOverhead:Int = 4) {
         let delta:Int8 = Int8(bitPattern: val)//delta can be negative, aka two bit complement
         let newPC:Int = Int(self.registers.PC) + Int(delta)
         //a relative jump is just an absolute jump from PC
-        self.jumpTo(EnhancedShort(fit(newPC)), flags, inverseFlag, branchingCycleOverhead)
+        self.jumpTo(EnhancedShort(fit(newPC)), flag, inverseFlag: inverseFlag, branchingCycleOverhead)
     }
     
-    /// call according to condition
-    public func call(_ address:EnhancedShort, _ flags:CPUFlag..., inverseFlag:Bool = false, branchingCycleOverhead:Int = 4) {
+    /// perform a relative jump
+    private func jumpRelative(_ val:Byte) {
+        let delta:Int8 = Int8(bitPattern: val)//delta can be negative, aka two bit complement
+        let newPC:Int = Int(self.registers.PC) + Int(delta)
+        //a relative jump is just an absolute jump from PC
+        self.jumpTo(EnhancedShort(fit(newPC)))
+    }
+    
+    /// call according to condition (flag)
+    public func call(_ address:EnhancedShort, _ flag:CPUFlag, inverseFlag:Bool = false, branchingCycleOverhead:Int = 4) {
         let oldPC = self.registers.PC
-        self.jumpTo(address, flags, inverseFlag, branchingCycleOverhead)
+        self.jumpTo(address, flag, inverseFlag: inverseFlag, branchingCycleOverhead)
         //branching has succeed write PC
         if(oldPC != self.registers.PC) {
             self.pushToStack(oldPC)
@@ -275,9 +280,14 @@ class CPU: Component, Clockable, GameBoyInstructionSet {
     }
     
     /// save PC to stack then jump to address
-    public func call(_ address: Short) {
+    private func call(_ address: Short) {
+        self.call(EnhancedShort(address))
+    }
+    
+    /// save PC to stack then jump to address
+    private func call(_ address: EnhancedShort) {
         self.pushToStack(self.registers.PC)
-        self.jumpTo(EnhancedShort(address))
+        self.jumpTo(address)
     }
     
     /// or val with A then stores result in A
@@ -295,12 +305,17 @@ class CPU: Component, Clockable, GameBoyInstructionSet {
     }
     
     /// return by taking care of flags, if any flag branching occurs a cycle overhead of +12 is applied
-    private func retrn(_ flags:CPUFlag..., inverseFlag:Bool = false) {
+    private func retrn(_ flag:CPUFlag, inverseFlag:Bool = false) {
         let oldPC = self.registers.PC
-        self.jumpTo(EnhancedShort(self.readFromStack()), flags, inverseFlag, 12)
+        self.jumpTo(EnhancedShort(self.readFromStack()), flag, inverseFlag: inverseFlag, 12)
         if(oldPC != self.registers.PC){
-            self.registers.PC = self.popFromStack()
+            self.retrn()
         }
+    }
+    
+    /// return by taking care of flags, if any flag branching occurs a cycle overhead of +12 is applied
+    private func retrn() {
+        self.registers.PC = self.popFromStack()
     }
     
     /// return and enable interrupt, same as RET+EI

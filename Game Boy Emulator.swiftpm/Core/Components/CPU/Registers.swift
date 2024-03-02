@@ -68,20 +68,6 @@ class Registers: Component,Describable {
         return (self.F & flag.rawValue) > 0
     }
     
-    /// true if all input flags are set, (overload provided as array splatting is not yet available in swift)
-    public func areFlagsSet(_ flags:[CPUFlag]) -> Bool {
-        var res = true
-        for flag in flags {
-            res = res && self.isFlagSet(flag) 
-        }
-        return res
-    }
-    
-    /// true if all input flags are set
-    public func areFlagsSet(_ flags:CPUFlag...) -> Bool {
-        return self.areFlagsSet(flags)
-    }
-    
     /// raise or clear flag on condition
     public func conditionalSet(cond:Bool, flag:CPUFlag) {
         cond ? self.raiseFlag(flag) : self.clearFlag(flag)
