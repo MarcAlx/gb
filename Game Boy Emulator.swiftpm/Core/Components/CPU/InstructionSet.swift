@@ -19,6 +19,13 @@ enum InstructionLength:UInt8, ExpressibleByIntegerLiteral {
 }
 
 struct Instruction {
+    /// implementation used if instructon is a one byte one
+    private let impl1:OneByteInstruction
+    /// implementation used if instructon is a two bytes one
+    private let impl2:TwoBytesInstruction
+    /// implementation used if instructon is a three bytes one
+    private let impl3:ThreeBytesInstruction
+    
     /// opcode
     let opCode:UInt8
     
@@ -31,12 +38,59 @@ struct Instruction {
     /// in M cycle
     let duration:Int
     
-    /// the instruction itself
-    let implementation: VariableLengthInstruction
+    public init(opCode: Byte,
+                length: InstructionLength,
+                name: String,
+                duration:Int,
+                _ impl:OneByteInstruction? = nil) {
+        self.init(opCode: opCode, length: length, name: name, duration: duration,impl1:impl)
+    }
     
-    /// execute the instruction
-    public func execute(_ byteArg:UInt8? = nil,_ shortArg:EnhancedShort? = nil)  {
-        self.implementation(byteArg ?? 0,shortArg ?? EnhancedShort())
+    public init(opCode: Byte,
+                length: InstructionLength,
+                name: String,
+                duration:Int,
+                _ impl:TwoBytesInstruction? = nil) {
+        self.init(opCode: opCode, length: length, name: name, duration: duration,impl2:impl)
+    }
+    
+    public init(opCode: Byte,
+                length: InstructionLength,
+                name: String,
+                duration:Int,
+                _ impl:ThreeBytesInstruction? = nil) {
+        self.init(opCode: opCode, length: length, name: name, duration: duration,impl3:impl)
+    }
+    
+    private init(opCode: Byte,
+                 length: InstructionLength,
+                 name: String,
+                 duration:Int,
+                 impl1:OneByteInstruction? = nil,
+                 impl2:TwoBytesInstruction? = nil,
+                 impl3:ThreeBytesInstruction? = nil) {
+        self.opCode = opCode
+        self.length = length
+        self.name = name
+        self.duration = duration
+        self.impl1 = impl1 ?? emptyOneByteInstruction
+        self.impl2 = impl2 ?? emptyTwoBytesInstruction
+        self.impl3 = impl3 ?? emptyThreeBytesInstruction
+    }
+    
+    /// execute the instruction as a one byte instruction (does nothing if not of the correct size)
+    public func execute()  {
+        self.impl1()
+    }
+    
+    /// execute the instruction as a two bytes instruction (does nothing if not of the correct size)
+    public func execute(_ byteArg:UInt8)  {
+        self.impl2(byteArg)
+    }
+    
+    /// execute the instruction as a three bytes instruction (does nothing if not of the correct size)
+    public func execute(_ shortArg:EnhancedShort)  {
+        self.impl3(shortArg)
     }
 }
 

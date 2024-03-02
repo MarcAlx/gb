@@ -106,7 +106,7 @@ class CPU: Component, Clockable, GameBoyInstructionSet {
         case InstructionLength.ThreeBytes:
             let arg = EnhancedShort(self.readIncrPC(), self.readIncrPC())
             //LogService.log(LogCategory.CPU,"; \(String(format: instruction.name, arg.value))")
-            instruction.execute(nil/*not sure why it's needed*/,arg)
+            instruction.execute(arg)
             break
         }
         return instruction.duration
