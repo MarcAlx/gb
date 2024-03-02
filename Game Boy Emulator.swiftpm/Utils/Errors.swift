@@ -7,7 +7,7 @@ enum errors: Error {
     //an instruction with wrong size has been found
     case wrongInstructionSize
     //unknown instruction has been encountered at PC
-    case unsupportedInstruction(opCode:Byte,isExtended:Bool,fountAt:Short)
+    case unsupportedInstruction(opCode:OperationCode,fountAt:Short)
     //access to an unsupported memory location
     case unsupportedMemoryLocation(address:Short)
     //unauthorized write
@@ -21,8 +21,8 @@ extension errors: LocalizedError {
             return NSLocalizedString("Cartridge has an invalid size", comment: "error")
         case .wrongInstructionSize:
             return NSLocalizedString("Instruction is wrongly sized", comment: "error")
-        case let .unsupportedInstruction(opCode, isExtended, fountAt):
-            return NSLocalizedString(String(format: "Unsupported instruction: 0x%02X (extended=%d) found at 0x%04X",opCode,isExtended,fountAt), comment: "error")
+        case let .unsupportedInstruction(opCode, fountAt):
+            return NSLocalizedString(String(format: "Unsupported instruction: 0x%02X (extended=%d) found at 0x%04X",opCode.code,opCode.isExtended,fountAt), comment: "error")
         case let .unsupportedMemoryLocation(address):
             return NSLocalizedString(String(format:"Unsupported memory location: 0x%04X",address), comment: "error")
         case let .readOnlyMemoryLocation(address):

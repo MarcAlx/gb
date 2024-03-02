@@ -1,3 +1,6 @@
+// a tuple that combines a byte (opcode) with a bool that indicates if opcode is extended
+typealias OperationCode = (isExtended:Bool, code:UInt8)
+
 ///an instruction that sizes one byte: no argument only instruction (1b)
 typealias OneByteInstruction    = ()              -> Void
 ///an instruction that sizes two bytes: instruction (1b) + one argument (1b)
@@ -55,12 +58,9 @@ class InstructionDecoder {
     }
     
     ///decode an opcode and return corresponding instruction or nil if not found/supported
-    func decode(opCode:UInt8, isExtended:Bool = false) -> Instruction? {
-        let instrSet = isExtended ? self.extendedInstructionSet : self.instructionSet
-        if let instr = instrSet[opCode] {
-            return instr
-        }
-        return nil
+    func decode(opCode:OperationCode) -> Instruction? {
+        let instrSet = opCode.isExtended ? self.extendedInstructionSet : self.instructionSet
+        return instrSet[opCode.code] ?? nil
     }
     
     /// build standard instruction array from a StandardInstructionSet implementation

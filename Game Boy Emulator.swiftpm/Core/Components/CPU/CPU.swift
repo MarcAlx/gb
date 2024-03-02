@@ -61,10 +61,10 @@ class CPU: Component, Clockable, GameBoyInstructionSet {
             //}
             
             //fetch
-            let op = self.fetch() //on real hardware fetch are done during last 4 cycles of previous instuction, but as cycles are incremented during execute don't care
+            let opCode = self.fetch() //on real hardware fetch are done during last 4 cycles of previous instuction, but as cycles are incremented during execute don't care
             
             //decode
-            if let instruction = self.instructionDecoder.decode(opCode: op.opCode, isExtended:op.isExtended) {
+            if let instruction = self.instructionDecoder.decode(opCode:opCode) {
                 //execute
                 let duration = self.execute(instruction: instruction)
                 //incr cycle count
@@ -74,7 +74,7 @@ class CPU: Component, Clockable, GameBoyInstructionSet {
             }
             else {
                 self.state = CPUState.PANIC
-                ErrorService.report(error: errors.unsupportedInstruction(opCode: op.opCode, isExtended: op.isExtended,fountAt: self.registers.PC-1-(op.isExtended ? 1 : 0)))
+                ErrorService.report(error: errors.unsupportedInstruction(opCode:opCode ,fountAt: self.registers.PC-1-(opCode.isExtended ? 1 : 0)))
             }
             //print(self.registers.describe())
         }
@@ -82,7 +82,7 @@ class CPU: Component, Clockable, GameBoyInstructionSet {
     
     /// fetch an opcode from PC
     /// - returns a tuple with a bool that indicates if opcode is extended, and the fetched opcode
-    private func fetch() -> (isExtended:Bool, opCode:UInt8) {
+    private func fetch() -> OperationCode {
         let opCode = self.readIncrPC()
         if opCode == ExtentedInstructionSetOpcode {
             return (true, self.readIncrPC())
