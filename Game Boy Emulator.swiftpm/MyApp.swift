@@ -30,7 +30,8 @@ struct MyApp: App {
                     Label("insert cartridge",systemImage: "square.and.arrow.down")
                 }
                 Toggle(isOn: self.$gVM.isOn){
-                    Label("Turn on/off",systemImage: "lightswitch.on")
+                    Label(self.gVM.isOn ? "Turn off" : "Turn on",
+                          systemImage: self.gVM.isOn ? "lightswitch.off" : "lightswitch.on" )
                 }.onChange(of: self.gVM.isOn) { value in
                     if(value)  {
                         self.gVM.turnOn()
