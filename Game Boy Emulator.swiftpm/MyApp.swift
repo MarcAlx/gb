@@ -28,7 +28,7 @@ struct MyApp: App {
                     self.mVM.fileImporterPresented = true
                 } label: { 
                     Label("insert cartridge",systemImage: "square.and.arrow.down")
-                }
+                }.disabled(self.gVM.isOn)
                 Toggle(isOn: self.$gVM.isOn){
                     Label(self.gVM.isOn ? "Turn off" : "Turn on",
                           systemImage: self.gVM.isOn ? "lightswitch.off" : "lightswitch.on" )
