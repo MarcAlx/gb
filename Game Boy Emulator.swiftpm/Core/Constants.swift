@@ -31,6 +31,9 @@ public let MCyclesPerFrame:Int = ScanlinesPerFrame * MCyclesPerScanline
 
 public let PreferredFrameRate:Float = Float(CPUSpeed) / Float(MCyclesPerFrame)//59.7275
 
+//duration of a frame expressed in ms
+public let FrameDuration:Float = 1/PreferredFrameRate
+
 //Ram size
 public let RAMSize:Int = 0xFFFF+1
 
