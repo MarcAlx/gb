@@ -8,14 +8,13 @@ struct MyApp: App {
     @ObservedObject private var mVM:MainViewModel = MainViewModel()
     @ObservedObject private var gVM:GameBoyViewModel = GameBoyViewModel()
     
-    var gameScene: GameScene {
-        let scene = GameScene()
-        scene.size = CGSize(width: ScreenWidth, height: ScreenHeight)
-        scene.isFPSDisplayEnabled = true
-        return scene
-    }
+    //the scene displayed in screen
+    private let scene:GameScene
     
     public init() {
+        self.scene = GameScene()
+        self.scene.size = CGSize(width: ScreenWidth, height: ScreenHeight)
+        self.scene.isFPSDisplayEnabled = true
         self.gVM.errorViewModel = self.eVM
         LogService.logViewModel = self.lVM
         ErrorService.errorViewModel = self.eVM
@@ -42,7 +41,7 @@ struct MyApp: App {
                 }
                 
                 // the game screen
-                SpriteView(scene: gameScene).frame(width: SceneWidth, height: SceneHeight)
+                SpriteView(scene: self.scene).frame(width: SceneWidth, height: SceneHeight)
                 
                 //todo use dedicated view for logging
                 List {
