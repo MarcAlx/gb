@@ -55,7 +55,7 @@ class GameScene: SKScene {
         
         //fps label
         self.fpsLabel.fontName = "Courier"
-        self.fpsLabel.fontSize = 11
+        self.fpsLabel.fontSize = 8
         self.fpsLabel.fontColor = .white
         
         self.fpsLabel.text = "FPS: 88.88"//fake representative text to get accurate evaluation when positionning
