@@ -128,6 +128,37 @@ class CPUCore: Component {
         return val &+ 1 // to avoid overflow, Short.MaxValue+1 -> 0 instead of error
     }
     
+    // deciamal adjust A (BCD)
+    internal func _daa() -> Void {
+        // basically obtaining DAA consists in :
+        // - adding 0x60 if A overflow  0x99
+        // - adding 0x06 if lsb of A greater than 0x09
+        // for negative don't check overflow, and substract instead
+        
+        if(self.registers.isFlagSet(.NEGATIVE)) // after substraction
+        {
+            if(self.registers.isFlagSet(.CARRY)){
+                self.registers.A = self.registers.A - 0x60;
+            }
+            if(self.registers.isFlagSet(.HALF_CARRY)){
+                self.registers.A = self.registers.A - 0x06;
+            }
+        }
+        else //after addition
+        {
+            if(self.registers.isFlagSet(.CARRY) || self.registers.A > 0x99){
+                self.registers.A = self.registers.A + 0x60;
+            }
+            if(self.registers.isFlagSet(.HALF_CARRY) || (self.registers.A & 0x0F) > 0x09){
+                self.registers.A = self.registers.A + 0x06;
+            }
+        }
+        
+        self.registers.clearFlag(.HALF_CARRY)
+        self.registers.conditionalSet(cond: self.registers.A>0x99, flag: .CARRY)
+        self.registers.conditionalSet(cond: self.registers.A == 0, flag: .ZERO)
+    }
+    
     /// jump to address, any provided flag is checked in order to conditionnaly jump, (if so a cycle overhead is applied by default 4), if inverseFlag is true flag are checked at inverse
     internal func jumpTo(_ address:EnhancedShort, _ flag:CPUFlag, inverseFlag:Bool = false, _ branchingCycleOverhead:Int = 4) {
         if((!inverseFlag &&  self.registers.isFlagSet(flag))

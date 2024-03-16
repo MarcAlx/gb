@@ -134,7 +134,7 @@ protocol StandardInstructionSet {
     /// loads N into H 
     func ld_h_n(val:Byte) -> Void
     
-    /// todo 
+    /// Deciman Adjust A, replace the contents of A by its BCD value
     func daa() -> Void
     
     /// jump relative by val if Z flag is set 

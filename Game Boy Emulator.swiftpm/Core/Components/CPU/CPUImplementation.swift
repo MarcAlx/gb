@@ -60,7 +60,7 @@ class CPUImplementation: CPUCore {
             Instruction(opCode: 0x24, length: 1, name: "INC H", duration:4,inc_h),
             Instruction(opCode: 0x25, length: 1, name: "DEC H", duration:4,dec_h),
             Instruction(opCode: 0x26, length: 2, name: "LD H, 0x%02X", duration:8,ld_h_n),
-            unsupported,// Instruction(opCode: 0x27, length: 1, name: "DAA", duration:4,daa),
+            Instruction(opCode: 0x27, length: 1, name: "DAA", duration:4,daa),
             Instruction(opCode: 0x28, length: 2, name: "JR Z, 0x%02X", duration:12,jr_z_n),
             Instruction(opCode: 0x29, length: 1, name: "ADD HL, HL", duration:8,add_hl_hl),
             Instruction(opCode: 0x2A, length: 1, name: "LD A, (HL+)", duration:8,ld_a_hlip),
@@ -586,7 +586,7 @@ class CPUImplementation: CPUCore {
     func inc_h() -> Void { self.registers.H = self.inc(self.registers.H) }
     func dec_h() -> Void { self.registers.H = self.dec(self.registers.H) }
     func ld_h_n(val:Byte) -> Void { self.registers.H = val }
-    func daa() -> Void { /*todo*/ }
+    func daa() -> Void { self._daa() }
     func jr_z_n(val:Byte) -> Void { jumpRelative(val, .ZERO) }
     func add_hl_hl() -> Void { self.add_hl(self.registers.HL) }
     func ld_a_hlip() -> Void { self.registers.A = mmu.read(address: self.registers.HL); self.registers.HL+=1 }
