@@ -29,7 +29,7 @@ public class GameBoyViewModel:ObservableObject {
     ///init display link to setup framerate
     private func initDisplayLink() {
         self.displayLink = CADisplayLink(target: self, selector: #selector(update))
-        //lock framerate, some device could go up to 120
+        //lock framerate (to what the GB is)
         self.displayLink.preferredFrameRateRange = CAFrameRateRange(minimum: ExactFrameRate, maximum: ExactFrameRate, preferred: ExactFrameRate)
         self.displayLink.isPaused = true
         self.displayLink.add(to: .current, forMode: .common)
@@ -59,6 +59,17 @@ public class GameBoyViewModel:ObservableObject {
     @objc func update() {
         workQueue.sync {
             self.gb.update()
+            
+            //let currentTime = Date().timeIntervalSince1970
+            //let ellapsedTime = currentTime - self.previousTime
+            //self.previousTime = currentTime
+            //1/ellapsedTime
+            
+            // official from doc seems too stable
+            //1.0 / (self.displayLink.targetTimestamp - self.displayLink.timestamp)
+            
+            //duration seems computed from preferredFrameRateRange, so it's not accurate
+            //1.0 / self.displayLink!.duration
         }
     }
 }
