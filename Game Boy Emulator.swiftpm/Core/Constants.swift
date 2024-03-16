@@ -36,7 +36,7 @@ public let ExactFrameRate:Float = Float(CPUSpeed) / Float(MCyclesPerFrame)//59.7
 public let FrameDuration:Float = 1/ExactFrameRate
 
 //wish framerate for UI
-public let PreferredFrameRate:Float = 60
+public let PreferredFrameRate:Int = 60
 
 //Ram size
 public let RAMSize:Int = 0xFFFF+1

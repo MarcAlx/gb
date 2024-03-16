@@ -41,7 +41,7 @@ struct MyApp: App {
                 }
                 
                 // the game screen
-                SpriteView(scene: self.scene).frame(width: SceneWidth, height: SceneHeight)
+                SpriteView(scene: self.scene,preferredFramesPerSecond: PreferredFrameRate).frame(width: SceneWidth, height: SceneHeight)
                 
                 //todo use dedicated view for logging
                 List {

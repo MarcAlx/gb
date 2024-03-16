@@ -30,7 +30,7 @@ public class GameBoyViewModel:ObservableObject {
     private func initDisplayLink() {
         self.displayLink = CADisplayLink(target: self, selector: #selector(update))
         //lock framerate, some device could go up to 120
-        self.displayLink.preferredFrameRateRange = CAFrameRateRange(minimum: PreferredFrameRate, maximum: PreferredFrameRate, preferred: PreferredFrameRate)
+        self.displayLink.preferredFrameRateRange = CAFrameRateRange(minimum: ExactFrameRate, maximum: ExactFrameRate, preferred: ExactFrameRate)
         self.displayLink.isPaused = true
         self.displayLink.add(to: .current, forMode: .common)
     }
