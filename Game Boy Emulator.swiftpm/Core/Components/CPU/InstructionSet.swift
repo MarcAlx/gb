@@ -371,7 +371,7 @@ protocol StandardInstructionSet {
     /// loads L into address pointed by value at HL
     func ld_hlp_l() -> Void
     
-    /// todo 
+    /// pause cpu until next interrupt
     func halt() -> Void
     
     /// loads A into address pointed by value at HL

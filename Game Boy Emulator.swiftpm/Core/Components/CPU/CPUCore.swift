@@ -48,6 +48,8 @@ class CPUCore: Component {
         self.pushToStack(self.registers.PC)
         //move PC to associated interrupt address
         self.jumpTo(EnhancedShort(interruptLoc))
+        //restore cpu state
+        self.state = CPUState.RUNNING
     }
     
     /// add val to HL, assign flag and return val

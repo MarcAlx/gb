@@ -139,7 +139,7 @@ class CPUImplementation: CPUCore {
             Instruction(opCode: 0x73, length: 1, name: "LD (HL), E", duration:8,ld_hlp_e),
             Instruction(opCode: 0x74, length: 1, name: "LD (HL), H", duration:8,ld_hlp_h),
             Instruction(opCode: 0x75, length: 1, name: "LD (HL), L", duration:8,ld_hlp_l),
-            unsupported,// Instruction(opCode: 0x76, length: 1, name: "HALT", duration:4,halt),
+            Instruction(opCode: 0x76, length: 1, name: "HALT", duration:4,halt),
             Instruction(opCode: 0x77, length: 1, name: "LD (HL), A", duration:8,ld_hlp_a),
             Instruction(opCode: 0x78, length: 1, name: "LD A, B", duration:4,ld_a_b),
             Instruction(opCode: 0x79, length: 1, name: "LD A, C", duration:4,ld_a_c),
@@ -665,7 +665,7 @@ class CPUImplementation: CPUCore {
     func ld_hlp_e() -> Void { mmu.write(address: self.registers.HL, val: self.registers.E) }
     func ld_hlp_h() -> Void { mmu.write(address: self.registers.HL, val: self.registers.H) }
     func ld_hlp_l() -> Void { mmu.write(address: self.registers.HL, val: self.registers.L) }
-    func halt() -> Void { /*todo*/ }
+    func halt() -> Void { self.state = CPUState.HALTED }
     func ld_hlp_a() -> Void { mmu.write(address: self.registers.HL, val: self.registers.A) }
     func ld_a_b() -> Void { self.registers.A = self.registers.B }
     func ld_a_c() -> Void { self.registers.A = self.registers.C }
