@@ -315,22 +315,22 @@ class CPUImplementation: CPUCore {
             Instruction(opCode: 0x1D, length: 1, name: "RR L", duration:8,rr_l),
             Instruction(opCode: 0x1E, length: 1, name: "RR (HL)", duration:16,rr_hlp),
             Instruction(opCode: 0x1F, length: 1, name: "RR A", duration:8,rr_a),
-            unsupported,//Instruction(opCode: 0x20, length: 1, name: "SLA B", duration:8,sla_b),
-            unsupported,//Instruction(opCode: 0x21, length: 1, name: "SLA C", duration:8,sla_c),
-            unsupported,//Instruction(opCode: 0x22, length: 1, name: "SLA D", duration:8,sla_d),
-            unsupported,//Instruction(opCode: 0x23, length: 1, name: "SLA E", duration:8,sla_e),
-            unsupported,//Instruction(opCode: 0x24, length: 1, name: "SLA H", duration:8,sla_h),
-            unsupported,//Instruction(opCode: 0x25, length: 1, name: "SLA L", duration:8,sla_l),
-            unsupported,//Instruction(opCode: 0x26, length: 1, name: "SLA (HL)", duration:16,sla_hlp),
-            unsupported,//Instruction(opCode: 0x27, length: 1, name: "SLA A", duration:8,sla_a),
-            unsupported,//Instruction(opCode: 0x28, length: 1, name: "SRA B", duration:8,sra_b),
-            unsupported,//Instruction(opCode: 0x29, length: 1, name: "SRA C", duration:8,sra_c),
-            unsupported,//Instruction(opCode: 0x2A, length: 1, name: "SRA D", duration:8,sra_d),
-            unsupported,//Instruction(opCode: 0x2B, length: 1, name: "SRA E", duration:8,sra_e),
-            unsupported,//Instruction(opCode: 0x2C, length: 1, name: "SRA H", duration:8,sra_h),
-            unsupported,//Instruction(opCode: 0x2D, length: 1, name: "SRA L", duration:8,sra_l),
-            unsupported,//Instruction(opCode: 0x2E, length: 1, name: "SRA (HL)", duration:16,sra_hlp),
-            unsupported,//Instruction(opCode: 0x2F, length: 1, name: "SRA A", duration:8,sra_a),
+            Instruction(opCode: 0x20, length: 1, name: "SLA B", duration:8,sla_b),
+            Instruction(opCode: 0x21, length: 1, name: "SLA C", duration:8,sla_c),
+            Instruction(opCode: 0x22, length: 1, name: "SLA D", duration:8,sla_d),
+            Instruction(opCode: 0x23, length: 1, name: "SLA E", duration:8,sla_e),
+            Instruction(opCode: 0x24, length: 1, name: "SLA H", duration:8,sla_h),
+            Instruction(opCode: 0x25, length: 1, name: "SLA L", duration:8,sla_l),
+            Instruction(opCode: 0x26, length: 1, name: "SLA (HL)", duration:16,sla_hlp),
+            Instruction(opCode: 0x27, length: 1, name: "SLA A", duration:8,sla_a),
+            Instruction(opCode: 0x28, length: 1, name: "SRA B", duration:8,sra_b),
+            Instruction(opCode: 0x29, length: 1, name: "SRA C", duration:8,sra_c),
+            Instruction(opCode: 0x2A, length: 1, name: "SRA D", duration:8,sra_d),
+            Instruction(opCode: 0x2B, length: 1, name: "SRA E", duration:8,sra_e),
+            Instruction(opCode: 0x2C, length: 1, name: "SRA H", duration:8,sra_h),
+            Instruction(opCode: 0x2D, length: 1, name: "SRA L", duration:8,sra_l),
+            Instruction(opCode: 0x2E, length: 1, name: "SRA (HL)", duration:16,sra_hlp),
+            Instruction(opCode: 0x2F, length: 1, name: "SRA A", duration:8,sra_a),
             Instruction(opCode: 0x30, length: 1, name: "SWAP B", duration:8,swap_b),
             Instruction(opCode: 0x31, length: 1, name: "SWAP C", duration:8,swap_c),
             Instruction(opCode: 0x32, length: 1, name: "SWAP D", duration:8,swap_d),
@@ -339,14 +339,14 @@ class CPUImplementation: CPUCore {
             Instruction(opCode: 0x35, length: 1, name: "SWAP L", duration:8,swap_l),
             Instruction(opCode: 0x36, length: 1, name: "SWAP (HL)", duration:16,swap_hlp),
             Instruction(opCode: 0x37, length: 1, name: "SWAP A", duration:8,swap_a),
-            unsupported,//Instruction(opCode: 0x38, length: 1, name: "SRL B", duration:8,srl_b),
-            unsupported,//Instruction(opCode: 0x39, length: 1, name: "SRL C", duration:8,srl_c),
-            unsupported,//Instruction(opCode: 0x3A, length: 1, name: "SRL D", duration:8,srl_d),
-            unsupported,//Instruction(opCode: 0x3B, length: 1, name: "SRL E", duration:8,srl_e),
-            unsupported,//Instruction(opCode: 0x3C, length: 1, name: "SRL H", duration:8,srl_h),
-            unsupported,//Instruction(opCode: 0x3D, length: 1, name: "SRL L", duration:8,srl_l),
-            unsupported,//Instruction(opCode: 0x3E, length: 1, name: "SRL (HL)", duration:16,srl_hlp),
-            unsupported,//Instruction(opCode: 0x3F, length: 1, name: "SRL A", duration:8,srl_a),
+            Instruction(opCode: 0x38, length: 1, name: "SRL B", duration:8,srl_b),
+            Instruction(opCode: 0x39, length: 1, name: "SRL C", duration:8,srl_c),
+            Instruction(opCode: 0x3A, length: 1, name: "SRL D", duration:8,srl_d),
+            Instruction(opCode: 0x3B, length: 1, name: "SRL E", duration:8,srl_e),
+            Instruction(opCode: 0x3C, length: 1, name: "SRL H", duration:8,srl_h),
+            Instruction(opCode: 0x3D, length: 1, name: "SRL L", duration:8,srl_l),
+            Instruction(opCode: 0x3E, length: 1, name: "SRL (HL)", duration:16,srl_hlp),
+            Instruction(opCode: 0x3F, length: 1, name: "SRL A", duration:8,srl_a),
             Instruction(opCode: 0x40, length: 1, name: "BIT 0, B", duration:8,bit_0_b),
             Instruction(opCode: 0x41, length: 1, name: "BIT 0, C", duration:8,bit_0_c),
             Instruction(opCode: 0x42, length: 1, name: "BIT 0, D", duration:8,bit_0_d),
@@ -834,22 +834,22 @@ class CPUImplementation: CPUCore {
     func rr_l() -> Void { self.registers.L = self.rr(self.registers.L) }
     func rr_hlp() -> Void { mmu.write(address: self.registers.HL, val: self.rr(mmu.read(address: self.registers.HL))) }
     func rr_a() -> Void { self.registers.A = self.rr(self.registers.A) }
-    func sla_b() -> Void { /*todo*/ }
-    func sla_c() -> Void { /*todo*/ }
-    func sla_d() -> Void { /*todo*/ }
-    func sla_e() -> Void { /*todo*/ }
-    func sla_h() -> Void { /*todo*/ }
-    func sla_l() -> Void { /*todo*/ }
-    func sla_hlp() -> Void { /*todo*/ }
-    func sla_a() -> Void { /*todo*/ }
-    func sra_b() -> Void { /*todo*/ }
-    func sra_c() -> Void { /*todo*/ }
-    func sra_d() -> Void { /*todo*/ }
-    func sra_e() -> Void { /*todo*/ }
-    func sra_h() -> Void { /*todo*/ }
-    func sra_l() -> Void { /*todo*/ }
-    func sra_hlp() -> Void { /*todo*/ }
-    func sra_a() -> Void { /*todo*/ }
+    func sla_b() -> Void { self.registers.B = self.sla(self.registers.B) }
+    func sla_c() -> Void { self.registers.C = self.sla(self.registers.C) }
+    func sla_d() -> Void { self.registers.D = self.sla(self.registers.D) }
+    func sla_e() -> Void { self.registers.E = self.sla(self.registers.E) }
+    func sla_h() -> Void { self.registers.H = self.sla(self.registers.H) }
+    func sla_l() -> Void { self.registers.L = self.sla(self.registers.L) }
+    func sla_hlp() -> Void { mmu.write(address: self.registers.HL, val: self.sla(mmu.read(address: self.registers.HL))) }
+    func sla_a() -> Void { self.registers.A = self.sla(self.registers.A) }
+    func sra_b() -> Void { self.registers.B = self.sra(self.registers.B) }
+    func sra_c() -> Void { self.registers.C = self.sra(self.registers.C) }
+    func sra_d() -> Void { self.registers.D = self.sra(self.registers.D) }
+    func sra_e() -> Void { self.registers.E = self.sra(self.registers.E) }
+    func sra_h() -> Void { self.registers.H = self.sra(self.registers.H) }
+    func sra_l() -> Void { self.registers.L = self.sra(self.registers.L) }
+    func sra_hlp() -> Void { mmu.write(address: self.registers.HL, val: self.sra(mmu.read(address: self.registers.HL))) }
+    func sra_a() -> Void { self.registers.A = self.sra(self.registers.A) }
     func swap_b() -> Void { self.registers.B = self.swap(self.registers.B) }
     func swap_c() -> Void { self.registers.C = self.swap(self.registers.C) }
     func swap_d() -> Void { self.registers.D = self.swap(self.registers.D) }
@@ -858,14 +858,14 @@ class CPUImplementation: CPUCore {
     func swap_l() -> Void { self.registers.L = self.swap(self.registers.L) }
     func swap_hlp() -> Void { mmu.write(address: self.registers.HL, val: self.swap(mmu.read(address: self.registers.HL))) }
     func swap_a() -> Void { self.registers.A = self.swap(self.registers.A) }
-    func srl_b() -> Void { /*todo*/ }
-    func srl_c() -> Void { /*todo*/ }
-    func srl_d() -> Void { /*todo*/ }
-    func srl_e() -> Void { /*todo*/ }
-    func srl_h() -> Void { /*todo*/ }
-    func srl_l() -> Void { /*todo*/ }
-    func srl_hlp() -> Void { /*todo*/ }
-    func srl_a() -> Void { /*todo*/ }
+    func srl_b() -> Void { self.registers.B = self.srl(self.registers.B) }
+    func srl_c() -> Void { self.registers.C = self.srl(self.registers.C) }
+    func srl_d() -> Void { self.registers.D = self.srl(self.registers.D) }
+    func srl_e() -> Void { self.registers.E = self.srl(self.registers.E) }
+    func srl_h() -> Void { self.registers.H = self.srl(self.registers.H) }
+    func srl_l() -> Void { self.registers.L = self.srl(self.registers.L) }
+    func srl_hlp() -> Void { mmu.write(address: self.registers.HL, val: self.srl(mmu.read(address: self.registers.HL))) }
+    func srl_a() -> Void { self.registers.A = self.srl(self.registers.A) }
     func bit_0_b() -> Void { test_bit(.Bit_0, self.registers.B) }
     func bit_0_c() -> Void { test_bit(.Bit_0, self.registers.C) }
     func bit_0_d() -> Void { test_bit(.Bit_0, self.registers.D) }

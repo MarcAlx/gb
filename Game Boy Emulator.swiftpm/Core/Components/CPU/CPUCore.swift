@@ -300,6 +300,41 @@ class CPUCore: Component {
         self.add_a(val &+ (self.registers.isFlagSet(.CARRY) ? 1 : 0))
     }
     
+    /// perform an arithemtical shift left of val (same as logical one)
+    internal func sla(_ val:Byte) -> Byte {
+        return self.sll(val)
+    }
+    
+    /// perform an logical shift left of val (not exposed in 0xCB)
+    internal func sll(_ val:Byte) -> Byte {
+        let res = val << 1;
+        self.registers.conditionalSet(cond: res == 0, flag: .ZERO)
+        self.registers.clearFlag(.NEGATIVE)
+        self.registers.clearFlag(.HALF_CARRY)
+        self.registers.conditionalSet(cond: isBitSet(.Bit_7, val), flag: .CARRY)
+        return res;
+    }
+    
+    /// perform an logical shift left of val
+    internal func srl(_ val:Byte) -> Byte {
+        let res = val >> 1;
+        self.registers.conditionalSet(cond: res == 0, flag: .ZERO)
+        self.registers.clearFlag(.NEGATIVE)
+        self.registers.clearFlag(.HALF_CARRY)
+        self.registers.conditionalSet(cond: isBitSet(.Bit_0, val), flag: .CARRY)
+        return res;
+    }
+    
+    /// perform an arithmetic shift right of val (same as logical but old 7bit MSB is stored in new 7bit MSB
+    internal func sra(_ val:Byte) -> Byte {
+        var res = self.srl(val)
+        if(isBitSet(.Bit_7, val)){
+            res = res & ByteMask.Bit_7.rawValue
+        }
+        self.registers.conditionalSet(cond: res == 0, flag: .ZERO)
+        return res;
+    }
+    
     /// swap msb and lsb in val
     internal func swap(_ val:Byte) -> Byte {
         self.registers.clearFlags(.CARRY, .HALF_CARRY, .NEGATIVE)
