@@ -281,7 +281,6 @@ class CPUImplementation: CPUCore {
     }
     
     func asExtentedInstructions() -> [Instruction] {
-        let unsupported:Instruction = Instruction(length: 1, name: "panic_ext", duration:4, self.panic_ext)
         return [
             Instruction(opCode: 0x00, length: 1, name: "RLC B", duration:8,rlc_b),
             Instruction(opCode: 0x01, length: 1, name: "RLC C", duration:8,rlc_c),
