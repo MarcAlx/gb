@@ -1,45 +1,3 @@
-/// instruction length
-enum InstructionLength:UInt8, ExpressibleByIntegerLiteral {
-    case OneByte    = 1
-    case TwoBytes   = 2
-    case ThreeBytes = 3
-    
-    ///to allow int affectation
-    init(integerLiteral value: IntegerLiteralType) {
-        if(value == 3){
-            self = .ThreeBytes
-        }
-        else if(value == 2){
-            self = .TwoBytes
-        }
-        else {
-            self = .OneByte
-        }
-    }
-}
-
-struct Instruction {
-    /// opcode
-    let opCode:UInt8
-    
-    /// instruction length in byte, no parameters instruction are 1 byte long, where 1 paremeters are 2 and 2 parameters are 3.
-    let length:InstructionLength
-    
-    /// instruction's name
-    let name:String
-    
-    /// in M cycle
-    let duration:Int
-    
-    /// the instruction itself
-    let implementation: VariableLengthInstruction
-    
-    /// execute the instruction
-    public func execute(_ byteArg:UInt8? = nil,_ shortArg:EnhancedShort? = nil)  {
-        self.implementation(byteArg ?? 0,shortArg ?? EnhancedShort())
-    }
-}
-
 /// A note on function naming
 /// i8 is n
 /// u8 is n
@@ -176,7 +134,7 @@ protocol StandardInstructionSet {
     /// loads N into H 
     func ld_h_n(val:Byte) -> Void
     
-    /// todo 
+    /// Deciman Adjust A, replace the contents of A by its BCD value
     func daa() -> Void
     
     /// jump relative by val if Z flag is set 
@@ -413,7 +371,7 @@ protocol StandardInstructionSet {
     /// loads L into address pointed by value at HL
     func ld_hlp_l() -> Void
     
-    /// todo 
+    /// pause cpu until next interrupt
     func halt() -> Void
     
     /// loads A into address pointed by value at HL

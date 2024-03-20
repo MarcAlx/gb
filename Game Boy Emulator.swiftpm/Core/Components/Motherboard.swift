@@ -58,7 +58,7 @@ class Motherboard: Clockable {
                 ////check interrupts
                 self.cpu.handleInterrupts()
                 self.tick(self.cycles, tmpCycles)
-                tmpCycles += 1
+                tmpCycles += TCycleLength
             }
             //frame as been computed
             self.ppu.commitFrame()

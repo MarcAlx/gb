@@ -27,7 +27,7 @@ class GameScene: SKScene {
         self.initNodes()
     }
     
-    /// called every frame, for framerate see displaylink in GBViewModel
+    /// called every frame, for framerate see SpriteView initialization
     override func update(_ currentTime: TimeInterval) {
         // update screen with framebuffer
         self.screen.texture = SKTexture(data: PPU.sharedInstance.frameBuffer,
@@ -55,7 +55,7 @@ class GameScene: SKScene {
         
         //fps label
         self.fpsLabel.fontName = "Courier"
-        self.fpsLabel.fontSize = 11
+        self.fpsLabel.fontSize = 8
         self.fpsLabel.fontColor = .white
         
         self.fpsLabel.text = "FPS: 88.88"//fake representative text to get accurate evaluation when positionning
@@ -73,12 +73,6 @@ class GameScene: SKScene {
             let ellapsedTime = currentTime - self.previousTime
             self.previousTime = currentTime
             self.fpsLabel.text = String(format: "FPS: %.2f", 1/ellapsedTime)
-            
-            // official from doc seems too stable
-            //self.FPS = 1.0 / (self.displayLink.targetTimestamp - self.displayLink.timestamp)
-            
-            //duration seems computed from preferredFrameRateRange, so it's not accurate
-            //self.FPS = 1.0 / self.displayLink!.duration
         }
     }
 }

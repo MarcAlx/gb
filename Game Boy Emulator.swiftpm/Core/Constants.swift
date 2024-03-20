@@ -29,7 +29,14 @@ public let MCyclesPerScanline:Int = PPUTimings.OAM_SEARCH_LENGTH.rawValue
 // MCycles than occurs each frame
 public let MCyclesPerFrame:Int = ScanlinesPerFrame * MCyclesPerScanline
 
-public let PreferredFrameRate:Float = Float(CPUSpeed) / Float(MCyclesPerFrame)//59.7275
+// Exact GB frame rate (likely ignored, rounded to 60 by CADisplayLink)
+public let ExactFrameRate:Float = Float(CPUSpeed) / Float(MCyclesPerFrame)//59.7275
+
+//duration of a frame expressed in ms
+public let FrameDuration:Float = 1/ExactFrameRate
+
+//wish framerate for UI (likely rounded by swift)
+public let PreferredFrameRate:Int = 60
 
 //Ram size
 public let RAMSize:Int = 0xFFFF+1
