@@ -1,5 +1,5 @@
-#if canImport(XCTest)
 import XCTest
+@testable import GBKit
 
 final class CPUTests: XCTestCase {
 
@@ -11,30 +11,20 @@ final class CPUTests: XCTestCase {
         // Put teardown code here. This method is called after the invocation of each test method in the class.
     }
 
-    func testKo() throws {
-        // This is an example of a functional test case.
-        // Use XCTAssert and related functions to verify your tests produce the correct results.
-        // Any test you write for XCTest can be annotated as throws and async.
-        // Mark your test throws to produce an unexpected failure when your test encounters an uncaught error.
-        // Mark your test async to allow awaiting for asynchronous code to complete. Check the results with assertions afterwards.
-        XCTAssertTrue(false)
+    func test_inc() throws {
+        let cpu:CPU = CPU()
+        
+        cpu.registers.BC = 0
+        cpu.inc_bc()
+        XCTAssertTrue(cpu.registers.BC == 1)
     }
     
-    func testOk() throws {
-        // This is an example of a functional test case.
-        // Use XCTAssert and related functions to verify your tests produce the correct results.
-        // Any test you write for XCTest can be annotated as throws and async.
-        // Mark your test throws to produce an unexpected failure when your test encounters an uncaught error.
-        // Mark your test async to allow awaiting for asynchronous code to complete. Check the results with assertions afterwards.
-        XCTAssertTrue(true)
-    }
-
-    func testPerformanceExample() throws {
-        // This is an example of a performance test case.
-        self.measure {
-            // Put the code you want to measure the time of here.
-        }
+    func test_ld() throws {
+        let cpu:CPU = CPU()
+        
+        cpu.registers.A = 8
+        cpu.ld_a_a()
+        XCTAssertTrue(cpu.registers.A == 8)
     }
 
 }
-#endif
