@@ -6,7 +6,7 @@ class GameScene: SKScene {
     var effectNode : SKEffectNode = SKEffectNode()
     
     /// frame buffer will be drawn in the texture of sprite
-    private var screen = SKSpriteNode(color: .red, size: CGSize(width: ScreenWidth, height: ScreenHeight))
+    private var screen = SKSpriteNode(color: .red, size: CGSize(width: GBConstants.ScreenWidth, height: GBConstants.ScreenHeight))
     
     /// fps counter is a text
     private var fpsLabel = SKLabelNode(text: "Hello")
@@ -32,8 +32,8 @@ class GameScene: SKScene {
     override func update(_ currentTime: TimeInterval) {
         // update screen with framebuffer
         self.screen.texture = SKTexture(data: PPU.sharedInstance.frameBuffer,
-                                        size: CGSize(width: ScreenWidth,
-                                                     height: ScreenHeight))
+                                        size: CGSize(width: GBConstants.ScreenWidth,
+                                                     height: GBConstants.ScreenHeight))
         //to avoid pixel tearing
         self.screen.texture!.filteringMode = .nearest
         
@@ -44,13 +44,13 @@ class GameScene: SKScene {
     private func initNodes() {
         //screen
         self.screen.texture = SKTexture(data: PPU.sharedInstance.frameBuffer,
-                                        size: CGSize(width: ScreenWidth,
-                                                     height: ScreenHeight))
+                                        size: CGSize(width: GBConstants.ScreenWidth,
+                                                     height: GBConstants.ScreenHeight))
         self.screen.anchorPoint = CGPoint(x: 0, y: 0)
         
         //filp vertically as framebuffer contains data from top to bottom, but swift draws from bottom to top
         self.screen.yScale = -1
-        self.screen.position = CGPoint(x:0, y:ScreenHeight) //as yScale flips, y must be offset by ScreenHeight
+        self.screen.position = CGPoint(x:0, y:GBConstants.ScreenHeight) //as yScale flips, y must be offset by ScreenHeight
         
         self.addChild(self.screen)
         
@@ -61,7 +61,7 @@ class GameScene: SKScene {
         
         self.fpsLabel.text = "FPS: 88.88"//fake representative text to get accurate evaluation when positionning
         self.fpsLabel.position = CGPoint(x: Int(self.fpsLabel.frame.width) / 2,
-                                         y: ScreenHeight - Int(self.fpsLabel.frame.height))
+                                         y: GBConstants.ScreenHeight - Int(self.fpsLabel.frame.height))
         self.addChild(self.fpsLabel)
     }
     

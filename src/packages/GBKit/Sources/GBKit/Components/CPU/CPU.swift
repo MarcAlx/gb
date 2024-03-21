@@ -67,7 +67,7 @@ class CPU: CPUImplementation, Clockable {
     private func fetch() -> (OperationCode,[Instruction]) {
         //return ((false, 0x21),standardInstructionSet)
         let opCode = self.readIncrPC()
-        if opCode == ExtentedInstructionSetOpcode {
+        if opCode == GBConstants.ExtentedInstructionSetOpcode {
             return ((true, self.readIncrPC()),extendedInstructionSet)
         }
         return ((false,opCode),standardInstructionSet)

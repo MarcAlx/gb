@@ -13,7 +13,7 @@ public struct GBScene: Scene {
     
     public init() {
         self.scene = GameScene()
-        self.scene.size = CGSize(width: ScreenWidth, height: ScreenHeight)
+        self.scene.size = CGSize(width: GBConstants.ScreenWidth, height: GBConstants.ScreenHeight)
         self.scene.isFPSDisplayEnabled = true
         self.gVM.errorViewModel = self.eVM
         GBLogService.gbLogger = self.lVM
@@ -41,7 +41,7 @@ public struct GBScene: Scene {
                 }
                 
                 // the game screen
-                SpriteView(scene: self.scene,preferredFramesPerSecond: PreferredFrameRate).frame(width: SceneWidth, height: SceneHeight)
+                SpriteView(scene: self.scene,preferredFramesPerSecond: GBUIConstants.PreferredFrameRate).frame(width: GBUIConstants.SceneWidth, height: GBUIConstants.SceneHeight)
                 
                 //todo use dedicated view for logging
                 List {

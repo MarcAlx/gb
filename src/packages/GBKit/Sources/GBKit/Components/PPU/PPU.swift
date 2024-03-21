@@ -10,7 +10,7 @@ enum LCDStatMode: UInt8 {
 /// Pixel Processing Unit
 public class PPU: Component, Clockable {
     /// empty frame, for reset/init purpose
-    private static let blankFrame:Data = Data(stride(from: 0, to: PixelCount, by: 1).flatMap {
+    private static let blankFrame:Data = Data(stride(from: 0, to: GBConstants.PixelCount, by: 1).flatMap {
         _ in return [255,255,255,255]//R,G,B,A
     })
     
@@ -53,7 +53,7 @@ public class PPU: Component, Clockable {
             return self._lineSync
         }
         set {
-            self._lineSync = newValue % MCyclesPerScanline
+            self._lineSync = newValue % GBConstants.MCyclesPerScanline
         }
     }
     
@@ -64,7 +64,7 @@ public class PPU: Component, Clockable {
             return self._frameSync
         }
         set {
-            self._frameSync = newValue % MCyclesPerFrame
+            self._frameSync = newValue % GBConstants.MCyclesPerFrame
         }
     }
     
@@ -76,9 +76,9 @@ public class PPU: Component, Clockable {
         }
         
         //current timing in line draw
-        self.lineSync = self.frameSync % MCyclesPerScanline;
+        self.lineSync = self.frameSync % GBConstants.MCyclesPerScanline;
         //set LY
-        let ly = UInt8((self.frameSync) / MCyclesPerScanline);
+        let ly = UInt8((self.frameSync) / GBConstants.MCyclesPerScanline);
         ios.LY = ly
         
         //lcd stat mode
@@ -93,17 +93,17 @@ public class PPU: Component, Clockable {
             //trigger stat interrupt if VBlank LCDStatus bit is set
             statInterruptTriggered = ios.readLCDStatusFlag(.VBlankInterruptSource)
         }
-        else if(self.lineSync < PIXEL_RENDER_TRIGGER)
+        else if(self.lineSync < GBConstants.PIXEL_RENDER_TRIGGER)
         {
             newMode = LCDStatMode.OAM_SEARCH
             //trigger stat interrupt if OAM LCDStatus bit is set
             statInterruptTriggered = ios.readLCDStatusFlag(.OAMInterruptSource)
         }
-        else if(self.lineSync < HBLANK_TRIGGER)
+        else if(self.lineSync < GBConstants.HBLANK_TRIGGER)
         {
             newMode = LCDStatMode.PIXEL_TRANSFER
         }
-        else if(self.lineSync < MCyclesPerScanline)
+        else if(self.lineSync < GBConstants.MCyclesPerScanline)
         {
             newMode = LCDStatMode.HBLANK
             //trigger stat interrupt if HBLANK LCDStatus bit is set
@@ -145,7 +145,7 @@ public class PPU: Component, Clockable {
     private func scanline() -> Void {
         
         let ly  = ios.LY
-        let tw  = TileWidth
+        let tw  = GBConstants.TileWidth
         
         //BG an WINDOW are enabled
         if(ios.readLCDControlFlag(.BG_AND_WINDOW_ENABLE))
@@ -172,7 +172,7 @@ public class PPU: Component, Clockable {
             var effectiveX = scx
             
             //for each tile in BG
-            for vpx in stride(from: UInt8(0), to: UInt8(ScreenWidth), by: UInt8.Stride(tw)) {
+            for vpx in stride(from: UInt8(0), to: UInt8(GBConstants.ScreenWidth), by: UInt8.Stride(tw)) {
                 //tile column considering view port
                 let tileCol = UInt8((Int(vpx) + Int(scx)) / 8)
                 
@@ -187,7 +187,7 @@ public class PPU: Component, Clockable {
                 let effectiveTileIndex:Byte = tileDataFlag ? tileIndex : Byte(128 + Int(Int8(bitPattern: tileIndex)))
                 
                 //get tile starting address from tile index
-                let tileAddress:Short = self.getAddressAt(index: UInt16(effectiveTileIndex) * UInt16(TileLength),
+                let tileAddress:Short = self.getAddressAt(index: UInt16(effectiveTileIndex) * UInt16(GBConstants.TileLength),
                                                           range: tiledata)
                 
                 //draw tile line
@@ -198,7 +198,7 @@ public class PPU: Component, Clockable {
                                   startX: vpx,
                                   startY: ly,
                                   offsetX: offsetX % tw,
-                                  stopX: (vpx+tw != ScreenWidth) ? 0 : scx % tw)
+                                  stopX: (vpx+tw != GBConstants.ScreenWidth) ? 0 : scx % tw)
                 
                 //reset offsetX after first use
                 offsetX = 0
@@ -234,10 +234,10 @@ public class PPU: Component, Clockable {
         let byte2:Byte = self.mmu.read(address: lineAddr+1)
         
         //inline 2d array indexy, *4 as each color is indexed with 4 values (rgba)
-        var dest:Int = (((Int(startY) * ScreenWidth) + Int(startX)) * 4) //substracted to ScreenHeight as data are drawn in swift from bottom to top
+        var dest:Int = (((Int(startY) * GBConstants.ScreenWidth) + Int(startX)) * 4) //substracted to ScreenHeight as data are drawn in swift from bottom to top
         
         //from msb to lsb
-        for col in stride(from: Int(TileWidth-offsetX-1), to: Int(stopX)-1, by: -1) {
+        for col in stride(from: Int(GBConstants.TileWidth-offsetX-1), to: Int(stopX)-1, by: -1) {
             //decode each color
             var color = 0
             if(isBitSet(IntToByteMask[col], byte1)) {
@@ -263,7 +263,7 @@ public class PPU: Component, Clockable {
     
     /// generate a random frame, for debug purpose
     private func generateRandomFrameBuffer() -> Data {
-        return Data(stride(from: 0, to: PixelCount, by: 1).flatMap {
+        return Data(stride(from: 0, to: GBConstants.PixelCount, by: 1).flatMap {
             _ in
             return [
                 UInt8(drand48() * 255), // red

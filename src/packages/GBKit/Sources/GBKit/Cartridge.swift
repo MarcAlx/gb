@@ -28,8 +28,8 @@ public class Cartridge: Describable {
     /// init banks from data
     private func initBanks() {
         for i in 0..<self.headers.nbBankInROM {
-            let from = i * ROMBankSizeInBytes
-            let to   = (i+1) * ROMBankSizeInBytes
+            let from = i * GBConstants.ROMBankSizeInBytes
+            let to   = (i+1) * GBConstants.ROMBankSizeInBytes
             self.banks.append(MemoryBank(data:Array(self.data[from..<to])))
         }
     }

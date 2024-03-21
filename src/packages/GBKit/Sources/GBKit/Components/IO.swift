@@ -133,7 +133,7 @@ class IOInterface: Component {
         }
         set {
             //LY should be between 0 and ScanLinesPerFrame-1
-            mmu[IOAddresses.LCD_LY.rawValue] = newValue % UInt8(ScanlinesPerFrame)
+            mmu[IOAddresses.LCD_LY.rawValue] = newValue % UInt8(GBConstants.ScanlinesPerFrame)
         }
     }
     

@@ -87,7 +87,7 @@ public class CartridgeHeader {
         }
         
         //logo
-        self.isNintendoLogoPresent = Array(cartridgeData[CHAddresses.NINTENDO_LOGO.rawValue...CHAddresses.NINTENDO_LOGO_END.rawValue]) == NintendoLogo
+        self.isNintendoLogoPresent = Array(cartridgeData[CHAddresses.NINTENDO_LOGO.rawValue...CHAddresses.NINTENDO_LOGO_END.rawValue]) == GBConstants.NintendoLogo
         
         //manufacturer code
         let mCode = String(bytes: cartridgeData[CHAddresses.MANUFACTURER_CODE.rawValue...CHAddresses.MANUFACTURER_CODE_END.rawValue], encoding: .ascii)!.trimmingCharacters(in: .whitespaces)
@@ -115,10 +115,10 @@ public class CartridgeHeader {
         //licensee code
         self.oldLicenseeCode = cartridgeData[CHAddresses.OLD_LICENSEE_CODE.rawValue]
         self.newLicenseeCode = cartridgeData[CHAddresses.NEW_LICENSEE_CODE.rawValue]
-        if oldLicenseeCode == SwitchToNewLicenseeValue, let l = NewLicenseeCodeLookup[newLicenseeCode] {
+        if oldLicenseeCode == GBConstants.SwitchToNewLicenseeValue, let l = GBConstants.NewLicenseeCodeLookup[newLicenseeCode] {
             self.licensee = l
         }
-        else if let l = OldLicenseeCodeLookup[oldLicenseeCode] {
+        else if let l = GBConstants.OldLicenseeCodeLookup[oldLicenseeCode] {
             self.licensee = l
         }
         else {
@@ -127,11 +127,11 @@ public class CartridgeHeader {
         
         //ROM size
         self.romSize = computeROMSizeFromHeaderByte(byte: cartridgeData[CHAddresses.ROM_SIZE.rawValue])
-        self.nbBankInROM = self.romSize/ROMBankSize
+        self.nbBankInROM = self.romSize/GBConstants.ROMBankSize
         
         //RAM size
         self.ramSize = computeRAMSizeFromHeaderByte(byte: cartridgeData[CHAddresses.RAM_SIZE.rawValue])
-        self.nbBankInRAM = self.ramSize/RAMBankSize
+        self.nbBankInRAM = self.ramSize/GBConstants.RAMBankSize
         
         //destination
         self.destination = DestinationCode(rawValue: cartridgeData[CHAddresses.DESTINATION_CODE.rawValue])!

@@ -52,13 +52,13 @@ class Motherboard: Clockable {
     public func update() {
         if(self.isOn && self.hasCartridgeInserted) {
             var tmpCycles = 0
-            while(tmpCycles < MCyclesPerFrame){
+            while(tmpCycles < GBConstants.MCyclesPerFrame){
                 self.cpu.tick(self.cycles, tmpCycles)
                 self.ppu.tick(self.cycles, tmpCycles)
                 ////check interrupts
                 self.cpu.handleInterrupts()
                 self.tick(self.cycles, tmpCycles)
-                tmpCycles += TCycleLength
+                tmpCycles += GBConstants.TCycleLength
             }
             //frame as been computed
             self.ppu.commitFrame()

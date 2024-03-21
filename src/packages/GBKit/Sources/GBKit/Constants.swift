@@ -1,284 +1,302 @@
 import Foundation
 
-// CPU speed in hertz
-public let CPUSpeed:Int = 4_194_304
+public struct GameBoyConstants {
+    // CPU speed in hertz
+    public let CPUSpeed:Int = 4_194_304
 
-// length of a T cycle in M cycle
-public let TCycleLength:Int = 4
+    // length of a T cycle in M cycle
+    public let TCycleLength:Int = 4
 
-public let ScreenWidth:Int = 160
-public let ScreenHeight:Int = 144
-public let PixelCount:Int = ScreenWidth * ScreenHeight
+    public let ScreenWidth:Int = 160
+    public let ScreenHeight:Int = 144
+    public let PixelCount:Int
 
-///All tile have the same width
-public let TileWidth:UInt8 = 8
+    ///All tile have the same width
+    public let TileWidth:UInt8 = 8
 
-//length of tile in byte
-public let TileLength:UInt8 = 16
+    //length of tile in byte
+    public let TileLength:UInt8 = 16
 
-// BG tile height
-public let BGTileHeight:Int = 8
+    // BG tile height
+    public let BGTileHeight:Int = 8
 
-// Nb of scanline drawn per frame (144 + 10 VBlank)
-public let ScanlinesPerFrame:Int = 154
-// time needed (in M cycles) to render a scanline
-public let MCyclesPerScanline:Int = PPUTimings.OAM_SEARCH_LENGTH.rawValue
-                                  + PPUTimings.PIXEL_RENDER_LENGTH.rawValue
-                                  + PPUTimings.HBLANK_LENGTH.rawValue
+    // Nb of scanline drawn per frame (144 + 10 VBlank)
+    public let ScanlinesPerFrame:Int = 154
+    // time needed (in M cycles) to render a scanline
+    public let MCyclesPerScanline:Int = PPUTimings.OAM_SEARCH_LENGTH.rawValue
+                                      + PPUTimings.PIXEL_RENDER_LENGTH.rawValue
+                                      + PPUTimings.HBLANK_LENGTH.rawValue
 
-// MCycles than occurs each frame
-public let MCyclesPerFrame:Int = ScanlinesPerFrame * MCyclesPerScanline
+    // MCycles than occurs each frame
+    public let MCyclesPerFrame:Int
 
-// Exact GB frame rate (likely ignored, rounded to 60 by CADisplayLink)
-public let ExactFrameRate:Float = Float(CPUSpeed) / Float(MCyclesPerFrame)//59.7275
+    // Exact GB frame rate (likely ignored, rounded to 60 by CADisplayLink)
+    public let ExactFrameRate:Float
 
-//duration of a frame expressed in ms
-public let FrameDuration:Float = 1/ExactFrameRate
+    //duration of a frame expressed in ms
+    public let FrameDuration:Float
 
-//wish framerate for UI (likely rounded by swift)
-public let PreferredFrameRate:Int = 60
+    //Ram size
+    public let RAMSize:Int = 0xFFFF+1
 
-//Ram size
-public let RAMSize:Int = 0xFFFF+1
+    //opcode to lookup for extended instructions
+    public let ExtentedInstructionSetOpcode:Byte = 0xCB
 
-//opcode to lookup for extended instructions
-public let ExtentedInstructionSetOpcode:Byte = 0xCB
+    public let NintendoLogo:[Byte] = [
+        0xCE, 0xED, 0x66, 0x66, 0xCC, 0x0D, 0x00, 0x0B, 0x03, 0x73, 0x00, 0x83, 0x00, 0x0C, 0x00, 0x0D,
+        0x00, 0x08, 0x11, 0x1F, 0x88, 0x89, 0x00, 0x0E, 0xDC, 0xCC, 0x6E, 0xE6, 0xDD, 0xDD, 0xD9, 0x99,
+        0xBB, 0xBB, 0x67, 0x63, 0x6E, 0x0E, 0xEC, 0xCC, 0xDD, 0xDC, 0x99, 0x9F, 0xBB, 0xB9, 0x33, 0x3E,
+    ]
 
-let NintendoLogo:[Byte] = [
-    0xCE, 0xED, 0x66, 0x66, 0xCC, 0x0D, 0x00, 0x0B, 0x03, 0x73, 0x00, 0x83, 0x00, 0x0C, 0x00, 0x0D,
-    0x00, 0x08, 0x11, 0x1F, 0x88, 0x89, 0x00, 0x0E, 0xDC, 0xCC, 0x6E, 0xE6, 0xDD, 0xDD, 0xD9, 0x99,
-    0xBB, 0xBB, 0x67, 0x63, 0x6E, 0x0E, 0xEC, 0xCC, 0xDD, 0xDC, 0x99, 0x9F, 0xBB, 0xB9, 0x33, 0x3E,
-]
+    ///old licensee code lookup
+    public let OldLicenseeCodeLookup:[Byte:String] = [
+        0x00 : "None",
+        0x01 : "Nintendo",
+        0x08 : "Capcom",
+        0x09 : "Hot-B",
+        0x0A : "Jaleco",
+        0x0B : "Coconuts Japan",
+        0x0C : "Elite Systems",
+        0x13 : "EA (Electronic Arts)",
+        0x18 : "Hudsonsoft",
+        0x19 : "ITC Entertainment",
+        0x1A : "Yanoman",
+        0x1D : "Japan Clary",
+        0x1F : "Virgin Interactive",
+        0x24 : "PCM Complete",
+        0x25 : "San-X",
+        0x28 : "Kotobuki Systems",
+        0x29 : "Seta",
+        0x30 : "Infogrames",
+        0x31 : "Nintendo",
+        0x32 : "Bandai",
+        0x33 : "",
+        0x34 : "Konami",
+        0x35 : "HectorSoft",
+        0x38 : "Capcom",
+        0x39 : "Banpresto",
+        0x3C : ".Entertainment i",
+        0x3E : "Gremlin",
+        0x41 : "Ubisoft",
+        0x42 : "Atlus",
+        0x44 : "Malibu",
+        0x46 : "Angel",
+        0x47 : "Spectrum Holoby",
+        0x49 : "Irem",
+        0x4A : "Virgin Interactive",
+        0x4D : "Malibu",
+        0x4F : "U.S. Gold",
+        0x50 : "Absolute",
+        0x51 : "Acclaim",
+        0x52 : "Activision",
+        0x53 : "American Sammy",
+        0x54 : "GameTek",
+        0x55 : "Park Place",
+        0x56 : "LJN",
+        0x57 : "Matchbox",
+        0x59 : "Milton Bradley",
+        0x5A : "Mindscape",
+        0x5B : "Romstar",
+        0x5C : "Naxat Soft",
+        0x5D : "Tradewest",
+        0x60 : "Titus",
+        0x61 : "Virgin Interactive",
+        0x67 : "Ocean Interactive",
+        0x69 : "EA (Electronic Arts)",
+        0x6E : "Elite Systems",
+        0x6F : "Electro Brain",
+        0x70 : "Infogrames",
+        0x71 : "Interplay",
+        0x72 : "Broderbund",
+        0x73 : "Sculptered Soft",
+        0x75 : "The Sales Curve",
+        0x78 : "t.hq",
+        0x79 : "Accolade",
+        0x7A : "Triffix Entertainment",
+        0x7C : "Microprose",
+        0x7F : "Kemco",
+        0x80 : "Misawa Entertainment",
+        0x83 : "Lozc",
+        0x86 : "Tokuma Shoten Intermedia",
+        0x8B : "Bullet-Proof Software",
+        0x8C : "Vic Tokai",
+        0x8E : "Ape",
+        0x8F : "I’Max",
+        0x91 : "Chunsoft Co.",
+        0x92 : "Video System",
+        0x93 : "Tsubaraya Productions Co.",
+        0x95 : "Varie Corporation",
+        0x96 : "Yonezawa/S’Pal",
+        0x97 : "Kaneko",
+        0x99 : "Arc",
+        0x9A : "Nihon Bussan",
+        0x9B : "Tecmo",
+        0x9C : "Imagineer",
+        0x9D : "Banpresto",
+        0x9F : "Nova",
+        0xA1 : "Hori Electric",
+        0xA2 : "Bandai",
+        0xA4 : "Konami",
+        0xA6 : "Kawada",
+        0xA7 : "Takara",
+        0xA9 : "Technos Japan",
+        0xAA : "Broderbund",
+        0xAC : "Toei Animation",
+        0xAD : "Toho",
+        0xAF : "Namco",
+        0xB0 : "acclaim",
+        0xB1 : "ASCII or Nexsoft",
+        0xB2 : "Bandai",
+        0xB4 : "Square Enix",
+        0xB6 : "HAL Laboratory",
+        0xB7 : "SNK",
+        0xB9 : "Pony Canyon",
+        0xBA : "Culture Brain",
+        0xBB : "Sunsoft",
+        0xBD : "Sony Imagesoft",
+        0xBF : "Sammy",
+        0xC0 : "Taito",
+        0xC2 : "Kemco",
+        0xC3 : "Squaresoft",
+        0xC4 : "Tokuma Shoten Intermedia",
+        0xC5 : "Data East",
+        0xC6 : "Tonkinhouse",
+        0xC8 : "Koei",
+        0xC9 : "UFL",
+        0xCA : "Ultra",
+        0xCB : "Vap",
+        0xCC : "Use Corporation",
+        0xCD : "Meldac",
+        0xCE : "Pony Canyon or",
+        0xCF : "Angel",
+        0xD0 : "Taito",
+        0xD1 : "Sofel",
+        0xD2 : "Quest",
+        0xD3 : "Sigma Enterprises",
+        0xD4 : "ASK Kodansha Co.",
+        0xD6 : "Naxat Soft",
+        0xD7 : "Copya System",
+        0xD9 : "Banpresto",
+        0xDA : "Tomy",
+        0xDB : "LJN",
+        0xDD : "NCS",
+        0xDE : "Human",
+        0xDF : "Altron",
+        0xE0 : "Jaleco",
+        0xE1 : "Towa Chiki",
+        0xE2 : "Yutaka",
+        0xE3 : "Varie",
+        0xE5 : "Epcoh",
+        0xE7 : "Athena",
+        0xE8 : "Asmik ACE Entertainment",
+        0xE9 : "Natsume",
+        0xEA : "King Records",
+        0xEB : "Atlus",
+        0xEC : "Epic/Sony Records",
+        0xEE : "IGS",
+        0xF0 : "A Wave",
+        0xF3 : "Extreme Entertainment",
+        0xFF : "LJN"
+    ]
 
-///old licensee code lookup
-let OldLicenseeCodeLookup:[Byte:String] = [
-    0x00 : "None",
-    0x01 : "Nintendo",
-    0x08 : "Capcom",
-    0x09 : "Hot-B",
-    0x0A : "Jaleco",
-    0x0B : "Coconuts Japan",
-    0x0C : "Elite Systems",
-    0x13 : "EA (Electronic Arts)",
-    0x18 : "Hudsonsoft",
-    0x19 : "ITC Entertainment",
-    0x1A : "Yanoman",
-    0x1D : "Japan Clary",
-    0x1F : "Virgin Interactive",
-    0x24 : "PCM Complete",
-    0x25 : "San-X",
-    0x28 : "Kotobuki Systems",
-    0x29 : "Seta",
-    0x30 : "Infogrames",
-    0x31 : "Nintendo",
-    0x32 : "Bandai",
-    0x33 : "",
-    0x34 : "Konami",
-    0x35 : "HectorSoft",
-    0x38 : "Capcom",
-    0x39 : "Banpresto",
-    0x3C : ".Entertainment i",
-    0x3E : "Gremlin",
-    0x41 : "Ubisoft",
-    0x42 : "Atlus",
-    0x44 : "Malibu",
-    0x46 : "Angel",
-    0x47 : "Spectrum Holoby",
-    0x49 : "Irem",
-    0x4A : "Virgin Interactive",
-    0x4D : "Malibu",
-    0x4F : "U.S. Gold",
-    0x50 : "Absolute",
-    0x51 : "Acclaim",
-    0x52 : "Activision",
-    0x53 : "American Sammy",
-    0x54 : "GameTek",
-    0x55 : "Park Place",
-    0x56 : "LJN",
-    0x57 : "Matchbox",
-    0x59 : "Milton Bradley",
-    0x5A : "Mindscape",
-    0x5B : "Romstar",
-    0x5C : "Naxat Soft",
-    0x5D : "Tradewest",
-    0x60 : "Titus",
-    0x61 : "Virgin Interactive",
-    0x67 : "Ocean Interactive",
-    0x69 : "EA (Electronic Arts)",
-    0x6E : "Elite Systems",
-    0x6F : "Electro Brain",
-    0x70 : "Infogrames",
-    0x71 : "Interplay",
-    0x72 : "Broderbund",
-    0x73 : "Sculptered Soft",
-    0x75 : "The Sales Curve",
-    0x78 : "t.hq",
-    0x79 : "Accolade",
-    0x7A : "Triffix Entertainment",
-    0x7C : "Microprose",
-    0x7F : "Kemco",
-    0x80 : "Misawa Entertainment",
-    0x83 : "Lozc",
-    0x86 : "Tokuma Shoten Intermedia",
-    0x8B : "Bullet-Proof Software",
-    0x8C : "Vic Tokai",
-    0x8E : "Ape",
-    0x8F : "I’Max",
-    0x91 : "Chunsoft Co.",
-    0x92 : "Video System",
-    0x93 : "Tsubaraya Productions Co.",
-    0x95 : "Varie Corporation",
-    0x96 : "Yonezawa/S’Pal",
-    0x97 : "Kaneko",
-    0x99 : "Arc",
-    0x9A : "Nihon Bussan",
-    0x9B : "Tecmo",
-    0x9C : "Imagineer",
-    0x9D : "Banpresto",
-    0x9F : "Nova",
-    0xA1 : "Hori Electric",
-    0xA2 : "Bandai",
-    0xA4 : "Konami",
-    0xA6 : "Kawada",
-    0xA7 : "Takara",
-    0xA9 : "Technos Japan",
-    0xAA : "Broderbund",
-    0xAC : "Toei Animation",
-    0xAD : "Toho",
-    0xAF : "Namco",
-    0xB0 : "acclaim",
-    0xB1 : "ASCII or Nexsoft",
-    0xB2 : "Bandai",
-    0xB4 : "Square Enix",
-    0xB6 : "HAL Laboratory",
-    0xB7 : "SNK",
-    0xB9 : "Pony Canyon",
-    0xBA : "Culture Brain",
-    0xBB : "Sunsoft",
-    0xBD : "Sony Imagesoft",
-    0xBF : "Sammy",
-    0xC0 : "Taito",
-    0xC2 : "Kemco",
-    0xC3 : "Squaresoft",
-    0xC4 : "Tokuma Shoten Intermedia",
-    0xC5 : "Data East",
-    0xC6 : "Tonkinhouse",
-    0xC8 : "Koei",
-    0xC9 : "UFL",
-    0xCA : "Ultra",
-    0xCB : "Vap",
-    0xCC : "Use Corporation",
-    0xCD : "Meldac",
-    0xCE : "Pony Canyon or",
-    0xCF : "Angel",
-    0xD0 : "Taito",
-    0xD1 : "Sofel",
-    0xD2 : "Quest",
-    0xD3 : "Sigma Enterprises",
-    0xD4 : "ASK Kodansha Co.",
-    0xD6 : "Naxat Soft",
-    0xD7 : "Copya System",
-    0xD9 : "Banpresto",
-    0xDA : "Tomy",
-    0xDB : "LJN",
-    0xDD : "NCS",
-    0xDE : "Human",
-    0xDF : "Altron",
-    0xE0 : "Jaleco",
-    0xE1 : "Towa Chiki",
-    0xE2 : "Yutaka",
-    0xE3 : "Varie",
-    0xE5 : "Epcoh",
-    0xE7 : "Athena",
-    0xE8 : "Asmik ACE Entertainment",
-    0xE9 : "Natsume",
-    0xEA : "King Records",
-    0xEB : "Atlus",
-    0xEC : "Epic/Sony Records",
-    0xEE : "IGS",
-    0xF0 : "A Wave",
-    0xF3 : "Extreme Entertainment",
-    0xFF : "LJN"
-]
+    ///old licensee value that indicates that new values must be used
+    public let SwitchToNewLicenseeValue:Byte = 0x33
 
-///old licensee value that indicates that new values must be used
-let SwitchToNewLicenseeValue:Byte = 0x33
+    ///new licensee code lookup
+    public let NewLicenseeCodeLookup:[Byte:String] = [
+        0x00 : "None",
+        0x01 : "Nintendo R&D1",
+        0x08 : "Capcom",
+        0x13 : "Electronic Arts",
+        0x18 : "Hudson Soft",
+        0x19 : "b-ai",
+        0x20 : "kss",
+        0x22 : "pow",
+        0x24 : "PCM Complete",
+        0x25 : "san-x",
+        0x28 : "Kemco Japan",
+        0x29 : "seta",
+        0x30 : "Viacom",
+        0x31 : "Nintendo",
+        0x32 : "Bandai",
+        0x33 : "Ocean/Acclaim",
+        0x34 : "Konami",
+        0x35 : "Hector",
+        0x37 : "Taito",
+        0x38 : "Hudson",
+        0x39 : "Banpresto",
+        0x41 : "Ubi Soft",
+        0x42 : "Atlus",
+        0x44 : "Malibu",
+        0x46 : "angel",
+        0x47 : "Bullet-Proof",
+        0x49 : "irem",
+        0x50 : "Absolute",
+        0x51 : "Acclaim",
+        0x52 : "Activision",
+        0x53 : "American sammy",
+        0x54 : "Konami",
+        0x55 : "Hi tech entertainment",
+        0x56 : "LJN",
+        0x57 : "Matchbox",
+        0x58 : "Mattel",
+        0x59 : "Milton Bradley",
+        0x60 : "Titus",
+        0x61 : "Virgin",
+        0x64 : "LucasArts",
+        0x67 : "Ocean",
+        0x69 : "Electronic Arts",
+        0x70 : "Infogrames",
+        0x71 : "Interplay",
+        0x72 : "Broderbund",
+        0x73 : "sculptured",
+        0x75 : "sci",
+        0x78 : "THQ",
+        0x79 : "Accolade",
+        0x80 : "misawa",
+        0x83 : "lozc",
+        0x86 : "Tokuma Shoten Intermedia",
+        0x87 : "Tsukuda Original",
+        0x91 : "Chunsoft",
+        0x92 : "Video system",
+        0x93 : "Ocean/Acclaim",
+        0x95 : "Varie",
+        0x96 : "Yonezawa/s’pal",
+        0x97 : "Kaneko",
+        0x99 : "Pack in soft",
+        0xA4 : "Konami (Yu-Gi-Oh!)"
+    ]
 
-///new licensee code lookup
-let NewLicenseeCodeLookup:[Byte:String] = [
-    0x00 : "None",
-    0x01 : "Nintendo R&D1",
-    0x08 : "Capcom",
-    0x13 : "Electronic Arts",
-    0x18 : "Hudson Soft",
-    0x19 : "b-ai",
-    0x20 : "kss",
-    0x22 : "pow",
-    0x24 : "PCM Complete",
-    0x25 : "san-x",
-    0x28 : "Kemco Japan",
-    0x29 : "seta",
-    0x30 : "Viacom",
-    0x31 : "Nintendo",
-    0x32 : "Bandai",
-    0x33 : "Ocean/Acclaim",
-    0x34 : "Konami",
-    0x35 : "Hector",
-    0x37 : "Taito",
-    0x38 : "Hudson",
-    0x39 : "Banpresto",
-    0x41 : "Ubi Soft",
-    0x42 : "Atlus",
-    0x44 : "Malibu",
-    0x46 : "angel",
-    0x47 : "Bullet-Proof",
-    0x49 : "irem",
-    0x50 : "Absolute",
-    0x51 : "Acclaim",
-    0x52 : "Activision",
-    0x53 : "American sammy",
-    0x54 : "Konami",
-    0x55 : "Hi tech entertainment",
-    0x56 : "LJN",
-    0x57 : "Matchbox",
-    0x58 : "Mattel",
-    0x59 : "Milton Bradley",
-    0x60 : "Titus",
-    0x61 : "Virgin",
-    0x64 : "LucasArts",
-    0x67 : "Ocean",
-    0x69 : "Electronic Arts",
-    0x70 : "Infogrames",
-    0x71 : "Interplay",
-    0x72 : "Broderbund",
-    0x73 : "sculptured",
-    0x75 : "sci",
-    0x78 : "THQ",
-    0x79 : "Accolade",
-    0x80 : "misawa",
-    0x83 : "lozc",
-    0x86 : "Tokuma Shoten Intermedia",
-    0x87 : "Tsukuda Original",
-    0x91 : "Chunsoft",
-    0x92 : "Video system",
-    0x93 : "Ocean/Acclaim",
-    0x95 : "Varie",
-    0x96 : "Yonezawa/s’pal",
-    0x97 : "Kaneko",
-    0x99 : "Pack in soft",
-    0xA4 : "Konami (Yu-Gi-Oh!)"
-]
+    /// size of bank in ROM, in KiB
+    public let ROMBankSize:Int = 16
+    
+    /// size of bank in rom in B
+    public let ROMBankSizeInBytes:Int
 
-/// size of bank in ROM, in KiB
-let ROMBankSize:Int = 16
-/// size of bank in rom in B
-let ROMBankSizeInBytes:Int = ROMBankSize * 1024
+    /// size of bank in ROM, in KiB
+    public let RAMBankSize:Int = 8
 
-/// size of bank in ROM, in KiB
-let RAMBankSize:Int = 8
+    /// work RAM  ank size
+    let WRAMBankSize:Int = 4096
+    
+    //M-Cycles at which PIXEL_RENDER starts
+    public let PIXEL_RENDER_TRIGGER = PPUTimings.OAM_SEARCH_LENGTH.rawValue
+    //M-Cycles at which H-Blank starts
+    public let HBLANK_TRIGGER = PPUTimings.OAM_SEARCH_LENGTH.rawValue + PPUTimings.PIXEL_RENDER_LENGTH.rawValue
+    //M-Cycles at which V-Blank starts
+    public let VBLANK_TRIGGER:Int
+    
+    public init() {
+        self.PixelCount = ScreenWidth * ScreenHeight
+        self.MCyclesPerFrame  = ScanlinesPerFrame * MCyclesPerScanline
+        self.ExactFrameRate = Float(CPUSpeed) / Float(MCyclesPerFrame)//59.7275
+        self.FrameDuration = 1/ExactFrameRate
+        self.ROMBankSizeInBytes = ROMBankSize * 1024
+        self.VBLANK_TRIGGER = ScreenHeight * MCyclesPerScanline //Vblank is triggered after all line has been rendered
+    }
+}
 
-/// work RAM  ank size
-let WRAMBankSize:Int = 4096
+public let GBConstants:GameBoyConstants = GameBoyConstants()
 
 /// Cartridge header addresses
 enum CHAddresses: Int /*Int to ease subscripting*/ {
@@ -489,10 +507,3 @@ enum PPUTimings:Int {
     case PIXEL_RENDER_LENGTH = 172
     case HBLANK_LENGTH = 204
 }
-
-//M-Cycles at which PIXEL_RENDER starts
-public let PIXEL_RENDER_TRIGGER = PPUTimings.OAM_SEARCH_LENGTH.rawValue
-//M-Cycles at which H-Blank starts
-public let HBLANK_TRIGGER = PPUTimings.OAM_SEARCH_LENGTH.rawValue + PPUTimings.PIXEL_RENDER_LENGTH.rawValue
-//M-Cycles at which V-Blank starts
-public let VBLANK_TRIGGER:Int = ScreenHeight * MCyclesPerScanline //Vblank is triggered after all line has been rendered

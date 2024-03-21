@@ -10,7 +10,7 @@ class MMU:Component {
     /// current cartridge
     public private(set) var currentCartridge:Cartridge = Cartridge()
     
-    private let ram:MemoryBank = MemoryBank(size: RAMSize,name: "ram")
+    private let ram:MemoryBank = MemoryBank(size: GBConstants.RAMSize,name: "ram")
         
     private init() {
     }
