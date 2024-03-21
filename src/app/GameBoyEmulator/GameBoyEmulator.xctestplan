@@ -1,0 +1,29 @@
+{
+  "configurations" : [
+    {
+      "id" : "72ED1D17-3DA6-4D68-968B-819CD2468025",
+      "name" : "Test Scheme Action",
+      "options" : {
+
+      }
+    }
+  ],
+  "defaultOptions" : {
+    "targetForVariableExpansion" : {
+      "containerPath" : "container:GameBoyEmulator.xcodeproj",
+      "identifier" : "C2A55E182BAC5B0800FCFFD3",
+      "name" : "GameBoyEmulator"
+    }
+  },
+  "testTargets" : [
+    {
+      "parallelizable" : true,
+      "target" : {
+        "containerPath" : "container:GameBoyEmulator.xcodeproj",
+        "identifier" : "C2133E052BACE31200B45917",
+        "name" : "GameBoyEmulatorTests"
+      }
+    }
+  ],
+  "version" : 1
+}
