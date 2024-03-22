@@ -1,7 +1,7 @@
 import XCTest
 @testable import GBKit
 
-final class CPUTests: XCTestCase {
+final class CPUInstructionsTests: XCTestCase {
 
     override func setUpWithError() throws {
         // Put setup code here. This method is called before the invocation of each test method in the class.
