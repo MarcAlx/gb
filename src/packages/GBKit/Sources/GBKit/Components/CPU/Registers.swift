@@ -68,6 +68,11 @@ class Registers: Component,Describable {
         return (self.F & flag.rawValue) > 0
     }
     
+    //true if flag is clear
+    public func isFlagCleared(_ flag:CPUFlag) -> Bool {
+        return (self.F & flag.rawValue) == 0
+    }
+    
     /// raise or clear flag on condition
     public func conditionalSet(cond:Bool, flag:CPUFlag) {
         cond ? self.raiseFlag(flag) : self.clearFlag(flag)
