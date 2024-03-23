@@ -36,19 +36,29 @@ enum NegativeByteMask: Byte {
     case Bit_0 = 0b1111_1110
 }
 
-/// true if a carry has occured between old and new val (basically checking for overflow)
-func hasCarry<T>(_ old:T, _ new:T) -> Bool where T:Comparable, T:Numeric {
-    return new < old //if value has overflow (produce carry) then new value is lower than old
+/// true if new value has overflown old
+func hasOverflown<T>(_ old:T, _ new:T) -> Bool where T:Comparable, T:Numeric {
+    return new < old //if value has overflow then new value is lower than old
 }
 
-/// true if a+b produce half carry
+/// true if a+b produce carry
+func isAddCarry(_ a:Byte,_ b:Byte) -> Bool {
+    return (a &+ b) < a // &+ doesn't produce overflow, so if addition is < to first operand, &+ has overflown (thus carry)
+}
+
+/// true if a+b produce carry
+func isAddCarry(_ a:Short,_ b:Short) -> Bool {
+    return (a &+ b) < a // &+ doesn't produce overflow, so if addition is < to first operand, &+ has overflown (thus carry)
+}
+
+/// true if a+b produce half carry (byte 3 to byte 4)
 func isAddHalfCarry(_ a:Byte,_ b:Byte) -> Bool {
-    return (((a & 0xF) + (b & 0xF)) & 0x10) == 0x10
+    return (((a & 0xF) + (b & 0xF)) & 0x10) == 0x10 //a+b > 0b0000_1111
 }
 
-/// true if a+b produce half carry
+/// true if a+b produce half carry (for some reason not from 7 to 8 but from 11 to 12)
 func isAddHalfCarry(_ a:Short,_ b:Short) -> Bool {
-    return (((a & 0xFFF) + (b & 0xFFF)) & 0x1000) == 0x1000
+    return (((a & 0xFFF) + (b & 0xFFF)) & 0x1000) == 0x1000 //a+b > 0x0FFF
 }
 
 /// true if a-b produce half borrow (between byte)
