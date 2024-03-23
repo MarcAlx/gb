@@ -11,6 +11,15 @@ final class CPUInstructionsTests: XCTestCase {
         // Put teardown code here. This method is called after the invocation of each test method in the class.
     }
 
+    func test_nop() throws {
+        //0x00
+        let cpu:CPU = CPU()
+        let old = cpu.registers.describe()
+        cpu.nop()
+        let new = cpu.registers.describe()
+        XCTAssertTrue(old.elementsEqual(new))
+    }
+    
     func test_inc() throws {
         let cpu:CPU = CPU()
         
