@@ -609,7 +609,10 @@ class CPUImplementation: CPUCore {
     func inc_a() -> Void { self.registers.A = self.inc(self.registers.A) }
     func dec_a() -> Void { self.registers.A = self.dec(self.registers.A) }
     func ld_a_n(val:Byte) -> Void { self.registers.A = val }
-    func ccf() -> Void { self.registers.clearFlags(.NEGATIVE,.HALF_CARRY); self.registers.isFlagSet(.CARRY) ? self.registers.clearFlag(.CARRY) : self.registers.raiseFlag(.CARRY) }
+    func ccf() -> Void {
+        self.registers.clearFlags(.NEGATIVE,.HALF_CARRY);
+        self.registers.isFlagSet(.CARRY) ? self.registers.clearFlag(.CARRY) : self.registers.raiseFlag(.CARRY)
+    }
     func ld_b_b() -> Void { self.registers.B = self.registers.B }
     func ld_b_c() -> Void { self.registers.B = self.registers.C }
     func ld_b_d() -> Void { self.registers.B = self.registers.D }
