@@ -787,10 +787,11 @@ class CPUImplementation: CPUCore {
     func push_af() -> Void { self.pushToStack(self.registers.AF) }
     func or_a_n(val:Byte) -> Void { self.or_a(val) }
     func rst_30h() -> Void { self.call(ReservedMemoryLocationAddresses.RESTART_30.rawValue) }
-    func ld_hl_sppn(val:EnhancedShort) -> Void {
-        let res:Short = self.registers.SP &+ val.value
+    func ld_hl_sppn(val:Byte) -> Void {
+        let delta:Int8 = Int8(bitPattern: val)//delta can be negative, aka two bit complement
+        let res:Short = fit(Int(self.registers.SP) + Int(delta))
         self.registers.conditionalSet(cond: hasCarry(self.registers.SP, res) , flag: .CARRY)
-        self.registers.conditionalSet(cond: isAddHalfCarry(self.registers.SP, val.value) , flag: .HALF_CARRY)
+        self.registers.conditionalSet(cond: isAddHalfCarry(self.registers.SP, Short(val)) , flag: .HALF_CARRY)
         self.registers.clearFlags(.NEGATIVE,.ZERO)
         self.registers.HL = res
     }

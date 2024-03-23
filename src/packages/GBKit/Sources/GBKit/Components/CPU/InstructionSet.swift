@@ -731,8 +731,8 @@ protocol StandardInstructionSet {
     /// push PC to stack then jump to 00, same as call to 0x0030
     func rst_30h() -> Void
     
-    /// adds val to SP then load into HL, affect carry anf half carry flags
-    func ld_hl_sppn(val:EnhancedShort) -> Void
+    /// adds val (can be negative) to SP then load into HL, affect carry anf half carry flags
+    func ld_hl_sppn(val:Byte) -> Void
     
     /// loads HL into SP 
     func ld_sp_hl() -> Void
