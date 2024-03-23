@@ -7,7 +7,8 @@
 /// Increments are suffixed i, BD+  is _bci_
 /// Decrements are suffixed d, BC-  is _bcd_
 /// Pointer increment are suffixed ip and so on... 
-/// (HL+) is hlip
+/// (HL+) is hlpi (post increment)
+/// (HL-) is hlpd (post decrement)
 /// ff00pnp is ff00 +(u8)
 ///
 /// misc :
@@ -120,7 +121,7 @@ protocol StandardInstructionSet {
     func ld_hl_nn(val:EnhancedShort) -> Void
     
     /// increments HL then loads A into address pointed by (incremented) HL
-    func ld_hlip_a() -> Void
+    func ld_hlpi_a() -> Void
     
     /// increments address HL
     func inc_hl() -> Void
@@ -144,7 +145,7 @@ protocol StandardInstructionSet {
     func add_hl_hl() -> Void
     
     /// increments HL then loads into A value pointed by (incremented) HL 
-    func ld_a_hlip() -> Void
+    func ld_a_hlpi() -> Void
     
     /// decrements HL 
     func dec_hl() -> Void

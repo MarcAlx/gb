@@ -55,7 +55,7 @@ class CPUImplementation: CPUCore {
             Instruction(opCode: 0x1F, length: 1, name: "RRA", duration:4,rra),
             Instruction(opCode: 0x20, length: 2, name: "JR NZ, 0x%02X", duration:12,jr_nz_n),
             Instruction(opCode: 0x21, length: 3, name: "LD HL, 0x%04X", duration:12,ld_hl_nn),
-            Instruction(opCode: 0x22, length: 1, name: "LD (HL+), A", duration:8,ld_hlip_a),
+            Instruction(opCode: 0x22, length: 1, name: "LD (HL+), A", duration:8,ld_hlpi_a),
             Instruction(opCode: 0x23, length: 1, name: "INC HL", duration:8,inc_hl),
             Instruction(opCode: 0x24, length: 1, name: "INC H", duration:4,inc_h),
             Instruction(opCode: 0x25, length: 1, name: "DEC H", duration:4,dec_h),
@@ -63,7 +63,7 @@ class CPUImplementation: CPUCore {
             Instruction(opCode: 0x27, length: 1, name: "DAA", duration:4,daa),
             Instruction(opCode: 0x28, length: 2, name: "JR Z, 0x%02X", duration:12,jr_z_n),
             Instruction(opCode: 0x29, length: 1, name: "ADD HL, HL", duration:8,add_hl_hl),
-            Instruction(opCode: 0x2A, length: 1, name: "LD A, (HL+)", duration:8,ld_a_hlip),
+            Instruction(opCode: 0x2A, length: 1, name: "LD A, (HL+)", duration:8,ld_a_hlpi),
             Instruction(opCode: 0x2B, length: 1, name: "DEC HL", duration:8,dec_hl),
             Instruction(opCode: 0x2C, length: 1, name: "INC L", duration:4,inc_l),
             Instruction(opCode: 0x2D, length: 1, name: "DEC L", duration:4,dec_l),
@@ -580,7 +580,7 @@ class CPUImplementation: CPUCore {
     func rra() -> Void { self.registers.A = rr(self.registers.A) }
     func jr_nz_n(val:Byte) -> Void { jumpRelative(val, .ZERO, inverseFlag: true) }
     func ld_hl_nn(val:EnhancedShort) -> Void { self.registers.HL = val.value }
-    func ld_hlip_a() -> Void { mmu.write(address: self.registers.HL, val: self.registers.A); self.registers.HL+=1 }
+    func ld_hlpi_a() -> Void { mmu.write(address: self.registers.HL, val: self.registers.A); self.registers.HL+=1 }
     func inc_hl() -> Void { self.registers.HL = self.inc(self.registers.HL) }
     func inc_h() -> Void { self.registers.H = self.inc(self.registers.H) }
     func dec_h() -> Void { self.registers.H = self.dec(self.registers.H) }
@@ -588,7 +588,7 @@ class CPUImplementation: CPUCore {
     func daa() -> Void { self._daa() }
     func jr_z_n(val:Byte) -> Void { jumpRelative(val, .ZERO) }
     func add_hl_hl() -> Void { self.add_hl(self.registers.HL) }
-    func ld_a_hlip() -> Void { self.registers.A = mmu.read(address: self.registers.HL); self.registers.HL+=1 }
+    func ld_a_hlpi() -> Void { self.registers.A = mmu.read(address: self.registers.HL); self.registers.HL+=1 }
     func dec_hl() -> Void { self.registers.HL = self.dec(self.registers.HL) }
     func inc_l() -> Void { self.registers.L = self.inc(self.registers.L) }
     func dec_l() -> Void { self.registers.L = self.dec(self.registers.L) }

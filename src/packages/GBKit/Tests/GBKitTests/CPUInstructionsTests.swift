@@ -57,7 +57,7 @@ final class CPUInstructionsTests: XCTestCase {
         //0x22
         cpu.registers.A = 0x6
         cpu.registers.HL = 0x8
-        cpu.ld_hlip_a()
+        cpu.ld_hlpi_a()
         XCTAssertTrue(cpu.mmu[0x8] == 0x6)
         XCTAssertTrue(cpu.registers.HL == 0x9)
         
@@ -117,7 +117,7 @@ final class CPUInstructionsTests: XCTestCase {
         cpu.registers.A = 0x4
         cpu.registers.HL = 0x0000
         cpu.mmu[cpu.registers.HL] = 0x22
-        cpu.ld_a_hlip()
+        cpu.ld_a_hlpi()
         XCTAssertTrue(cpu.registers.A == 0x22)
         XCTAssertTrue(cpu.registers.HL == 0x1)
         
