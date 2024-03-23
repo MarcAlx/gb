@@ -54,30 +54,33 @@ class CPUCore: Component {
     
     /// add val to HL, assign flag and return val
     internal func add_hl(_ val:Short) -> Void {
+        let old:Short = val
         let res:Short = self.registers.HL &+ val
         self.registers.clearFlag(.NEGATIVE)
         self.registers.conditionalSet(cond: isAddHalfCarry(self.registers.HL, val), flag: .HALF_CARRY)
-        self.registers.conditionalSet(cond: hasCarry(val, res), flag: .CARRY)
+        self.registers.conditionalSet(cond: hasOverflown(old, res), flag: .CARRY)
         self.registers.HL = res
     }
     
     /// add val to HL, assign flag and return val
     internal func add_sp(_ val:Short) -> Void {
+        let old:Short = val
         let res:Short = self.registers.SP &+ val
         self.registers.clearFlag(.ZERO)
         self.registers.clearFlag(.NEGATIVE)
         self.registers.conditionalSet(cond: isAddHalfCarry(self.registers.SP, Short(val)), flag: .HALF_CARRY)
-        self.registers.conditionalSet(cond: hasCarry(val, res), flag: .CARRY)
+        self.registers.conditionalSet(cond: hasOverflown(old, res), flag: .CARRY)
         self.registers.SP = res
     }
     
     /// add val to A
     internal func add_a(_ val:Byte) -> Void {
+        let old = val
         let res:Byte = self.registers.A &+ val
         self.registers.conditionalSet(cond: res==0, flag: .ZERO)
         self.registers.clearFlag(.NEGATIVE)
         self.registers.conditionalSet(cond: isAddHalfCarry(self.registers.A, val), flag: .HALF_CARRY)
-        self.registers.conditionalSet(cond: hasCarry(val, res), flag: .CARRY)
+        self.registers.conditionalSet(cond: hasOverflown(old, res), flag: .CARRY)
         self.registers.A = res
     }
     
