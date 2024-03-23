@@ -20,6 +20,13 @@ final class CPUInstructionsTests: XCTestCase {
         XCTAssertTrue(old.elementsEqual(new))
     }
     
+    func test_halt() throws {
+        let cpu:CPU = CPU()
+        cpu.state = CPUState.RUNNING
+        cpu.halt()
+        XCTAssertTrue(cpu.state == CPUState.HALTED)
+    }
+    
     func test_inc() throws {
         let cpu:CPU = CPU()
         
