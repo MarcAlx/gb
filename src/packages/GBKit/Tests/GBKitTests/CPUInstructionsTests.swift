@@ -259,8 +259,9 @@ final class CPUInstructionsTests: XCTestCase {
         
         //0x08
         cpu.registers.SP = 0x6
+        cpu.mmu[0x0000] = 0x01
         cpu.ld_nnp_sp(address: EnhancedShort(0x0000))
-        XCTAssertTrue(cpu.mmu[0x0000] == 0x6)
+        XCTAssertTrue(cpu.mmu[0x01] == 0x6)
         
         //0xFA
         cpu.registers.SP = 0x6
