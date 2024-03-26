@@ -1044,7 +1044,31 @@ final class CPUInstructionsTests: XCTestCase {
     }
     
     func test_push() throws {
-        XCTAssertTrue(false)
+        let cpu:CPU = CPU()
+        
+        //0xC6
+        cpu.registers.SP = 0xFFFF
+        cpu.registers.BC = 0xBBCC
+        cpu.push_bc()
+        XCTAssertTrue(cpu.mmu[0xFFFE] == 0xCC && cpu.mmu[0xFFFD] == 0xBB)
+        
+        //0xD6
+        cpu.registers.SP = 0xFFFF
+        cpu.registers.DE = 0xDDEE
+        cpu.push_de()
+        XCTAssertTrue(cpu.mmu[0xFFFE] == 0xEE && cpu.mmu[0xFFFD] == 0xDD)
+        
+        //0xE6
+        cpu.registers.SP = 0xFFFF
+        cpu.registers.HL = 0xFFEE
+        cpu.push_hl()
+        XCTAssertTrue(cpu.mmu[0xFFFE] == 0xEE && cpu.mmu[0xFFFD] == 0xFF)
+        
+        //0xF6
+        cpu.registers.SP = 0xFFFF
+        cpu.registers.AF = 0xAAFF
+        cpu.push_af()
+        XCTAssertTrue(cpu.mmu[0xFFFE] == 0xFF && cpu.mmu[0xFFFD] == 0xAA)
     }
     
     func test_pop() throws {
