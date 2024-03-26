@@ -27,6 +27,10 @@ final class CPUInstructionsTests: XCTestCase {
         XCTAssertTrue(cpu.state == CPUState.HALTED)
     }
     
+    func test_stop() throws {
+        XCTAssertTrue(false)
+    }
+    
     func test_dec() throws {
         let cpu:CPU = CPU()
         cpu.registers.F = 0b0000_0000
@@ -787,6 +791,74 @@ final class CPUInstructionsTests: XCTestCase {
         XCTAssertTrue(cpu.registers.A == 0xDD)
     }
 
+    func test_add() throws {
+        XCTAssertTrue(false)
+    }
+    
+    func test_adc() throws {
+        XCTAssertTrue(false)
+    }
+    
+    func test_sub() throws {
+        XCTAssertTrue(false)
+    }
+    
+    func test_sbc() throws {
+        XCTAssertTrue(false)
+    }
+    
+    func test_and() throws {
+        XCTAssertTrue(false)
+    }
+    
+    func test_xor() throws {
+        XCTAssertTrue(false)
+    }
+    
+    func test_cp() throws {
+        XCTAssertTrue(false)
+    }
+    
+    func test_or() throws {
+        XCTAssertTrue(false)
+    }
+    
+    func test_jump() throws {
+        XCTAssertTrue(false)
+    }
+    
+    func test_call() throws {
+        XCTAssertTrue(false)
+    }
+    
+    func test_ret() throws {
+        XCTAssertTrue(false)
+    }
+    
+    func test_push() throws {
+        XCTAssertTrue(false)
+    }
+    
+    func test_pop() throws {
+        XCTAssertTrue(false)
+    }
+    
+    func test_rst() throws {
+        XCTAssertTrue(false)
+    }
+    
+    func test_daa() throws {
+        XCTAssertTrue(false)
+    }
+    
+    func test_rr() throws {
+        XCTAssertTrue(false)
+    }
+    
+    func test_rl() throws {
+        XCTAssertTrue(false)
+    }
+    
     func test_cpl() throws {
         let cpu:CPU = CPU()
         cpu.registers.A = 0b1010_1010
