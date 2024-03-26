@@ -54,9 +54,76 @@ final class CPUInstructionsTests: XCTestCase {
     func test_inc() throws {
         let cpu:CPU = CPU()
         
+        //0x03
         cpu.registers.BC = 0
         cpu.inc_bc()
         XCTAssertTrue(cpu.registers.BC == 1)
+        
+        //0x013
+        cpu.registers.DE = 0
+        cpu.inc_de()
+        XCTAssertTrue(cpu.registers.DE == 1)
+        
+        //0x23
+        cpu.registers.HL = 0
+        cpu.inc_hl()
+        XCTAssertTrue(cpu.registers.HL == 1)
+        
+        //0x33
+        cpu.registers.SP = 0
+        cpu.inc_sp()
+        XCTAssertTrue(cpu.registers.SP == 1)
+        
+        //0x04
+        cpu.registers.B = 0
+        cpu.inc_b()
+        XCTAssertTrue(cpu.registers.B == 1)
+        
+        //0x014
+        cpu.registers.D = 0
+        cpu.inc_d()
+        XCTAssertTrue(cpu.registers.D == 1)
+        
+        //0x24
+        cpu.registers.H = 0
+        cpu.inc_h()
+        XCTAssertTrue(cpu.registers.H == 1)
+        
+        //0x34
+        cpu.registers.HL = 0x0000
+        cpu.mmu[cpu.registers.HL] = 0x22
+        cpu.inc_hlp()
+        XCTAssertTrue(cpu.mmu[cpu.registers.HL] == 0x23)
+        
+        //0x0C
+        cpu.registers.C = 0
+        cpu.inc_c()
+        XCTAssertTrue(cpu.registers.C == 1)
+        
+        //0x01C
+        cpu.registers.E = 0
+        cpu.inc_e()
+        XCTAssertTrue(cpu.registers.E == 1)
+        
+        //0x2C
+        cpu.registers.L = 0
+        cpu.inc_l()
+        XCTAssertTrue(cpu.registers.L == 1)
+        
+        //0x3C
+        cpu.registers.A = 0
+        cpu.inc_a()
+        XCTAssertTrue(cpu.registers.A == 1)
+        
+        cpu.registers.A = Byte.max
+        cpu.inc_a()
+        XCTAssertTrue(cpu.registers.A == 0)
+        XCTAssertTrue(cpu.registers.isFlagSet(.ZERO))
+        
+        cpu.registers.A = 0b0000_1111
+        cpu.inc_a()
+        XCTAssertTrue(cpu.registers.A == 0b0001_0000)
+        XCTAssertTrue(cpu.registers.isFlagSet(.HALF_CARRY))
     }
     
     func test_ld() throws {
