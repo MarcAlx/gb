@@ -812,7 +812,109 @@ final class CPUInstructionsTests: XCTestCase {
     }
     
     func test_xor() throws {
-        XCTAssertTrue(false)
+        let cpu:CPU = CPU()
+        
+        //0xA8
+        cpu.registers.A = 0b0000_1111
+        cpu.registers.B = 0b1111_0000
+        cpu.xor_a_b()
+        XCTAssertTrue(cpu.registers.A == 0b1111_1111)
+        XCTAssertTrue(cpu.registers.isFlagCleared(.ZERO))
+        cpu.registers.A = 0b0000_0000
+        cpu.registers.B = 0b0000_0000
+        cpu.xor_a_b()
+        XCTAssertTrue(cpu.registers.A == 0b0000_0000)
+        XCTAssertTrue(cpu.registers.isFlagSet(.ZERO))
+    
+        //0xA9
+        cpu.registers.A = 0b0000_1111
+        cpu.registers.C = 0b1111_0000
+        cpu.xor_a_c()
+        XCTAssertTrue(cpu.registers.A == 0b1111_1111)
+        XCTAssertTrue(cpu.registers.isFlagCleared(.ZERO))
+        cpu.registers.A = 0b0000_0000
+        cpu.registers.C = 0b0000_0000
+        cpu.xor_a_c()
+        XCTAssertTrue(cpu.registers.A == 0b0000_0000)
+        XCTAssertTrue(cpu.registers.isFlagSet(.ZERO))
+        
+        //0xAA
+        cpu.registers.A = 0b0000_1111
+        cpu.registers.D = 0b1111_0000
+        cpu.xor_a_d()
+        XCTAssertTrue(cpu.registers.A == 0b1111_1111)
+        XCTAssertTrue(cpu.registers.isFlagCleared(.ZERO))
+        cpu.registers.A = 0b0000_0000
+        cpu.registers.D = 0b0000_0000
+        cpu.xor_a_d()
+        XCTAssertTrue(cpu.registers.A == 0b0000_0000)
+        XCTAssertTrue(cpu.registers.isFlagSet(.ZERO))
+        
+        //0xAB
+        cpu.registers.A = 0b0000_1111
+        cpu.registers.E = 0b1111_0000
+        cpu.xor_a_e()
+        XCTAssertTrue(cpu.registers.A == 0b1111_1111)
+        XCTAssertTrue(cpu.registers.isFlagCleared(.ZERO))
+        cpu.registers.A = 0b0000_0000
+        cpu.registers.E = 0b0000_0000
+        cpu.xor_a_e()
+        XCTAssertTrue(cpu.registers.A == 0b0000_0000)
+        XCTAssertTrue(cpu.registers.isFlagSet(.ZERO))
+        
+        //0xAC
+        cpu.registers.A = 0b0000_1111
+        cpu.registers.H = 0b1111_0000
+        cpu.xor_a_h()
+        XCTAssertTrue(cpu.registers.A == 0b1111_1111)
+        XCTAssertTrue(cpu.registers.isFlagCleared(.ZERO))
+        cpu.registers.A = 0b0000_0000
+        cpu.registers.H = 0b0000_0000
+        cpu.xor_a_h()
+        XCTAssertTrue(cpu.registers.A == 0b0000_0000)
+        XCTAssertTrue(cpu.registers.isFlagSet(.ZERO))
+        
+        //0xAD
+        cpu.registers.A = 0b0000_1111
+        cpu.registers.L = 0b1111_0000
+        cpu.xor_a_l()
+        XCTAssertTrue(cpu.registers.A == 0b1111_1111)
+        XCTAssertTrue(cpu.registers.isFlagCleared(.ZERO))
+        cpu.registers.A = 0b0000_0000
+        cpu.registers.L = 0b0000_0000
+        cpu.xor_a_l()
+        XCTAssertTrue(cpu.registers.A == 0b0000_0000)
+        XCTAssertTrue(cpu.registers.isFlagSet(.ZERO))
+        
+        //0xAE
+        cpu.registers.A = 0b0000_1111
+        cpu.registers.HL = 0x0000
+        cpu.mmu[0x0000] = 0b1111_0000
+        cpu.xor_a_hlp()
+        XCTAssertTrue(cpu.registers.A == 0b1111_1111)
+        XCTAssertTrue(cpu.registers.isFlagCleared(.ZERO))
+        cpu.registers.A = 0b0000_0000
+        cpu.registers.HL = 0x0000
+        cpu.mmu[0x0000] = 0b0000_0000
+        cpu.xor_a_hlp()
+        XCTAssertTrue(cpu.registers.A == 0b0000_0000)
+        XCTAssertTrue(cpu.registers.isFlagSet(.ZERO))
+        
+        //0xAF
+        cpu.registers.A = 0b0000_1111
+        cpu.xor_a_a()
+        XCTAssertTrue(cpu.registers.A == 0b0000_0000)
+        XCTAssertTrue(cpu.registers.isFlagSet(.ZERO))
+        
+        //0xEE
+        cpu.registers.A = 0b0000_1111
+        cpu.xor_a_n(val: 0b1111_0000)
+        XCTAssertTrue(cpu.registers.A == 0b1111_1111)
+        XCTAssertTrue(cpu.registers.isFlagCleared(.ZERO))
+        cpu.registers.A = 0b0000_0000
+        cpu.xor_a_n(val: 0b0000_0000)
+        XCTAssertTrue(cpu.registers.A == 0b0000_0000)
+        XCTAssertTrue(cpu.registers.isFlagSet(.ZERO))
     }
     
     func test_cp() throws {
