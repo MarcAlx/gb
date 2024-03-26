@@ -787,6 +787,15 @@ final class CPUInstructionsTests: XCTestCase {
         XCTAssertTrue(cpu.registers.A == 0xDD)
     }
 
+    func test_cpl() throws {
+        let cpu:CPU = CPU()
+        cpu.registers.A = 0b1010_1010
+        cpu.cpl()
+        XCTAssertTrue(cpu.registers.A == 0b0101_0101)
+        XCTAssertTrue(cpu.registers.isFlagSet(.NEGATIVE))
+        XCTAssertTrue(cpu.registers.isFlagSet(.HALF_CARRY))
+    }
+    
     func test_interrupt_enable() throws {
         let cpu:CPU = CPU()
         cpu.ei()
