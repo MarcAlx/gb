@@ -27,6 +27,30 @@ final class CPUInstructionsTests: XCTestCase {
         XCTAssertTrue(cpu.state == CPUState.HALTED)
     }
     
+    func test_flags() throws {
+        let cpu:CPU = CPU()
+        cpu.registers.F = 0b1111_0000
+        cpu.scf()
+        XCTAssertTrue(cpu.registers.isFlagSet(.CARRY))
+        XCTAssertTrue(cpu.registers.isFlagCleared(.NEGATIVE))
+        XCTAssertTrue(cpu.registers.isFlagCleared(.HALF_CARRY))
+        XCTAssertTrue(cpu.registers.isFlagSet(.ZERO))//not affected, so it should stay active
+        
+        cpu.registers.F = 0b1111_0000
+        //True -> False
+        cpu.ccf()
+        XCTAssertTrue(cpu.registers.isFlagCleared(.CARRY))
+        XCTAssertTrue(cpu.registers.isFlagCleared(.NEGATIVE))
+        XCTAssertTrue(cpu.registers.isFlagCleared(.HALF_CARRY))
+        XCTAssertTrue(cpu.registers.isFlagSet(.ZERO))//not affected, so it should stay active
+        //False -> True
+        cpu.ccf()
+        XCTAssertTrue(cpu.registers.isFlagSet(.CARRY))
+        XCTAssertTrue(cpu.registers.isFlagCleared(.NEGATIVE))
+        XCTAssertTrue(cpu.registers.isFlagCleared(.HALF_CARRY))
+        XCTAssertTrue(cpu.registers.isFlagSet(.ZERO))//not affected, so it should stay active
+    }
+    
     func test_inc() throws {
         let cpu:CPU = CPU()
         
