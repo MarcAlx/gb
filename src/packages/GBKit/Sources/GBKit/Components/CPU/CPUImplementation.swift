@@ -593,7 +593,11 @@ class CPUImplementation: CPUCore {
     func inc_l() -> Void { self.registers.L = self.inc(self.registers.L) }
     func dec_l() -> Void { self.registers.L = self.dec(self.registers.L) }
     func ld_l_n(val:Byte) -> Void { self.registers.L = val }
-    func cpl() -> Void { self.registers.A ^= self.registers.A }
+    func cpl() -> Void {
+        self.registers.A = flipBits(self.registers.A)
+        self.registers.raiseFlag(.NEGATIVE)
+        self.registers.raiseFlag(.HALF_CARRY)
+    }
     func jr_nc_n(val:Byte) -> Void { jumpRelative(val, .CARRY, inverseFlag: true) }
     func ld_sp_nn(val:EnhancedShort) -> Void { self.registers.SP = val.value }
     func ld_hlpd_a() -> Void { mmu.write(address: self.registers.HL, val: self.registers.A); self.registers.HL-=1 }

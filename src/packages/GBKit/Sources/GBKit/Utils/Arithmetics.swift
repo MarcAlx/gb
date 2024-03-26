@@ -111,6 +111,11 @@ func set(_ mask: ByteMask, _ val: Byte) -> Byte {
     return (val | mask.rawValue)
 }
 
+/// flip all bits in val
+func flipBits(_ val: Byte) -> Byte {
+    return ~val
+}
+
 /// swap msb and lsb in input
 func swap_lsb_msb(_ val:Byte) -> Byte {
     return (val << 4) | (val >> 4)
