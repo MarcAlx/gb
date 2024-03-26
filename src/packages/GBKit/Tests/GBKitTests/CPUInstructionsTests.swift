@@ -917,6 +917,16 @@ final class CPUInstructionsTests: XCTestCase {
         cpu.or_a_a()
         XCTAssertTrue(cpu.registers.A == 0b0000_0000)
         XCTAssertTrue(cpu.registers.isFlagSet(.ZERO))
+        
+        //0xF6
+        cpu.registers.A = 0b0000_1111
+        cpu.or_a_n(val: 0b1111_0000)
+        XCTAssertTrue(cpu.registers.A == 0b1111_1111)
+        XCTAssertTrue(cpu.registers.isFlagCleared(.ZERO))
+        cpu.registers.A = 0b0000_0000
+        cpu.or_a_n(val: 0b0000_0000)
+        XCTAssertTrue(cpu.registers.A == 0b0000_0000)
+        XCTAssertTrue(cpu.registers.isFlagSet(.ZERO))
     }
     
     func test_jump() throws {
