@@ -787,4 +787,13 @@ final class CPUInstructionsTests: XCTestCase {
         XCTAssertTrue(cpu.registers.A == 0xDD)
     }
 
+    func test_interrupt_enable() throws {
+        let cpu:CPU = CPU()
+        cpu.ei()
+        XCTAssertTrue(cpu.interrupts.IME)
+        cpu.di()
+        XCTAssertFalse(cpu.interrupts.IME)
+        cpu.ei()
+        XCTAssertTrue(cpu.interrupts.IME)
+    }
 }
