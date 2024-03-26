@@ -27,6 +27,88 @@ final class CPUInstructionsTests: XCTestCase {
         XCTAssertTrue(cpu.state == CPUState.HALTED)
     }
     
+    func test_dec() throws {
+        let cpu:CPU = CPU()
+        cpu.registers.F = 0b0000_0000
+        
+        //0x0B
+        cpu.registers.BC = 1
+        cpu.dec_bc()
+        XCTAssertTrue(cpu.registers.BC == 0)
+        
+        //0x01B
+        cpu.registers.DE = 1
+        cpu.dec_de()
+        XCTAssertTrue(cpu.registers.DE == 0)
+        
+        //0x2B
+        cpu.registers.HL = 1
+        cpu.dec_hl()
+        XCTAssertTrue(cpu.registers.HL == 0)
+        
+        //0x3B
+        cpu.registers.SP = 1
+        cpu.dec_sp()
+        XCTAssertTrue(cpu.registers.SP == 0)
+        
+        //0x05
+        cpu.registers.B = 1
+        cpu.dec_b()
+        XCTAssertTrue(cpu.registers.B == 0)
+        XCTAssertTrue(cpu.registers.isFlagSet(.ZERO))
+        XCTAssertTrue(cpu.registers.isFlagSet(.NEGATIVE))
+        
+        //0x15
+        cpu.registers.D = 1
+        cpu.dec_d()
+        XCTAssertTrue(cpu.registers.D == 0)
+        XCTAssertTrue(cpu.registers.isFlagSet(.ZERO))
+        XCTAssertTrue(cpu.registers.isFlagSet(.NEGATIVE))
+        
+        //0x25
+        cpu.registers.H = 1
+        cpu.dec_h()
+        XCTAssertTrue(cpu.registers.H == 0)
+        XCTAssertTrue(cpu.registers.isFlagSet(.ZERO))
+        XCTAssertTrue(cpu.registers.isFlagSet(.NEGATIVE))
+        
+        //0x35
+        cpu.registers.HL = 0x0000
+        cpu.mmu[cpu.registers.HL] = 1
+        cpu.dec_hlp()
+        XCTAssertTrue(cpu.mmu[cpu.registers.HL] == 0)
+        XCTAssertTrue(cpu.registers.isFlagSet(.ZERO))
+        XCTAssertTrue(cpu.registers.isFlagSet(.NEGATIVE))
+        
+        //0x0D
+        cpu.registers.C = 1
+        cpu.dec_c()
+        XCTAssertTrue(cpu.registers.C == 0)
+        XCTAssertTrue(cpu.registers.isFlagSet(.ZERO))
+        XCTAssertTrue(cpu.registers.isFlagSet(.NEGATIVE))
+        
+        //0x1D
+        cpu.registers.E = 1
+        cpu.dec_e()
+        XCTAssertTrue(cpu.registers.E == 0)
+        XCTAssertTrue(cpu.registers.isFlagSet(.ZERO))
+        XCTAssertTrue(cpu.registers.isFlagSet(.NEGATIVE))
+        
+        //0x2D
+        cpu.registers.L = 1
+        cpu.dec_l()
+        XCTAssertTrue(cpu.registers.L == 0)
+        XCTAssertTrue(cpu.registers.isFlagSet(.ZERO))
+        XCTAssertTrue(cpu.registers.isFlagSet(.NEGATIVE))
+        
+        //0x3D
+        cpu.registers.A = 1
+        cpu.dec_a()
+        XCTAssertTrue(cpu.registers.A == 0)
+        XCTAssertTrue(cpu.registers.isFlagSet(.ZERO))
+        XCTAssertTrue(cpu.registers.isFlagSet(.NEGATIVE))
+    }
+    
     func test_flags() throws {
         let cpu:CPU = CPU()
         cpu.registers.F = 0b1111_0000
