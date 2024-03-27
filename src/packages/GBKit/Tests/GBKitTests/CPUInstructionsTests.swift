@@ -1346,7 +1346,47 @@ final class CPUInstructionsTests: XCTestCase {
     }
     
     func test_rst() throws {
-        XCTAssertTrue(false)
+        let cpu:CPU = CPU()
+        
+        //0xC7
+        cpu.registers.PC = 0xFFFF
+        cpu.rst_00h()
+        XCTAssertTrue(cpu.registers.PC == 0x0000)
+        
+        //0xCF
+        cpu.registers.PC = 0xFFFF
+        cpu.rst_08h()
+        XCTAssertTrue(cpu.registers.PC == 0x0008)
+        
+        //0xD7
+        cpu.registers.PC = 0xFFFF
+        cpu.rst_10h()
+        XCTAssertTrue(cpu.registers.PC == 0x0010)
+        
+        //0xDF
+        cpu.registers.PC = 0xFFFF
+        cpu.rst_18h()
+        XCTAssertTrue(cpu.registers.PC == 0x0018)
+        
+        //0xE7
+        cpu.registers.PC = 0xFFFF
+        cpu.rst_20h()
+        XCTAssertTrue(cpu.registers.PC == 0x0020)
+        
+        //0xEF
+        cpu.registers.PC = 0xFFFF
+        cpu.rst_28h()
+        XCTAssertTrue(cpu.registers.PC == 0x0028)
+        
+        //0xF7
+        cpu.registers.PC = 0xFFFF
+        cpu.rst_30h()
+        XCTAssertTrue(cpu.registers.PC == 0x0030)
+        
+        //0xFF
+        cpu.registers.PC = 0xFFFF
+        cpu.rst_38h()
+        XCTAssertTrue(cpu.registers.PC == 0x0038)
     }
     
     func test_daa() throws {
