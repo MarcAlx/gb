@@ -904,6 +904,81 @@ final class CPUInstructionsTests: XCTestCase {
         XCTAssertTrue(cpu.registers.A == 0x00)
         XCTAssertTrue(cpu.registers.isFlagSet(.CARRY))
         XCTAssertTrue(cpu.registers.isFlagSet(.ZERO))
+        
+        //0xE8
+        cpu.registers.SP = 0x0000
+        cpu.add_sp_n(val: EnhancedShort(0x0FFF))
+        XCTAssertTrue(cpu.registers.SP == 0x0FFF)
+        XCTAssertTrue(cpu.registers.isFlagCleared(.HALF_CARRY))
+        XCTAssertTrue(cpu.registers.isFlagCleared(.CARRY))
+        cpu.registers.SP = 0x0001
+        cpu.add_sp_n(val: EnhancedShort(0xFFFF))
+        XCTAssertTrue(cpu.registers.SP == 0x0000)
+        XCTAssertTrue(cpu.registers.isFlagSet(.HALF_CARRY))
+        XCTAssertTrue(cpu.registers.isFlagSet(.CARRY))
+        
+        XCTAssertTrue(cpu.registers.isFlagCleared(.NEGATIVE))
+        XCTAssertTrue(cpu.registers.isFlagCleared(.ZERO))
+        
+        //0x09
+        cpu.registers.HL = 0x0000
+        cpu.registers.BC = 0x0FFF
+        cpu.add_hl_bc()
+        XCTAssertTrue(cpu.registers.HL == 0x0FFF)
+        XCTAssertTrue(cpu.registers.isFlagCleared(.HALF_CARRY))
+        XCTAssertTrue(cpu.registers.isFlagCleared(.CARRY))
+        cpu.registers.HL = 0x0001
+        cpu.registers.BC = 0xFFFF
+        cpu.add_hl_bc()
+        XCTAssertTrue(cpu.registers.HL == 0x0000)
+        XCTAssertTrue(cpu.registers.isFlagSet(.HALF_CARRY))
+        XCTAssertTrue(cpu.registers.isFlagSet(.CARRY))
+        
+        //0x19
+        cpu.registers.HL = 0x0000
+        cpu.registers.DE = 0x0FFF
+        cpu.add_hl_de()
+        XCTAssertTrue(cpu.registers.HL == 0x0FFF)
+        XCTAssertTrue(cpu.registers.isFlagCleared(.HALF_CARRY))
+        XCTAssertTrue(cpu.registers.isFlagCleared(.CARRY))
+        cpu.registers.HL = 0x0001
+        cpu.registers.DE = 0xFFFF
+        cpu.add_hl_de()
+        XCTAssertTrue(cpu.registers.HL == 0x0000)
+        XCTAssertTrue(cpu.registers.isFlagSet(.HALF_CARRY))
+        XCTAssertTrue(cpu.registers.isFlagSet(.CARRY))
+        
+        //0x29
+        cpu.registers.HL = 0x0000
+        cpu.add_hl_hl()
+        XCTAssertTrue(cpu.registers.HL == 0x0000)
+        XCTAssertTrue(cpu.registers.isFlagCleared(.HALF_CARRY))
+        XCTAssertTrue(cpu.registers.isFlagCleared(.CARRY))
+        cpu.registers.HL = 0x8000
+        cpu.add_hl_hl()
+        XCTAssertTrue(cpu.registers.HL == 0x0000)
+        XCTAssertTrue(cpu.registers.isFlagSet(.CARRY))
+        cpu.registers.HL = 0x7FFF
+        cpu.add_hl_hl()
+        XCTAssertTrue(cpu.registers.HL == 0xFFFE)
+        XCTAssertTrue(cpu.registers.isFlagSet(.HALF_CARRY))
+        
+        //0x39
+        cpu.registers.HL = 0x0000
+        cpu.registers.SP = 0x0FFF
+        cpu.add_hl_sp()
+        XCTAssertTrue(cpu.registers.HL == 0x0FFF)
+        XCTAssertTrue(cpu.registers.isFlagCleared(.HALF_CARRY))
+        XCTAssertTrue(cpu.registers.isFlagCleared(.CARRY))
+        cpu.registers.HL = 0x0001
+        cpu.registers.SP = 0xFFFF
+        cpu.add_hl_sp()
+        XCTAssertTrue(cpu.registers.HL == 0x0000)
+        XCTAssertTrue(cpu.registers.isFlagSet(.HALF_CARRY))
+        XCTAssertTrue(cpu.registers.isFlagSet(.CARRY))
+        
+        XCTAssertTrue(cpu.registers.isFlagCleared(.NEGATIVE))
+        XCTAssertTrue(cpu.registers.isFlagCleared(.ZERO))
     }
     
     func test_adc() throws {
