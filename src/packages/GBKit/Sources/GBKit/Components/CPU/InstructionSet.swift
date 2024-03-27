@@ -135,7 +135,7 @@ protocol StandardInstructionSet {
     /// loads N into H 
     func ld_h_n(val:Byte) -> Void
     
-    /// Deciman Adjust A, replace the contents of A by its BCD value
+    /// Decimal Adjust A, replace the contents of A by its BCD value, (in fact it's more Binary Coded Hex, 0x32 -> 0b0011_0010)
     func daa() -> Void
     
     /// jump relative by val if Z flag is set 

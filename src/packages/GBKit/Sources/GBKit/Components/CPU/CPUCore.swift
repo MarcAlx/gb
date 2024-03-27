@@ -139,6 +139,8 @@ class CPUCore: Component {
         // - adding 0x60 if A overflow  0x99
         // - adding 0x06 if lsb of A greater than 0x09
         // for negative don't check overflow, and substract instead
+        // DAA is more Binary coded Hex than Binary coded decimal,
+        // ex don't think 32(0x20) as 0b0011_0010 but think 32(0x20) -> 0b0001_0100, whereas 0x32(50) is 0b0011_0010
         
         if(self.registers.isFlagSet(.NEGATIVE)) // after substraction
         {
