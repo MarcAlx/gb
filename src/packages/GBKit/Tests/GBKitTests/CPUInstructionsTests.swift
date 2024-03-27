@@ -1390,7 +1390,31 @@ final class CPUInstructionsTests: XCTestCase {
     }
     
     func test_daa() throws {
-        XCTAssertTrue(false)
+        let cpu:CPU = CPU()
+        
+        cpu.registers.A = 0
+        cpu.daa()
+        XCTAssertTrue(cpu.registers.A == 0)
+        
+        //0x10 -> 0b0001_0000
+        cpu.registers.A = 0x10
+        cpu.daa()
+        XCTAssertTrue(cpu.registers.A == 0b0001_0000)
+        
+        //0x20 -> 0b0010_0000
+        cpu.registers.A = 0x20
+        cpu.daa()
+        XCTAssertTrue(cpu.registers.A == 0b0010_0000)
+        
+        //0x99 -> 0b1001_1001
+        cpu.registers.A = 0x99
+        cpu.daa()
+        XCTAssertTrue(cpu.registers.A == 0b1001_1001)
+        
+        //9A (0x99+1) -> 0 (overflow)
+        cpu.registers.A = 0x9A
+        cpu.daa()
+        XCTAssertTrue(cpu.registers.A == 0)
     }
     
     func test_rr() throws {
