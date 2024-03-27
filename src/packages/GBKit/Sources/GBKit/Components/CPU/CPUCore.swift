@@ -143,19 +143,19 @@ class CPUCore: Component {
         if(self.registers.isFlagSet(.NEGATIVE)) // after substraction
         {
             if(self.registers.isFlagSet(.CARRY)){
-                self.registers.A = self.registers.A - 0x60;
+                self.registers.A = self.registers.A &- 0x60;
             }
             if(self.registers.isFlagSet(.HALF_CARRY)){
-                self.registers.A = self.registers.A - 0x06;
+                self.registers.A = self.registers.A &- 0x06;
             }
         }
         else //after addition
         {
             if(self.registers.isFlagSet(.CARRY) || self.registers.A > 0x99){
-                self.registers.A = self.registers.A + 0x60;
+                self.registers.A = self.registers.A &+ 0x60;
             }
             if(self.registers.isFlagSet(.HALF_CARRY) || (self.registers.A & 0x0F) > 0x09){
-                self.registers.A = self.registers.A + 0x06;
+                self.registers.A = self.registers.A &+ 0x06;
             }
         }
         
