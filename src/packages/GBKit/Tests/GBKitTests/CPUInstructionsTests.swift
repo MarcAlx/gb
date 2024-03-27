@@ -750,7 +750,7 @@ final class CPUInstructionsTests: XCTestCase {
         //0xF8 -> positive
         cpu.registers.HL = 0x22
         cpu.registers.SP = 0x08
-        cpu.ld_hl_sppn(val: 0x01)
+        cpu.ld_hl_sppi8(val: 0x01)
         XCTAssertTrue(cpu.registers.HL == 0x9)
         XCTAssertTrue(cpu.registers.isFlagCleared(.ZERO))
         XCTAssertTrue(cpu.registers.isFlagCleared(.NEGATIVE))
@@ -759,7 +759,7 @@ final class CPUInstructionsTests: XCTestCase {
         //0xF8 -> negative
         cpu.registers.HL = 0x22
         cpu.registers.SP = 0x08
-        cpu.ld_hl_sppn(val: 0b1111_1111)//-1 //Two bits complement
+        cpu.ld_hl_sppi8(val: 0b1111_1111)//-1 //Two bits complement
         XCTAssertTrue(cpu.registers.HL == 0x7)
         XCTAssertTrue(cpu.registers.isFlagCleared(.ZERO))
         XCTAssertTrue(cpu.registers.isFlagCleared(.NEGATIVE))
@@ -907,7 +907,7 @@ final class CPUInstructionsTests: XCTestCase {
         
         //0xE8 -> positive
         cpu.registers.SP = 0x08
-        cpu.add_sp_n(val: 0x01)
+        cpu.add_sp_i8(val: 0x01)
         XCTAssertTrue(cpu.registers.SP == 0x9)
         XCTAssertTrue(cpu.registers.isFlagCleared(.ZERO))
         XCTAssertTrue(cpu.registers.isFlagCleared(.NEGATIVE))
@@ -915,7 +915,7 @@ final class CPUInstructionsTests: XCTestCase {
         
         //0xE8 -> negative
         cpu.registers.SP = 0x08
-        cpu.add_sp_n(val: 0b1111_1111)//-1 //Two bits complement
+        cpu.add_sp_i8(val: 0b1111_1111)//-1 //Two bits complement
         XCTAssertTrue(cpu.registers.SP == 0x7)
         XCTAssertTrue(cpu.registers.isFlagCleared(.ZERO))
         XCTAssertTrue(cpu.registers.isFlagCleared(.NEGATIVE))

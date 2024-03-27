@@ -45,7 +45,7 @@ class CPUImplementation: CPUCore {
             Instruction(opCode: 0x15, length: 1, name: "DEC D", duration:4,dec_d),
             Instruction(opCode: 0x16, length: 2, name: "LD D, 0x%02X", duration:8,ld_d_n),
             Instruction(opCode: 0x17, length: 1, name: "RLA", duration:4,rla),
-            Instruction(opCode: 0x18, length: 2, name: "JR 0x%02X", duration:12,jr_n),
+            Instruction(opCode: 0x18, length: 2, name: "JR 0x%02X", duration:12,jr_i8),
             Instruction(opCode: 0x19, length: 1, name: "ADD HL, DE", duration:8,add_hl_de),
             Instruction(opCode: 0x1A, length: 1, name: "LD A, (DE)", duration:8,ld_a_dep),
             Instruction(opCode: 0x1B, length: 1, name: "DEC DE", duration:8,dec_de),
@@ -53,7 +53,7 @@ class CPUImplementation: CPUCore {
             Instruction(opCode: 0x1D, length: 1, name: "DEC E", duration:4,dec_e),
             Instruction(opCode: 0x1E, length: 2, name: "LD E, 0x%02X", duration:8,ld_e_n),
             Instruction(opCode: 0x1F, length: 1, name: "RRA", duration:4,rra),
-            Instruction(opCode: 0x20, length: 2, name: "JR NZ, 0x%02X", duration:12,jr_nz_n),
+            Instruction(opCode: 0x20, length: 2, name: "JR NZ, 0x%02X", duration:12,jr_nz_i8),
             Instruction(opCode: 0x21, length: 3, name: "LD HL, 0x%04X", duration:12,ld_hl_nn),
             Instruction(opCode: 0x22, length: 1, name: "LD (HL+), A", duration:8,ld_hlpi_a),
             Instruction(opCode: 0x23, length: 1, name: "INC HL", duration:8,inc_hl),
@@ -61,7 +61,7 @@ class CPUImplementation: CPUCore {
             Instruction(opCode: 0x25, length: 1, name: "DEC H", duration:4,dec_h),
             Instruction(opCode: 0x26, length: 2, name: "LD H, 0x%02X", duration:8,ld_h_n),
             Instruction(opCode: 0x27, length: 1, name: "DAA", duration:4,daa),
-            Instruction(opCode: 0x28, length: 2, name: "JR Z, 0x%02X", duration:12,jr_z_n),
+            Instruction(opCode: 0x28, length: 2, name: "JR Z, 0x%02X", duration:12,jr_z_i8),
             Instruction(opCode: 0x29, length: 1, name: "ADD HL, HL", duration:8,add_hl_hl),
             Instruction(opCode: 0x2A, length: 1, name: "LD A, (HL+)", duration:8,ld_a_hlpi),
             Instruction(opCode: 0x2B, length: 1, name: "DEC HL", duration:8,dec_hl),
@@ -69,7 +69,7 @@ class CPUImplementation: CPUCore {
             Instruction(opCode: 0x2D, length: 1, name: "DEC L", duration:4,dec_l),
             Instruction(opCode: 0x2E, length: 2, name: "LD L, 0x%02X", duration:8,ld_l_n),
             Instruction(opCode: 0x2F, length: 1, name: "CPL", duration:4,cpl),
-            Instruction(opCode: 0x30, length: 2, name: "JR NC, 0x%02X", duration:12,jr_nc_n),
+            Instruction(opCode: 0x30, length: 2, name: "JR NC, 0x%02X", duration:12,jr_nc_i8),
             Instruction(opCode: 0x31, length: 3, name: "LD SP, 0x%04X", duration:12,ld_sp_nn),
             Instruction(opCode: 0x32, length: 1, name: "LD (HL-), A", duration:8,ld_hlpd_a),
             Instruction(opCode: 0x33, length: 1, name: "INC SP", duration:8,inc_sp),
@@ -77,7 +77,7 @@ class CPUImplementation: CPUCore {
             Instruction(opCode: 0x35, length: 1, name: "DEC (HL)", duration:12,dec_hlp),
             Instruction(opCode: 0x36, length: 2, name: "LD (HL), 0x%02X", duration:12,ld_hlp_n),
             Instruction(opCode: 0x37, length: 1, name: "SCF", duration:4,scf),
-            Instruction(opCode: 0x38, length: 2, name: "JR C, 0x%02X", duration:8,jr_c_n),
+            Instruction(opCode: 0x38, length: 2, name: "JR C, 0x%02X", duration:8,jr_c_i8),
             Instruction(opCode: 0x39, length: 1, name: "ADD HL, SP", duration:4,add_hl_sp),
             Instruction(opCode: 0x3A, length: 1, name: "LD A, (HL-)", duration:8,ld_a_hlpd),
             Instruction(opCode: 0x3B, length: 1, name: "DEC SP", duration:8,dec_sp),
@@ -253,7 +253,7 @@ class CPUImplementation: CPUCore {
             Instruction(opCode: 0xE5, length: 1, name: "PUSH HL", duration:16,push_hl),
             Instruction(opCode: 0xE6, length: 2, name: "AND A, 0x%02X", duration:8,and_a_n),
             Instruction(opCode: 0xE7, length: 1, name: "RST 20h", duration:16,rst_20h),
-            Instruction(opCode: 0xE8, length: 1, name: "ADD SP, 0x%02X", duration:16,add_sp_n),
+            Instruction(opCode: 0xE8, length: 1, name: "ADD SP, 0x%02X", duration:16,add_sp_i8),
             Instruction(opCode: 0xE9, length: 1, name: "JP HL", duration:4,jp_hl),
             Instruction(opCode: 0xEA, length: 3, name: "LD 0x%04X, A", duration:16,ld_nnp_a),
             unsupported,
@@ -269,7 +269,7 @@ class CPUImplementation: CPUCore {
             Instruction(opCode: 0xF5, length: 1, name: "PUSH AF", duration:16,push_af),
             Instruction(opCode: 0xF6, length: 2, name: "OR A, 0x%02X", duration:8,or_a_n),
             Instruction(opCode: 0xF7, length: 1, name: "RST 30h", duration:16,rst_30h),
-            Instruction(opCode: 0xF8, length: 2, name: "LD HL, SP+0x%02X", duration:12,ld_hl_sppn),
+            Instruction(opCode: 0xF8, length: 2, name: "LD HL, SP+0x%02X", duration:12,ld_hl_sppi8),
             Instruction(opCode: 0xF9, length: 1, name: "LD SP, HL", duration:8,ld_sp_hl),
             Instruction(opCode: 0xFA, length: 3, name: "LD A, (0x%04X)", duration:16,ld_a_nnp),
             Instruction(opCode: 0xFB, length: 1, name: "EI", duration:4,ei),
@@ -570,7 +570,7 @@ class CPUImplementation: CPUCore {
     func dec_d() -> Void { self.registers.D = self.dec(self.registers.D) }
     func ld_d_n(val:Byte) -> Void { self.registers.D = val }
     func rla() -> Void { /*todo*/ }
-    func jr_n(val:Byte) -> Void { jumpRelative(val) }
+    func jr_i8(val:Byte) -> Void { jumpRelative(val) }
     func add_hl_de() -> Void { self.add_hl(self.registers.DE) }
     func ld_a_dep() -> Void { self.registers.A = mmu.read(address: self.registers.DE) }
     func dec_de() -> Void { self.registers.DE = self.dec(self.registers.DE) }
@@ -578,7 +578,7 @@ class CPUImplementation: CPUCore {
     func dec_e() -> Void { self.registers.E = self.dec(self.registers.E) }
     func ld_e_n(val:Byte) -> Void { self.registers.E = val }
     func rra() -> Void { self.registers.A = rr(self.registers.A) }
-    func jr_nz_n(val:Byte) -> Void { jumpRelative(val, .ZERO, inverseFlag: true) }
+    func jr_nz_i8(val:Byte) -> Void { jumpRelative(val, .ZERO, inverseFlag: true) }
     func ld_hl_nn(val:EnhancedShort) -> Void { self.registers.HL = val.value }
     func ld_hlpi_a() -> Void { mmu.write(address: self.registers.HL, val: self.registers.A); self.registers.HL+=1 }
     func inc_hl() -> Void { self.registers.HL = self.inc(self.registers.HL) }
@@ -586,7 +586,7 @@ class CPUImplementation: CPUCore {
     func dec_h() -> Void { self.registers.H = self.dec(self.registers.H) }
     func ld_h_n(val:Byte) -> Void { self.registers.H = val }
     func daa() -> Void { self._daa() }
-    func jr_z_n(val:Byte) -> Void { jumpRelative(val, .ZERO) }
+    func jr_z_i8(val:Byte) -> Void { jumpRelative(val, .ZERO) }
     func add_hl_hl() -> Void { self.add_hl(self.registers.HL) }
     func ld_a_hlpi() -> Void { self.registers.A = mmu.read(address: self.registers.HL); self.registers.HL+=1 }
     func dec_hl() -> Void { self.registers.HL = self.dec(self.registers.HL) }
@@ -598,7 +598,7 @@ class CPUImplementation: CPUCore {
         self.registers.raiseFlag(.NEGATIVE)
         self.registers.raiseFlag(.HALF_CARRY)
     }
-    func jr_nc_n(val:Byte) -> Void { jumpRelative(val, .CARRY, inverseFlag: true) }
+    func jr_nc_i8(val:Byte) -> Void { jumpRelative(val, .CARRY, inverseFlag: true) }
     func ld_sp_nn(val:EnhancedShort) -> Void { self.registers.SP = val.value }
     func ld_hlpd_a() -> Void { mmu.write(address: self.registers.HL, val: self.registers.A); self.registers.HL-=1 }
     func inc_sp() -> Void { self.registers.SP = self.inc(self.registers.SP) }
@@ -606,7 +606,7 @@ class CPUImplementation: CPUCore {
     func dec_hlp() -> Void { mmu.write(address: self.registers.HL, val: self.dec(mmu.read(address: self.registers.HL) as Short)) }
     func ld_hlp_n(val:Byte) -> Void { mmu.write(address: self.registers.HL, val: val) }
     func scf() -> Void { self.registers.clearFlags(.NEGATIVE,.HALF_CARRY); self.registers.raiseFlag(.CARRY) }
-    func jr_c_n(val:Byte) -> Void { jumpRelative(val, .CARRY) }
+    func jr_c_i8(val:Byte) -> Void { jumpRelative(val, .CARRY) }
     func add_hl_sp() -> Void { self.add_hl(self.registers.SP) }
     func ld_a_hlpd() -> Void { self.registers.A = mmu.read(address: self.registers.HL); self.registers.HL -= 1 }
     func dec_sp() -> Void { self.registers.SP -= 1 }
@@ -782,7 +782,7 @@ class CPUImplementation: CPUCore {
     func push_hl() -> Void { self.pushToStack(self.registers.HL) }
     func and_a_n(val:Byte) -> Void { self.and_a(val) }
     func rst_20h() -> Void { self.call(ReservedMemoryLocationAddresses.RESTART_20.rawValue) }
-    func add_sp_n(val:Byte) -> Void { self.registers.SP = self._add_sp_n(val: val) }
+    func add_sp_i8(val:Byte) -> Void { self.registers.SP = self._add_sp_i8(val: val) }
     func jp_hl() -> Void { self.jumpTo(EnhancedShort(self.registers.HL)) }
     func ld_nnp_a(address:EnhancedShort) -> Void { mmu.write(address: address.value, val: self.registers.A) }
     func xor_a_n(val:Byte) -> Void { self.xor_a(val) }
@@ -794,7 +794,7 @@ class CPUImplementation: CPUCore {
     func push_af() -> Void { self.pushToStack(self.registers.AF) }
     func or_a_n(val:Byte) -> Void { self.or_a(val) }
     func rst_30h() -> Void { self.call(ReservedMemoryLocationAddresses.RESTART_30.rawValue) }
-    func ld_hl_sppn(val:Byte) -> Void { self.registers.HL = self._add_sp_n(val: val) /*flags are set according to sp+n so it's ok*/ }
+    func ld_hl_sppi8(val:Byte) -> Void { self.registers.HL = self._add_sp_i8(val: val) /*flags are set according to sp+n so it's ok*/ }
     func ld_sp_hl() -> Void { self.registers.SP = self.registers.HL }
     func ld_a_nnp(address:EnhancedShort) -> Void { self.registers.A = mmu.read(address: address.value) }
     func ei() -> Void { self.e_i(true) }

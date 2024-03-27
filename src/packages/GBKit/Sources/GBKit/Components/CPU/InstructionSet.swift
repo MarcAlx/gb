@@ -1,5 +1,5 @@
 /// A note on function naming
-/// i8 is n
+/// i8 is i8 (signed int)
 /// u8 is n
 /// u16 is nn
 /// + is p
@@ -91,7 +91,7 @@ protocol StandardInstructionSet {
     func rla() -> Void
     
     /// jump relative by val
-    func jr_n(val:Byte) -> Void
+    func jr_i8(val:Byte) -> Void
     
     /// adds DE to HL
     func add_hl_de() -> Void
@@ -115,7 +115,7 @@ protocol StandardInstructionSet {
     func rra() -> Void
     
     /// jump relative by val if Z flag not set
-    func jr_nz_n(val:Byte) -> Void
+    func jr_nz_i8(val:Byte) -> Void
     
     /// loads val into HL 
     func ld_hl_nn(val:EnhancedShort) -> Void
@@ -139,7 +139,7 @@ protocol StandardInstructionSet {
     func daa() -> Void
     
     /// jump relative by val if Z flag is set 
-    func jr_z_n(val:Byte) -> Void
+    func jr_z_i8(val:Byte) -> Void
     
     /// adds HL to HL
     func add_hl_hl() -> Void
@@ -163,7 +163,7 @@ protocol StandardInstructionSet {
     func cpl() -> Void
     
     /// jump relative by val if NC flags are set 
-    func jr_nc_n(val:Byte) -> Void
+    func jr_nc_i8(val:Byte) -> Void
     
     /// loads val into SP 
     func ld_sp_nn(val:EnhancedShort) -> Void
@@ -187,7 +187,7 @@ protocol StandardInstructionSet {
     func scf() -> Void
     
     /// jump relative by val if C flag is set
-    func jr_c_n(val:Byte) -> Void
+    func jr_c_i8(val:Byte) -> Void
     
     /// adds SP to HL
     func add_hl_sp() -> Void
@@ -697,7 +697,7 @@ protocol StandardInstructionSet {
     func rst_20h() -> Void
     
     /// adds val to sp (can be negative)
-    func add_sp_n(val:Byte) -> Void
+    func add_sp_i8(val:Byte) -> Void
     
     /// jump to address designed by HL 
     func jp_hl() -> Void
@@ -733,7 +733,7 @@ protocol StandardInstructionSet {
     func rst_30h() -> Void
     
     /// adds val (can be negative) to SP then load into HL, affect carry anf half carry flags
-    func ld_hl_sppn(val:Byte) -> Void
+    func ld_hl_sppi8(val:Byte) -> Void
     
     /// loads HL into SP 
     func ld_sp_hl() -> Void

@@ -74,7 +74,7 @@ class CPUCore: Component {
     }
     
     // add sp + n, assign flags and return result as short, n can be negative
-    internal func _add_sp_n(val:Byte) -> Short {
+    internal func _add_sp_i8(val:Byte) -> Short {
         let old:Short = self.registers.SP
         let delta:Int8 = Int8(bitPattern: val)//delta can be negative, aka two bit complement
         let res:Short = fit(Int(self.registers.SP) + Int(delta))
