@@ -69,6 +69,7 @@ Core package to emulate GameBoy.
 - [jitboy (c)](https://github.com/sysprog21/jitboy)
 - [GameBoy (js)](https://github.com/vpoupet/GameBoy)
 - [PyBoy (python)](https://github.com/Baekalfen/PyBoy)
+- [Mooney gb (rust)](https://github.com/Gekkio/mooneye-gb)
 
 ### Worth reading articles
 
@@ -94,6 +95,7 @@ Core package to emulate GameBoy.
 - [A Visual Guide to the Gameboy's Half-Carry Flag](https://robdor.com/2016/08/10/gameboy-emulator-half-carry-flag/)
 - [A Look At The Game Boy Bootstrap: Let The Fun Begin!](https://realboyemulator.wordpress.com/2013/01/03/a-look-at-the-game-boy-bootstrap-let-the-fun-begin/)
 - [WTF is the DAA instruction?](https://ehaskins.com/2018-01-30%20Z80%20DAA/)
+- [Demystifying the GameBoy/SM83’s DAA Instruction](https://blog.ollien.com/posts/gb-daa/)
 
 ### forums / threads / questions
 
@@ -103,7 +105,9 @@ Core package to emulate GameBoy.
 - https://www.reddit.com/r/EmuDev/comments/5gkwi5/gb_apu_sound_emulation/
 - https://www.reddit.com/r/Gameboy/comments/a1c8h0/what_happens_when_a_gameboy_screen_is_disabled/
 
+- https://forums.nesdev.org/viewtopic.php?t=9088
 - https://forums.nesdev.org/viewtopic.php?t=16621
+- https://forums.nesdev.org/viewtopic.php?t=15944
 
 - [How does the Gameboy's memory bank switching work?](https://retrocomputing.stackexchange.com/questions/11732/how-does-the-gameboys-memory-bank-switching-work)
 - [How does Game Boy / Sharp LR35902 HRAM work?](https://retrocomputing.stackexchange.com/a/11943)
