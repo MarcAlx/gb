@@ -253,7 +253,7 @@ class CPUImplementation: CPUCore {
             Instruction(opCode: 0xE5, length: 1, name: "PUSH HL", duration:16,push_hl),
             Instruction(opCode: 0xE6, length: 2, name: "AND A, 0x%02X", duration:8,and_a_n),
             Instruction(opCode: 0xE7, length: 1, name: "RST 20h", duration:16,rst_20h),
-            Instruction(opCode: 0xE8, length: 2, name: "ADD SP, 0x%02X", duration:16,add_sp_n),
+            Instruction(opCode: 0xE8, length: 1, name: "ADD SP, 0x%02X", duration:16,add_sp_n),
             Instruction(opCode: 0xE9, length: 1, name: "JP HL", duration:4,jp_hl),
             Instruction(opCode: 0xEA, length: 3, name: "LD 0x%04X, A", duration:16,ld_nnp_a),
             unsupported,
@@ -782,7 +782,7 @@ class CPUImplementation: CPUCore {
     func push_hl() -> Void { self.pushToStack(self.registers.HL) }
     func and_a_n(val:Byte) -> Void { self.and_a(val) }
     func rst_20h() -> Void { self.call(ReservedMemoryLocationAddresses.RESTART_20.rawValue) }
-    func add_sp_n(val:EnhancedShort) -> Void { self.add_sp(val.value) }
+    func add_sp_n(val:Byte) -> Void { self.registers.SP = self._add_sp_n(val: val) }
     func jp_hl() -> Void { self.jumpTo(EnhancedShort(self.registers.HL)) }
     func ld_nnp_a(address:EnhancedShort) -> Void { mmu.write(address: address.value, val: self.registers.A) }
     func xor_a_n(val:Byte) -> Void { self.xor_a(val) }
@@ -794,15 +794,7 @@ class CPUImplementation: CPUCore {
     func push_af() -> Void { self.pushToStack(self.registers.AF) }
     func or_a_n(val:Byte) -> Void { self.or_a(val) }
     func rst_30h() -> Void { self.call(ReservedMemoryLocationAddresses.RESTART_30.rawValue) }
-    func ld_hl_sppn(val:Byte) -> Void {
-        let old:Short = self.registers.SP
-        let delta:Int8 = Int8(bitPattern: val)//delta can be negative, aka two bit complement
-        let res:Short = fit(Int(self.registers.SP) + Int(delta))
-        self.registers.conditionalSet(cond: hasOverflown(old, res), flag: .CARRY)
-        self.registers.conditionalSet(cond: isAddHalfCarry(self.registers.SP, Short(val)) , flag: .HALF_CARRY)
-        self.registers.clearFlags(.NEGATIVE,.ZERO)
-        self.registers.HL = res
-    }
+    func ld_hl_sppn(val:Byte) -> Void { self.registers.HL = self._add_sp_n(val: val) /*flags are set according to sp+n so it's ok*/ }
     func ld_sp_hl() -> Void { self.registers.SP = self.registers.HL }
     func ld_a_nnp(address:EnhancedShort) -> Void { self.registers.A = mmu.read(address: address.value) }
     func ei() -> Void { self.e_i(true) }

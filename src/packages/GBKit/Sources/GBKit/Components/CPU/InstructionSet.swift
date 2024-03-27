@@ -696,8 +696,8 @@ protocol StandardInstructionSet {
     /// push PC to stack then jump to 00, same as call to 0x0020
     func rst_20h() -> Void
     
-    /// adds val to sp 
-    func add_sp_n(val:EnhancedShort) -> Void
+    /// adds val to sp (can be negative)
+    func add_sp_n(val:Byte) -> Void
     
     /// jump to address designed by HL 
     func jp_hl() -> Void

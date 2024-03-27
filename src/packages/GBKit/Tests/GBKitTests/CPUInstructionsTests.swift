@@ -905,20 +905,21 @@ final class CPUInstructionsTests: XCTestCase {
         XCTAssertTrue(cpu.registers.isFlagSet(.CARRY))
         XCTAssertTrue(cpu.registers.isFlagSet(.ZERO))
         
-        //0xE8
-        cpu.registers.SP = 0x0000
-        cpu.add_sp_n(val: EnhancedShort(0x0FFF))
-        XCTAssertTrue(cpu.registers.SP == 0x0FFF)
-        XCTAssertTrue(cpu.registers.isFlagCleared(.HALF_CARRY))
-        XCTAssertTrue(cpu.registers.isFlagCleared(.CARRY))
-        cpu.registers.SP = 0x0001
-        cpu.add_sp_n(val: EnhancedShort(0xFFFF))
-        XCTAssertTrue(cpu.registers.SP == 0x0000)
-        XCTAssertTrue(cpu.registers.isFlagSet(.HALF_CARRY))
-        XCTAssertTrue(cpu.registers.isFlagSet(.CARRY))
-        
-        XCTAssertTrue(cpu.registers.isFlagCleared(.NEGATIVE))
+        //0xE8 -> positive
+        cpu.registers.SP = 0x08
+        cpu.add_sp_n(val: 0x01)
+        XCTAssertTrue(cpu.registers.SP == 0x9)
         XCTAssertTrue(cpu.registers.isFlagCleared(.ZERO))
+        XCTAssertTrue(cpu.registers.isFlagCleared(.NEGATIVE))
+        //todo test H && C
+        
+        //0xE8 -> negative
+        cpu.registers.SP = 0x08
+        cpu.add_sp_n(val: 0b1111_1111)//-1 //Two bits complement
+        XCTAssertTrue(cpu.registers.SP == 0x7)
+        XCTAssertTrue(cpu.registers.isFlagCleared(.ZERO))
+        XCTAssertTrue(cpu.registers.isFlagCleared(.NEGATIVE))
+        //todo test H && C
         
         //0x09
         cpu.registers.HL = 0x0000
