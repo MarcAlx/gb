@@ -1456,8 +1456,154 @@ final class CPUInstructionsTests: XCTestCase {
         XCTAssertTrue(cpu.registers.isFlagSet(.ZERO))
     }
     
-    func test_jump() throws {
-        XCTAssertTrue(false)
+    func test_jp() throws {
+        let cpu:CPU = CPU()
+        
+        //0xC2
+        cpu.registers.PC = 0x0000
+        cpu.registers.raiseFlag(.ZERO)
+        cpu.jp_nz_nn(address: EnhancedShort(0x1000))
+        XCTAssertTrue(cpu.registers.PC == 0x0000)
+        cpu.registers.PC = 0x0000
+        cpu.registers.clearFlag(.ZERO)
+        cpu.jp_nz_nn(address: EnhancedShort(0x1000))
+        XCTAssertTrue(cpu.registers.PC == 0x1000)
+        
+        //0xD2
+        cpu.registers.PC = 0x0000
+        cpu.registers.raiseFlag(.CARRY)
+        cpu.jp_nc_nn(address: EnhancedShort(0x1000))
+        XCTAssertTrue(cpu.registers.PC == 0x0000)
+        cpu.registers.PC = 0x0000
+        cpu.registers.clearFlag(.CARRY)
+        cpu.jp_nc_nn(address: EnhancedShort(0x1000))
+        XCTAssertTrue(cpu.registers.PC == 0x1000)
+        
+        //0xC3
+        cpu.registers.PC = 0x0000
+        cpu.jp_nn(address: EnhancedShort(0x1000))
+        XCTAssertTrue(cpu.registers.PC == 0x1000)
+        
+        //0xE9
+        cpu.registers.PC = 0x0000
+        cpu.registers.HL = 0x1000
+        cpu.jp_hl()
+        XCTAssertTrue(cpu.registers.PC == 0x1000)
+        
+        //0xCA
+        cpu.registers.PC = 0x0000
+        cpu.registers.clearFlag(.ZERO)
+        cpu.jp_z_nn(address: EnhancedShort(0x1000))
+        XCTAssertTrue(cpu.registers.PC == 0x0000)
+        cpu.registers.PC = 0x0000
+        cpu.registers.raiseFlag(.ZERO)
+        cpu.jp_z_nn(address: EnhancedShort(0x1000))
+        XCTAssertTrue(cpu.registers.PC == 0x1000)
+        
+        //0xDA
+        cpu.registers.PC = 0x0000
+        cpu.registers.clearFlag(.CARRY)
+        cpu.jp_c_nn(address: EnhancedShort(0x1000))
+        XCTAssertTrue(cpu.registers.PC == 0x0000)
+        cpu.registers.PC = 0x0000
+        cpu.registers.raiseFlag(.CARRY)
+        cpu.jp_c_nn(address: EnhancedShort(0x1000))
+        XCTAssertTrue(cpu.registers.PC == 0x1000)
+    }
+    
+    func test_jr() throws {
+        let cpu:CPU = CPU()
+        
+        //0x18
+        //positive
+        cpu.registers.PC = 0x1004
+        cpu.jr_i8(val: 2)
+        XCTAssertTrue(cpu.registers.PC == 0x1006)
+        //negative
+        cpu.registers.PC = 0x1004
+        cpu.jr_i8(val: 0b1111_1100)//-4 two bit complement
+        XCTAssertTrue(cpu.registers.PC == 0x1000)
+        
+        //0x20
+        //positive
+        cpu.registers.PC = 0x1004
+        cpu.registers.raiseFlag(.ZERO)
+        cpu.jr_nz_i8(val: 2)
+        XCTAssertTrue(cpu.registers.PC == 0x1004)
+        cpu.registers.PC = 0x1004
+        cpu.registers.clearFlag(.ZERO)
+        cpu.jr_nz_i8(val: 2)
+        XCTAssertTrue(cpu.registers.PC == 0x1006)
+        //negative
+        cpu.registers.PC = 0x1004
+        cpu.registers.raiseFlag(.ZERO)
+        cpu.jr_nz_i8(val: 0b1111_1100)//-4 two bit complement
+        XCTAssertTrue(cpu.registers.PC == 0x1004)
+        cpu.registers.PC = 0x1004
+        cpu.registers.clearFlag(.ZERO)
+        cpu.jr_nz_i8(val: 0b1111_1100)//-4 two bit complement
+        XCTAssertTrue(cpu.registers.PC == 0x1000)
+        
+        //0x30
+        //positive
+        cpu.registers.PC = 0x1004
+        cpu.registers.raiseFlag(.CARRY)
+        cpu.jr_nc_i8(val: 2)
+        XCTAssertTrue(cpu.registers.PC == 0x1004)
+        cpu.registers.PC = 0x1004
+        cpu.registers.clearFlag(.CARRY)
+        cpu.jr_nc_i8(val: 2)
+        XCTAssertTrue(cpu.registers.PC == 0x1006)
+        //negative
+        cpu.registers.PC = 0x1004
+        cpu.registers.raiseFlag(.CARRY)
+        cpu.jr_nc_i8(val: 0b1111_1100)//-4 two bit complement
+        XCTAssertTrue(cpu.registers.PC == 0x1004)
+        cpu.registers.PC = 0x1004
+        cpu.registers.clearFlag(.CARRY)
+        cpu.jr_nc_i8(val: 0b1111_1100)//-4 two bit complement
+        XCTAssertTrue(cpu.registers.PC == 0x1000)
+        
+        //0x28
+        //positive
+        cpu.registers.PC = 0x1004
+        cpu.registers.clearFlag(.ZERO)
+        cpu.jr_z_i8(val: 2)
+        XCTAssertTrue(cpu.registers.PC == 0x1004)
+        cpu.registers.PC = 0x1004
+        cpu.registers.raiseFlag(.ZERO)
+        cpu.jr_z_i8(val: 2)
+        XCTAssertTrue(cpu.registers.PC == 0x1006)
+        //negative
+        cpu.registers.PC = 0x1004
+        cpu.registers.clearFlag(.ZERO)
+        cpu.jr_z_i8(val: 0b1111_1100)//-4 two bit complement
+        XCTAssertTrue(cpu.registers.PC == 0x1004)
+        cpu.registers.PC = 0x1004
+        cpu.registers.raiseFlag(.ZERO)
+        cpu.jr_z_i8(val: 0b1111_1100)//-4 two bit complement
+        XCTAssertTrue(cpu.registers.PC == 0x1000)
+        
+        //0x38
+        //positive
+        cpu.registers.PC = 0x1004
+        cpu.registers.clearFlag(.CARRY)
+        cpu.jr_c_i8(val: 2)
+        XCTAssertTrue(cpu.registers.PC == 0x1004)
+        cpu.registers.PC = 0x1004
+        cpu.registers.raiseFlag(.CARRY)
+        cpu.jr_c_i8(val: 2)
+        XCTAssertTrue(cpu.registers.PC == 0x1006)
+        //negative
+        cpu.registers.PC = 0x1004
+        cpu.registers.clearFlag(.CARRY)
+        cpu.jr_c_i8(val: 0b1111_1100)//-4 two bit complement
+        XCTAssertTrue(cpu.registers.PC == 0x1004)
+        cpu.registers.PC = 0x1004
+        cpu.registers.raiseFlag(.CARRY)
+        cpu.jr_c_i8(val: 0b1111_1100)//-4 two bit complement
+        XCTAssertTrue(cpu.registers.PC == 0x1000)
+        
     }
     
     func test_call() throws {
