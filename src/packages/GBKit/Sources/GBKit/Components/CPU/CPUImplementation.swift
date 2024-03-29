@@ -232,7 +232,7 @@ class CPUImplementation: CPUCore {
             Instruction(opCode: 0xD0, length: 1, name: "RET NC", duration:8,ret_nc),
             Instruction(opCode: 0xD1, length: 1, name: "POP DE", duration:12,pop_de),
             Instruction(opCode: 0xD2, length: 3, name: "JP NC, 0x%04X", duration:12,jp_nc_nn),
-            unsupported,
+            unsupported,//0xD3
             Instruction(opCode: 0xD4, length: 3, name: "CALL NC, 0x%04X", duration:12,call_nc_nn),
             Instruction(opCode: 0xD5, length: 1, name: "PUSH DE", duration:16,push_de),
             Instruction(opCode: 0xD6, length: 2, name: "SUB A, 0x%02X", duration:8,sub_a_n),
@@ -240,32 +240,32 @@ class CPUImplementation: CPUCore {
             Instruction(opCode: 0xD8, length: 1, name: "RET C", duration:8,ret_c),
             Instruction(opCode: 0xD9, length: 1, name: "RETI", duration:16,reti),
             Instruction(opCode: 0xDA, length: 3, name: "JP C, 0x%04X", duration:12,jp_c_nn),
-            unsupported,
+            unsupported,//0xDB
             Instruction(opCode: 0xDC, length: 3, name: "CALL C, 0x%04X", duration:12,call_c_nn),
-            unsupported,
+            unsupported,//0xDD
             Instruction(opCode: 0xDE, length: 2, name: "SBC A, 0x%02X", duration:8,sbc_a_n),
             Instruction(opCode: 0xDF, length: 1, name: "RST 18h", duration:16,rst_18h),
             Instruction(opCode: 0xE0, length: 2, name: "LD (FF00+0x%02X) A", duration:12,ld_ff00pn_a),
             Instruction(opCode: 0xE1, length: 1, name: "POP HL", duration:12,pop_hl),
             Instruction(opCode: 0xE2, length: 1, name: "LD (FF00+C), A", duration:8,ld_ff00pc_a),
-            unsupported,
-            unsupported,
+            unsupported,//0xE3
+            unsupported,//0xE4
             Instruction(opCode: 0xE5, length: 1, name: "PUSH HL", duration:16,push_hl),
             Instruction(opCode: 0xE6, length: 2, name: "AND A, 0x%02X", duration:8,and_a_n),
             Instruction(opCode: 0xE7, length: 1, name: "RST 20h", duration:16,rst_20h),
             Instruction(opCode: 0xE8, length: 2, name: "ADD SP, 0x%02X", duration:16,add_sp_i8),
             Instruction(opCode: 0xE9, length: 1, name: "JP HL", duration:4,jp_hl),
             Instruction(opCode: 0xEA, length: 3, name: "LD 0x%04X, A", duration:16,ld_nnp_a),
-            unsupported,
-            unsupported,
-            unsupported,
+            unsupported,//0xEB
+            unsupported,//0xEC
+            unsupported,//0xED
             Instruction(opCode: 0xEE, length: 2, name: "XOR A, 0x%02X", duration:8,xor_a_n),
             Instruction(opCode: 0xEF, length: 1, name: "RST 28h", duration:16,rst_28h),
             Instruction(opCode: 0xF0, length: 2, name: "LD A, (FF00+0x%02X)", duration:12,ld_a_ff00pn),
             Instruction(opCode: 0xF1, length: 1, name: "POP AF", duration:12,pop_af),
             Instruction(opCode: 0xF2, length: 1, name: "LD A FF00+C", duration:8,ld_a_ff00pc),
             Instruction(opCode: 0xF3, length: 1, name: "DI", duration:4,di),
-            unsupported,
+            unsupported,//0xF4
             Instruction(opCode: 0xF5, length: 1, name: "PUSH AF", duration:16,push_af),
             Instruction(opCode: 0xF6, length: 2, name: "OR A, 0x%02X", duration:8,or_a_n),
             Instruction(opCode: 0xF7, length: 1, name: "RST 30h", duration:16,rst_30h),
@@ -273,8 +273,8 @@ class CPUImplementation: CPUCore {
             Instruction(opCode: 0xF9, length: 1, name: "LD SP, HL", duration:8,ld_sp_hl),
             Instruction(opCode: 0xFA, length: 3, name: "LD A, (0x%04X)", duration:16,ld_a_nnp),
             Instruction(opCode: 0xFB, length: 1, name: "EI", duration:4,ei),
-            unsupported,
-            unsupported,
+            unsupported,//0xFC
+            unsupported,//0xFD
             Instruction(opCode: 0xFE, length: 2, name: "CP A, 0x%02X", duration:8,cp_a_n),
             Instruction(opCode: 0xFF, length: 1, name: "RST 38h", duration:16,rst_38h)
         ]
