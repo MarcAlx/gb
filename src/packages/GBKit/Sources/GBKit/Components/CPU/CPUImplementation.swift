@@ -253,7 +253,7 @@ class CPUImplementation: CPUCore {
             Instruction(opCode: 0xE5, length: 1, name: "PUSH HL", duration:16,push_hl),
             Instruction(opCode: 0xE6, length: 2, name: "AND A, 0x%02X", duration:8,and_a_n),
             Instruction(opCode: 0xE7, length: 1, name: "RST 20h", duration:16,rst_20h),
-            Instruction(opCode: 0xE8, length: 1, name: "ADD SP, 0x%02X", duration:16,add_sp_i8),
+            Instruction(opCode: 0xE8, length: 2, name: "ADD SP, 0x%02X", duration:16,add_sp_i8),
             Instruction(opCode: 0xE9, length: 1, name: "JP HL", duration:4,jp_hl),
             Instruction(opCode: 0xEA, length: 3, name: "LD 0x%04X, A", duration:16,ld_nnp_a),
             unsupported,
