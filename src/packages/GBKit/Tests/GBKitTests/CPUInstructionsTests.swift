@@ -1938,12 +1938,32 @@ final class CPUInstructionsTests: XCTestCase {
         XCTAssertTrue(cpu.registers.A == 0)
     }
     
-    func test_rr() throws {
-        XCTAssertTrue(false)
-    }
-    
-    func test_rl() throws {
-        XCTAssertTrue(false)
+    func test_rra() throws {
+        let cpu:CPU = CPU()
+        
+        cpu.registers.clearFlag(.ZERO)
+        cpu.registers.raiseFlag(.HALF_CARRY)
+        cpu.registers.raiseFlag(.NEGATIVE)
+        cpu.registers.clearFlag(.CARRY)
+        cpu.registers.A = 0b0000_0001
+        cpu.rra()
+        XCTAssertTrue(cpu.registers.A == 0b0000_0000)
+        XCTAssertTrue(cpu.registers.isFlagSet(.ZERO))
+        XCTAssertTrue(cpu.registers.isFlagSet(.CARRY))
+        XCTAssertTrue(cpu.registers.isFlagCleared(.HALF_CARRY))
+        XCTAssertTrue(cpu.registers.isFlagCleared(.NEGATIVE))
+        
+        cpu.registers.clearFlag(.ZERO)
+        cpu.registers.raiseFlag(.HALF_CARRY)
+        cpu.registers.raiseFlag(.NEGATIVE)
+        cpu.registers.clearFlag(.CARRY)
+        cpu.registers.A = 0b0000_0001
+        cpu.rrca()
+        XCTAssertTrue(cpu.registers.A == 0b1000_0000)
+        XCTAssertTrue(cpu.registers.isFlagCleared(.ZERO))
+        XCTAssertTrue(cpu.registers.isFlagSet(.CARRY))
+        XCTAssertTrue(cpu.registers.isFlagCleared(.HALF_CARRY))
+        XCTAssertTrue(cpu.registers.isFlagCleared(.NEGATIVE))
     }
     
     func test_cpl() throws {
