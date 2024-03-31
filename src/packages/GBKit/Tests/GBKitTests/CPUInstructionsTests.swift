@@ -1354,7 +1354,71 @@ final class CPUInstructionsTests: XCTestCase {
     }
     
     func test_cp() throws {
-        XCTAssertTrue(false)
+        let cpu:CPU = CPU()
+        
+        cpu.registers.A = 0
+        cpu.registers.B = 1
+        cpu.cp_a_b()
+        XCTAssertTrue(cpu.registers.isFlagCleared(.ZERO))
+        XCTAssertTrue(cpu.registers.isFlagSet(.NEGATIVE))
+        XCTAssertTrue(cpu.registers.isFlagSet(.CARRY))
+        XCTAssertTrue(cpu.registers.isFlagSet(.HALF_CARRY))
+        
+        cpu.registers.A = 0
+        cpu.registers.C = 1
+        cpu.cp_a_c()
+        XCTAssertTrue(cpu.registers.isFlagCleared(.ZERO))
+        XCTAssertTrue(cpu.registers.isFlagSet(.NEGATIVE))
+        XCTAssertTrue(cpu.registers.isFlagSet(.CARRY))
+        XCTAssertTrue(cpu.registers.isFlagSet(.HALF_CARRY))
+        
+        cpu.registers.A = 0
+        cpu.registers.D = 1
+        cpu.cp_a_d()
+        XCTAssertTrue(cpu.registers.isFlagCleared(.ZERO))
+        XCTAssertTrue(cpu.registers.isFlagSet(.NEGATIVE))
+        XCTAssertTrue(cpu.registers.isFlagSet(.CARRY))
+        XCTAssertTrue(cpu.registers.isFlagSet(.HALF_CARRY))
+        
+        cpu.registers.A = 0
+        cpu.registers.E = 1
+        cpu.cp_a_e()
+        XCTAssertTrue(cpu.registers.isFlagCleared(.ZERO))
+        XCTAssertTrue(cpu.registers.isFlagSet(.NEGATIVE))
+        XCTAssertTrue(cpu.registers.isFlagSet(.CARRY))
+        XCTAssertTrue(cpu.registers.isFlagSet(.HALF_CARRY))
+        
+        cpu.registers.A = 0
+        cpu.registers.H = 1
+        cpu.cp_a_h()
+        XCTAssertTrue(cpu.registers.isFlagCleared(.ZERO))
+        XCTAssertTrue(cpu.registers.isFlagSet(.NEGATIVE))
+        XCTAssertTrue(cpu.registers.isFlagSet(.CARRY))
+        XCTAssertTrue(cpu.registers.isFlagSet(.HALF_CARRY))
+        
+        cpu.registers.A = 0
+        cpu.registers.L = 1
+        cpu.cp_a_l()
+        XCTAssertTrue(cpu.registers.isFlagCleared(.ZERO))
+        XCTAssertTrue(cpu.registers.isFlagSet(.NEGATIVE))
+        XCTAssertTrue(cpu.registers.isFlagSet(.CARRY))
+        XCTAssertTrue(cpu.registers.isFlagSet(.HALF_CARRY))
+        
+        cpu.registers.A = 0
+        cpu.cp_a_n(val: 1)
+        XCTAssertTrue(cpu.registers.isFlagCleared(.ZERO))
+        XCTAssertTrue(cpu.registers.isFlagSet(.NEGATIVE))
+        XCTAssertTrue(cpu.registers.isFlagSet(.CARRY))
+        XCTAssertTrue(cpu.registers.isFlagSet(.HALF_CARRY))
+        
+        cpu.registers.A = 0
+        cpu.registers.HL = MMUAddresses.WORK_RAM.rawValue
+        cpu.mmu[cpu.registers.HL] = 1
+        cpu.cp_a_hlp()
+        XCTAssertTrue(cpu.registers.isFlagCleared(.ZERO))
+        XCTAssertTrue(cpu.registers.isFlagSet(.NEGATIVE))
+        XCTAssertTrue(cpu.registers.isFlagSet(.CARRY))
+        XCTAssertTrue(cpu.registers.isFlagSet(.HALF_CARRY))
     }
     
     func test_or() throws {
