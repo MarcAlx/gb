@@ -315,7 +315,7 @@ class CPUCore: Component {
     
     /// sub val + carry to A
     internal func sbc_a(_ val:Byte) -> Void {
-        self.add_a(val &+ (self.registers.isFlagSet(.CARRY) ? 1 : 0))
+        self.sub_a(val &+ (self.registers.isFlagSet(.CARRY) ? 1 : 0))
     }
     
     /// perform an arithemtical shift left of val (same as logical one)
