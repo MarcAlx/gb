@@ -1618,7 +1618,56 @@ final class CPUInstructionsTests: XCTestCase {
     }
     
     func test_call() throws {
-        XCTAssertTrue(false)
+        let cpu:CPU = CPU()
+        
+        cpu.registers.PC = 0x0000
+        cpu.registers.SP = 0x1000
+        cpu.call(0x2000)
+        XCTAssertTrue(cpu.registers.PC == 0x2000)
+        
+        cpu.registers.PC = 0x0000
+        cpu.registers.SP = 0x1000
+        cpu.registers.raiseFlag(.ZERO)
+        cpu.call_z_nn(address: EnhancedShort(0x2000))
+        XCTAssertTrue(cpu.registers.PC == 0x2000)
+        cpu.registers.PC = 0x0000
+        cpu.registers.SP = 0x1000
+        cpu.registers.clearFlag(.ZERO)
+        cpu.call_z_nn(address: EnhancedShort(0x2000))
+        XCTAssertTrue(cpu.registers.PC == 0x0000)
+        
+        cpu.registers.PC = 0x0000
+        cpu.registers.SP = 0x1000
+        cpu.registers.raiseFlag(.CARRY)
+        cpu.call_c_nn(address: EnhancedShort(0x2000))
+        XCTAssertTrue(cpu.registers.PC == 0x2000)
+        cpu.registers.PC = 0x0000
+        cpu.registers.SP = 0x1000
+        cpu.registers.clearFlag(.CARRY)
+        cpu.call_c_nn(address: EnhancedShort(0x2000))
+        XCTAssertTrue(cpu.registers.PC == 0x0000)
+        
+        cpu.registers.PC = 0x0000
+        cpu.registers.SP = 0x1000
+        cpu.registers.raiseFlag(.ZERO)
+        cpu.call_nz_nn(address: EnhancedShort(0x2000))
+        XCTAssertTrue(cpu.registers.PC == 0x0000)
+        cpu.registers.PC = 0x0000
+        cpu.registers.SP = 0x1000
+        cpu.registers.clearFlag(.ZERO)
+        cpu.call_nz_nn(address: EnhancedShort(0x2000))
+        XCTAssertTrue(cpu.registers.PC == 0x2000)
+        
+        cpu.registers.PC = 0x0000
+        cpu.registers.SP = 0x1000
+        cpu.registers.raiseFlag(.CARRY)
+        cpu.call_nc_nn(address: EnhancedShort(0x2000))
+        XCTAssertTrue(cpu.registers.PC == 0x0000)
+        cpu.registers.PC = 0x0000
+        cpu.registers.SP = 0x1000
+        cpu.registers.clearFlag(.CARRY)
+        cpu.call_nc_nn(address: EnhancedShort(0x2000))
+        XCTAssertTrue(cpu.registers.PC == 0x2000)
     }
     
     func test_ret() throws {
