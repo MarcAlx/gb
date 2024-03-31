@@ -554,7 +554,7 @@ class CPUImplementation: CPUCore {
     func dec_b() -> Void { self.registers.B = self.dec(self.registers.B) }
     func ld_b_n(val:Byte) -> Void { self.registers.B = val }
     func rlca() -> Void { self.registers.A = rl(self.registers.A, circular: true) }
-    func ld_nnp_sp(address:EnhancedShort) -> Void { mmu.write(address: mmu.read(address: address.value), val: self.registers.SP) }
+    func ld_nnp_sp(address:EnhancedShort) -> Void { mmu.write(address: address.value, val: self.registers.SP) }
     func add_hl_bc() -> Void { self.add_hl(self.registers.BC) }
     func ld_a_bcp() -> Void { self.registers.A = mmu.read(address: self.registers.BC) }
     func dec_bc() -> Void { self.registers.BC -= 1 }
