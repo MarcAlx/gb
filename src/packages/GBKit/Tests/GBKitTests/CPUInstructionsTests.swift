@@ -11,6 +11,17 @@ final class CPUInstructionsTests: XCTestCase {
         // Put teardown code here. This method is called after the invocation of each test method in the class.
     }
 
+    func test_indexation() throws {
+        let cpu:CPU = CPU()
+        
+        let inst = cpu.asStandardInstructions()
+        for i in 0...255 {
+            if(inst[i].name != "panic"){
+                XCTAssertTrue(Byte(i) == inst[i].opCode)
+            }
+        }
+    }
+    
     func test_nop() throws {
         //0x00
         let cpu:CPU = CPU()

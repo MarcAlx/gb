@@ -11,6 +11,15 @@ final class CPUExtendedInstructionsTests: XCTestCase {
         // Put teardown code here. This method is called after the invocation of each test method in the class.
     }
     
+    func test_indexation() throws {
+        let cpu:CPU = CPU()
+        
+        let inst = cpu.asExtentedInstructions()
+        for i in 0...255 {
+            XCTAssertTrue(Byte(i) == inst[i].opCode)
+        }
+    }
+    
     func test_rlc() throws {
         let cpu:CPU = CPU()
         XCTAssertTrue(false)
