@@ -2117,25 +2117,25 @@ final class CPUInstructionsTests: XCTestCase {
         cpu.registers.SP = 0xFFFF
         cpu.registers.BC = 0xBBCC
         cpu.push_bc()
-        XCTAssertTrue(cpu.mmu[0xFFFE] == 0xCC && cpu.mmu[0xFFFD] == 0xBB)
+        XCTAssertTrue(cpu.mmu[0xFFFE] == 0xBB && cpu.mmu[0xFFFD] == 0xCC)
         
         //0xD6
         cpu.registers.SP = 0xFFFF
         cpu.registers.DE = 0xDDEE
         cpu.push_de()
-        XCTAssertTrue(cpu.mmu[0xFFFE] == 0xEE && cpu.mmu[0xFFFD] == 0xDD)
+        XCTAssertTrue(cpu.mmu[0xFFFE] == 0xDD && cpu.mmu[0xFFFD] == 0xEE)
         
         //0xE6
         cpu.registers.SP = 0xFFFF
         cpu.registers.HL = 0xFFEE
         cpu.push_hl()
-        XCTAssertTrue(cpu.mmu[0xFFFE] == 0xEE && cpu.mmu[0xFFFD] == 0xFF)
+        XCTAssertTrue(cpu.mmu[0xFFFE] == 0xFF && cpu.mmu[0xFFFD] == 0xEE)
         
         //0xF6
         cpu.registers.SP = 0xFFFF
         cpu.registers.AF = 0xAAFF
         cpu.push_af()
-        XCTAssertTrue(cpu.mmu[0xFFFE] == 0xFF && cpu.mmu[0xFFFD] == 0xAA)
+        XCTAssertTrue(cpu.mmu[0xFFFE] == 0xAA && cpu.mmu[0xFFFD] == 0xFF)
     }
     
     func test_pop() throws {
@@ -2144,32 +2144,32 @@ final class CPUInstructionsTests: XCTestCase {
         //0xC1
         cpu.registers.SP = 0xFFFD
         cpu.registers.BC = 0x0000
-        cpu.mmu[0xFFFE] = 0xCC
-        cpu.mmu[0xFFFD] = 0xBB
+        cpu.mmu[0xFFFE] = 0xBB
+        cpu.mmu[0xFFFD] = 0xCC
         cpu.pop_bc()
         XCTAssertTrue(cpu.registers.BC == 0xBBCC)
         
         //0xD1
         cpu.registers.SP = 0xFFFD
         cpu.registers.DE = 0x0000
-        cpu.mmu[0xFFFE] = 0xEE
-        cpu.mmu[0xFFFD] = 0xDD
+        cpu.mmu[0xFFFE] = 0xDD
+        cpu.mmu[0xFFFD] = 0xEE
         cpu.pop_de()
         XCTAssertTrue(cpu.registers.DE == 0xDDEE)
         
         //0xE1
         cpu.registers.SP = 0xFFFD
         cpu.registers.HL = 0x0000
-        cpu.mmu[0xFFFE] = 0xEE
-        cpu.mmu[0xFFFD] = 0xFF
+        cpu.mmu[0xFFFE] = 0xFF
+        cpu.mmu[0xFFFD] = 0xEE
         cpu.pop_hl()
         XCTAssertTrue(cpu.registers.HL == 0xFFEE)
         
         //0xF1
         cpu.registers.SP = 0xFFFD
         cpu.registers.BC = 0x0000
-        cpu.mmu[0xFFFE] = 0xFF
-        cpu.mmu[0xFFFD] = 0xAA
+        cpu.mmu[0xFFFE] = 0xAA
+        cpu.mmu[0xFFFD] = 0xFF
         cpu.pop_af()
         XCTAssertTrue(cpu.registers.AF == 0xAAFF)
     }

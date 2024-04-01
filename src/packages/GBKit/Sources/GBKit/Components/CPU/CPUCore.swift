@@ -368,36 +368,16 @@ class CPUCore: Component {
     }
     
     // mark : stack related
-    
-    /// read a byte from stack, an offset can be applied
-    internal func readFromStack(_ pcOffset:UInt16 = 0) -> Byte {
-        return mmu.read(address: self.registers.SP+pcOffset)
-    }
-    
     /// read a short from stack
     internal func readFromStack() -> Short {
-        return EnhancedShort(self.readFromStack(1),self.readFromStack(0)).value
-    }
-    
-    /// read a byte from stack along with PC increment
-    internal func popFromStack() -> Byte {
-        let res:Byte = self.readFromStack(0)
-        self.registers.SP += 1
-        return res
+        return self.mmu.read(address: self.registers.SP)
     }
     
     /// read a byte from stack along with PC increment
     internal func popFromStack() -> Short {
-        //must be done in two times as msb is retreived before lsb
-        let msb:Byte = self.popFromStack()
-        let lsb:Byte = self.popFromStack()
-        return EnhancedShort(lsb,msb).value
-    }
-    
-    /// write a byte to stack along with PC decrement
-    internal func writeToStack(_ val:Byte) -> Void {
-        self.registers.SP -= 1
-        mmu.write(address: self.registers.SP, val: val)
+        let res:Short = self.mmu.read(address: self.registers.SP)
+        self.registers.SP += 2
+        return res
     }
     
     /// write a short to stack along with PC decrements
@@ -407,7 +387,7 @@ class CPUCore: Component {
     
     /// write a short to stack along with PC decrements
     internal func writeToStack(_ val:EnhancedShort) -> Void {
-        self.writeToStack(val.lsb)
-        self.writeToStack(val.msb)
+        self.registers.SP -= 2
+        self.mmu.write(address: self.registers.SP, val: val)
     }
 }
