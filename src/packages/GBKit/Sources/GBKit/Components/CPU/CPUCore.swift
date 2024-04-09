@@ -347,7 +347,7 @@ class CPUCore: Component {
     internal func sra(_ val:Byte) -> Byte {
         var res = self.srl(val)
         if(isBitSet(.Bit_7, val)){
-            res = res & ByteMask.Bit_7.rawValue
+            res = res | ByteMask.Bit_7.rawValue
         }
         self.registers.conditionalSet(cond: res == 0, flag: .ZERO)
         return res;
