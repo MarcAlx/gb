@@ -151,12 +151,15 @@ class CPUCore: Component {
         // - adding 0x06 if lsb of A greater than 0x09
         // for negative don't check overflow, and substract instead
         // DAA is more Binary coded Hex than Binary coded decimal,
-        // ex don't think 32(0x20) as 0b0011_0010 but think 32(0x20) -> 0b0001_0100, whereas 0x32(50) is 0b0011_0010
+        // ex don't think 32(0x20) as 0b0011_0010 but think 32(0x20) -> 0b0001_0000, whereas 0x32(50) is 0b0011_0010
+        
+        var raiseCarry = false
         
         if(self.registers.isFlagSet(.NEGATIVE)) // after substraction
         {
             if(self.registers.isFlagSet(.CARRY)){
                 self.registers.A = self.registers.A &- 0x60;
+                raiseCarry = true
             }
             if(self.registers.isFlagSet(.HALF_CARRY)){
                 self.registers.A = self.registers.A &- 0x06;
@@ -166,14 +169,16 @@ class CPUCore: Component {
         {
             if(self.registers.isFlagSet(.CARRY) || self.registers.A > 0x99){
                 self.registers.A = self.registers.A &+ 0x60;
+                raiseCarry = true
             }
             if(self.registers.isFlagSet(.HALF_CARRY) || (self.registers.A & 0x0F) > 0x09){
                 self.registers.A = self.registers.A &+ 0x06;
             }
         }
         
+        //carry raised if positive and above 0x99, or negative with carry
+        self.registers.conditionalSet(cond: raiseCarry, flag: .CARRY)
         self.registers.clearFlag(.HALF_CARRY)
-        self.registers.conditionalSet(cond: self.registers.A>0x99, flag: .CARRY)
         self.registers.conditionalSet(cond: self.registers.A == 0, flag: .ZERO)
     }
     
