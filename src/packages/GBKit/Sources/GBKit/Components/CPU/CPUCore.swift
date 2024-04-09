@@ -99,7 +99,14 @@ class CPUCore: Component {
     
     /// add val + carry to A
     internal func adc_a(_ val:Byte) -> Void {
-        self.add_a(val &+ (self.registers.isFlagSet(.CARRY) ? 1 : 0))
+        let carry:Byte = (self.registers.isFlagSet(.CARRY) ? 1 : 0)
+        let res:Byte = self.registers.A &+ val &+ carry
+        self.registers.conditionalSet(cond: res==0, flag: .ZERO)
+        self.registers.clearFlag(.NEGATIVE)
+        self.registers.conditionalSet(cond: isAddHalfCarry(val, self.registers.A, carry), flag: .HALF_CARRY)
+        //carry if sum is over 255
+        self.registers.conditionalSet(cond: isAddCarry(self.registers.A, val, carry), flag: .CARRY)
+        self.registers.A = res
     }
     
     /// and val with A then stores result in A
@@ -321,7 +328,16 @@ class CPUCore: Component {
     
     /// sub val + carry to A
     internal func sbc_a(_ val:Byte) -> Void {
-        self.sub_a(val &+ (self.registers.isFlagSet(.CARRY) ? 1 : 0))
+        let carry:Byte = (self.registers.isFlagSet(.CARRY) ? 1 : 0)
+        let res:Byte = self.registers.A &- val &- carry
+        self.registers.conditionalSet(cond: res==0, flag: .ZERO)
+        self.registers.raiseFlag(.NEGATIVE)
+        
+        //sub borrow
+        self.registers.conditionalSet(cond: isSubHalfBorrow(self.registers.A, val, carry), flag: .HALF_CARRY)
+        //carry if borrow
+        self.registers.conditionalSet(cond: isSubBorrow(self.registers.A, val, carry), flag: .CARRY)
+        self.registers.A = res
     }
     
     /// perform an arithemtical shift left of val (same as logical one)
