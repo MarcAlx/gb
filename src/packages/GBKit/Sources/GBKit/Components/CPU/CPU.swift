@@ -47,8 +47,10 @@ class CPU: CPUImplementation, Clockable {
             //    print("add breakpoint here")
             //}
             
+            //print(self.registers.describe())
+            
             //fetch
-            let opCodeInstr = self.fetch() //on real hardware fetch are done during last 4 cycles of previous instuction, but as cycles are incremented during execute don't care
+            let opCodeInstr = self.fetch() //on real hardware fetch are done during last 4 cycles of previous instuction, but as cycles are incremented during execute, don't care
             //decode
             let instruction = self.decode(opCode:opCodeInstr.0,instr:opCodeInstr.1)
             //execute
