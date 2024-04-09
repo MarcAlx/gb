@@ -614,8 +614,8 @@ class CPUImplementation: CPUCore {
     func ld_sp_nn(val:EnhancedShort) -> Void { self.registers.SP = val.value }
     func ld_hlpd_a() -> Void { mmu.write(address: self.registers.HL, val: self.registers.A); self.registers.HL-=1 }
     func inc_sp() -> Void { self.registers.SP = self.inc(self.registers.SP) }
-    func inc_hlp() -> Void { mmu.write(address: self.registers.HL, val: self.inc(mmu.read(address: self.registers.HL) as Short)) }
-    func dec_hlp() -> Void { mmu.write(address: self.registers.HL, val: self.dec(mmu.read(address: self.registers.HL) as Short)) }
+    func inc_hlp() -> Void { mmu.write(address: self.registers.HL, val: self.inc(mmu.read(address: self.registers.HL) as Byte)) }
+    func dec_hlp() -> Void { mmu.write(address: self.registers.HL, val: self.dec(mmu.read(address: self.registers.HL) as Byte)) }
     func ld_hlp_n(val:Byte) -> Void { mmu.write(address: self.registers.HL, val: val) }
     func scf() -> Void { self.registers.clearFlags(.NEGATIVE,.HALF_CARRY); self.registers.raiseFlag(.CARRY) }
     func jr_c_i8(val:Byte) -> Void { jumpRelative(val, .CARRY) }
