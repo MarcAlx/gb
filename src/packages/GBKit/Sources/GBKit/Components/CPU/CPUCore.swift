@@ -76,8 +76,8 @@ class CPUCore: Component {
     // add sp + n, assign flags and return result as short, n can be negative
     internal func _add_sp_i8(val:Byte) -> Short {
         let old:Short = self.registers.SP
-        let delta:Int8 = Int8(bitPattern: val)//delta can be negative, aka two bit complement
-        let res:Short = fit(Int(self.registers.SP) + Int(delta))
+        let res = add_short_i8(val: old, i8: val)
+        
         //carry and half carry are checked over lsb part
         self.registers.conditionalSet(cond: hasOverflown(Byte(0xFF&old), Byte(0xFF&res)), flag: .CARRY)
         self.registers.conditionalSet(cond: isAddHalfCarry(old, val) , flag: .HALF_CARRY)
@@ -203,10 +203,9 @@ class CPUCore: Component {
     
     /// jump relative by val, any provided flag is checked in order to conditionnaly jump, (if so a cycle overhead is applied by default +4)
     internal func jumpRelative(_ val:Byte, _ flag:CPUFlag, inverseFlag:Bool = false, branchingCycleOverhead:Int = 4) {
-        let delta:Int8 = Int8(bitPattern: val)//delta can be negative, aka two bit complement
-        let newPC:Int = Int(self.registers.PC) + Int(delta)
+        let res = add_short_i8(val: self.registers.PC, i8: val)
         //a relative jump is just an absolute jump from PC
-        self.jumpTo(EnhancedShort(fit(newPC)), flag, inverseFlag: inverseFlag, branchingCycleOverhead)
+        self.jumpTo(EnhancedShort(res), flag, inverseFlag: inverseFlag, branchingCycleOverhead)
     }
     
     /// perform a relative jump

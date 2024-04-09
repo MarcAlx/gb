@@ -120,3 +120,16 @@ func flipBits(_ val: Byte) -> Byte {
 func swap_lsb_msb(_ val:Byte) -> Byte {
     return (val << 4) | (val >> 4)
 }
+
+/// Add a Byte (considered as i8) to short value, while avoiding overflow
+func add_short_i8(val:Short, i8:Byte) -> Short {
+    let delta:Int8 = Int8(bitPattern: i8)//delta can be negative, aka two bits complement (two's complement)
+    
+    //add must be circular
+    if(delta < 0){
+        return val &- Short(-delta)
+    }
+    else {
+        return val &+ Short(delta)
+    }
+}
