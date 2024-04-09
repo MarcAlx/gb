@@ -592,7 +592,7 @@ class CPUImplementation: CPUCore {
     }
     func jr_nz_i8(val:Byte) -> Void { jumpRelative(val, .ZERO, inverseFlag: true) }
     func ld_hl_nn(val:EnhancedShort) -> Void { self.registers.HL = val.value }
-    func ld_hlpi_a() -> Void { mmu.write(address: self.registers.HL, val: self.registers.A); self.registers.HL+=1 }
+    func ld_hlpi_a() -> Void { mmu.write(address: self.registers.HL, val: self.registers.A); self.registers.HL = self.registers.HL&+1 }
     func inc_hl() -> Void { self.registers.HL = self.inc(self.registers.HL) }
     func inc_h() -> Void { self.registers.H = self.inc(self.registers.H) }
     func dec_h() -> Void { self.registers.H = self.dec(self.registers.H) }
@@ -600,7 +600,7 @@ class CPUImplementation: CPUCore {
     func daa() -> Void { self._daa() }
     func jr_z_i8(val:Byte) -> Void { jumpRelative(val, .ZERO) }
     func add_hl_hl() -> Void { self.add_hl(self.registers.HL) }
-    func ld_a_hlpi() -> Void { self.registers.A = mmu.read(address: self.registers.HL); self.registers.HL+=1 }
+    func ld_a_hlpi() -> Void { self.registers.A = mmu.read(address: self.registers.HL); self.registers.HL = self.registers.HL&+1 }
     func dec_hl() -> Void { self.registers.HL = self.dec(self.registers.HL) }
     func inc_l() -> Void { self.registers.L = self.inc(self.registers.L) }
     func dec_l() -> Void { self.registers.L = self.dec(self.registers.L) }
@@ -612,7 +612,7 @@ class CPUImplementation: CPUCore {
     }
     func jr_nc_i8(val:Byte) -> Void { jumpRelative(val, .CARRY, inverseFlag: true) }
     func ld_sp_nn(val:EnhancedShort) -> Void { self.registers.SP = val.value }
-    func ld_hlpd_a() -> Void { mmu.write(address: self.registers.HL, val: self.registers.A); self.registers.HL-=1 }
+    func ld_hlpd_a() -> Void { mmu.write(address: self.registers.HL, val: self.registers.A); self.registers.HL = self.registers.HL&-1 }
     func inc_sp() -> Void { self.registers.SP = self.inc(self.registers.SP) }
     func inc_hlp() -> Void { mmu.write(address: self.registers.HL, val: self.inc(mmu.read(address: self.registers.HL) as Byte)) }
     func dec_hlp() -> Void { mmu.write(address: self.registers.HL, val: self.dec(mmu.read(address: self.registers.HL) as Byte)) }
@@ -620,7 +620,7 @@ class CPUImplementation: CPUCore {
     func scf() -> Void { self.registers.clearFlags(.NEGATIVE,.HALF_CARRY); self.registers.raiseFlag(.CARRY) }
     func jr_c_i8(val:Byte) -> Void { jumpRelative(val, .CARRY) }
     func add_hl_sp() -> Void { self.add_hl(self.registers.SP) }
-    func ld_a_hlpd() -> Void { self.registers.A = mmu.read(address: self.registers.HL); self.registers.HL -= 1 }
+    func ld_a_hlpd() -> Void { self.registers.A = mmu.read(address: self.registers.HL); self.registers.HL = self.registers.HL&-1 }
     func dec_sp() -> Void { self.registers.SP = self.dec(self.registers.SP) }
     func inc_a() -> Void { self.registers.A = self.inc(self.registers.A) }
     func dec_a() -> Void { self.registers.A = self.dec(self.registers.A) }
