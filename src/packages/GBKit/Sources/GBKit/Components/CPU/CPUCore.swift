@@ -280,7 +280,7 @@ class CPUCore: Component {
         
         self.registers.conditionalSet(cond: res == 0, flag: .ZERO)
         self.registers.clearFlags(.HALF_CARRY,.NEGATIVE)
-        self.registers.conditionalSet(cond: isBitSet(.Bit_0, val), flag: .CARRY)
+        self.registers.conditionalSet(cond: isBitSet(.Bit_7, val), flag: .CARRY)
         return res
     }
     
