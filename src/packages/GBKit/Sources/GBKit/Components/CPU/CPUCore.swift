@@ -78,8 +78,10 @@ class CPUCore: Component {
         let old:Short = self.registers.SP
         let delta:Int8 = Int8(bitPattern: val)//delta can be negative, aka two bit complement
         let res:Short = fit(Int(self.registers.SP) + Int(delta))
-        self.registers.conditionalSet(cond: hasOverflown(old, res), flag: .CARRY)
-        self.registers.conditionalSet(cond: isAddHalfCarry(self.registers.SP, Short(val)) , flag: .HALF_CARRY)
+        //carry and half carry are checked over lsb part
+        self.registers.conditionalSet(cond: hasOverflown(Byte(0xFF&old), Byte(0xFF&res)), flag: .CARRY)
+        self.registers.conditionalSet(cond: isAddHalfCarry(old, val) , flag: .HALF_CARRY)
+        
         self.registers.clearFlags(.NEGATIVE,.ZERO)
         return res
     }
