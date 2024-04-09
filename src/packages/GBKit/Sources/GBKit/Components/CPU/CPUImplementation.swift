@@ -829,7 +829,7 @@ class CPUImplementation: CPUCore {
     func rrc_h() -> Void { self.registers.H = self.rr(self.registers.H, circular: true) }
     func rrc_l() -> Void { self.registers.L = self.rr(self.registers.L, circular: true) }
     func rrc_hlp() -> Void { mmu.write(address: self.registers.HL, val: self.rr(mmu.read(address: self.registers.HL),circular: true)) }
-    func rrc_a() -> Void { self.registers.B = self.rr(self.registers.A, circular: true) }
+    func rrc_a() -> Void { self.registers.A = self.rr(self.registers.A, circular: true) }
     func rl_b() -> Void { self.registers.B = self.rl(self.registers.B) }
     func rl_c() -> Void { self.registers.C = self.rl(self.registers.C) }
     func rl_d() -> Void { self.registers.D = self.rl(self.registers.D) }
