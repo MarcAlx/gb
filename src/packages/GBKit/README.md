@@ -38,6 +38,33 @@ Core package to emulate GameBoy.
     PaletteManager
 ```
 
+## Quality 
+
+### gameboy doctor
+
+This repo is compliant with [gameboy doctor](https://github.com/robert/gameboy-doctor) for the following roms:
+
+ - 01-special.gb
+ - 03-op sp,hl.gb
+ - 04-op r,imm.gb
+ - 05-op rp.gb
+ - 06-ld r,r.gb
+ - 07-jr,jp,call,ret,rst.gb
+ - 08-misc instrs.gb
+ - 09-op r,r.gb
+ - 10-bit ops.gb
+ - 11-op a,(hl).gb
+
+The following rom still needs to be compliant: 
+
+- 02-interrupts.gb
+
+_n.b Some initialization are required in order to be compliant with this tool (set F to 0xB0, MMU must return to 0x90 for LY (0xFF44), CPU must log at each instruction via cpu.registers.describe())_
+
+### Unit test
+
+This project contains some unit tests, objective is to test each core fonction of the implementation.
+
 ## Useful links
 
 ### Introduction
@@ -70,6 +97,7 @@ Core package to emulate GameBoy.
 - [GameBoy (js)](https://github.com/vpoupet/GameBoy)
 - [PyBoy (python)](https://github.com/Baekalfen/PyBoy)
 - [Mooney gb (rust)](https://github.com/Gekkio/mooneye-gb)
+- [SameBoy (c)](https://github.com/LIJI32/SameBoy)
 
 ### Worth reading articles
 
@@ -77,7 +105,7 @@ Core package to emulate GameBoy.
 - [Building a Gameboy From Scratch](https://raphaelstaebler.medium.com/building-a-gameboy-from-scratch-part-1-51d05496783e)
 - [DMG-01: How to Emulate a Game Boy](https://rylev.github.io/DMG-01/public/book/introduction.html)
 - [Émuler la gameboy (fr)](https://www.hr-team.net/emuler-la-gameboy/)
-- [emudev q00.gb][https://emudev.de/gameboy-emulator/overview/]
+- [emudev q00.gb](https://emudev.de/gameboy-emulator/overview/)
 - [Gamebert: a Game Boy emulator built by Robert](https://robertheaton.com/gamebert/)
 - [Gameboy emulation](http://www.codeslinger.co.uk/pages/projects/gameboy/beginning.html)
 - [Gameboy Doctor: debug and fix your gameboy emulator](https://robertheaton.com/gameboy-doctor/)
