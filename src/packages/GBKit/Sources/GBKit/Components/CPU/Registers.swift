@@ -14,8 +14,8 @@ class Registers: Component,Describable {
     //accumulator
     public var A:Byte { get { return self._AF.msb } set { self._AF.msb = newValue} }
     //flags
-    public var F:Byte { get { return self._AF.lsb } set { self._AF.lsb = newValue} }
-    public var AF:Short { get { return self._AF.value } set { self._AF.value = newValue } }
+    public var F:Byte { get { return self._AF.lsb } set { self._AF.lsb = newValue & 0xF0 } }
+    public var AF:Short { get { return self._AF.value } set { self._AF.value = newValue & 0xFFF0 } }
     
     private var _BC:EnhancedShort = EnhancedShort()
     public var B:Byte { get { return self._BC.msb } set { self._BC.msb = newValue} }
