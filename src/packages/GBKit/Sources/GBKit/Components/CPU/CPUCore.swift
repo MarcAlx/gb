@@ -180,7 +180,7 @@ class CPUCore: Component {
     /// jump to address, any provided flag is checked in order to conditionnaly jump, (if so a cycle overhead is applied by default 4), if inverseFlag is true flag are checked at inverse
     internal func jumpTo(_ address:EnhancedShort, _ flag:CPUFlag, inverseFlag:Bool = false, _ branchingCycleOverhead:Int = 4) {
         if((!inverseFlag &&  self.registers.isFlagSet(flag))
-        ||   inverseFlag && !self.registers.isFlagSet(flag)) {
+        ||  (inverseFlag && !self.registers.isFlagSet(flag))) {
             self.jumpTo(address)
             self.cycles += branchingCycleOverhead // jumping with condition implies some extra cycles
         }
