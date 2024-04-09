@@ -307,7 +307,7 @@ class CPUCore: Component {
     internal func sub_a(_ val:Byte) -> Void {
         let res:Byte = self.registers.A &- val
         self.registers.conditionalSet(cond: res==0, flag: .ZERO)
-        self.registers.clearFlag(.NEGATIVE)
+        self.registers.raiseFlag(.NEGATIVE)
         self.registers.conditionalSet(cond: isSubHalfBorrow(self.registers.A, val), flag: .HALF_CARRY)
         self.registers.conditionalSet(cond: self.registers.A < val, flag: .CARRY) //
         self.registers.A = res
