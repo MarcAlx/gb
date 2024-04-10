@@ -94,6 +94,16 @@ class MMU:Component {
         self[address] = val
     }
     
+    /// read byte at address without control
+    public func directRead(address:Short) -> Byte {
+        return self.ram[address]
+    }
+    
+    /// write byte to address without control
+    public func directWrite(address:Short, val:Byte) -> Void {
+        self.ram[address] = val
+    }
+    
     /// write short to address (lsb at address, msb at address+1
     public func write(address:Short, val:EnhancedShort) -> Void {
         self.write(address: address, val: val.lsb)

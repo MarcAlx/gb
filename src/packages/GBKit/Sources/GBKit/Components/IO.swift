@@ -85,25 +85,25 @@ class IOInterface: Component {
     
     /// read LCD stat corresponding flag
     public func readLCDStatFlag(_ flag:LCDStatMask) -> Bool {
-        return ((mmu.read(address: IOAddresses.LCD_STATUS.rawValue) as Byte) & flag.rawValue) > 0
+        return (mmu.directRead(address: IOAddresses.LCD_STATUS.rawValue) & flag.rawValue) > 0
     }
     
     /// enable or disable corresponding LCD stat flag
     public func setLCDStatFlag(_ flag:LCDStatMask, enabled:Bool) {
         let cur:Byte = mmu.read(address: IOAddresses.LCD_STATUS.rawValue)
         let val:Byte = enabled ? cur | flag.rawValue : cur & ~flag.rawValue
-        mmu.write(address: IOAddresses.LCD_STATUS.rawValue, val: val)
+        mmu.directWrite(address: IOAddresses.LCD_STATUS.rawValue, val: val)
     }
     
     /// read lcd stat mode
     public func readLCDStatMode() -> LCDStatMode {
-        return LCDStatMode(rawValue: mmu.read(address: IOAddresses.LCD_STATUS.rawValue) & LCDStatMask.Mode.rawValue)!
+        return LCDStatMode(rawValue: mmu.directRead(address: IOAddresses.LCD_STATUS.rawValue) & LCDStatMask.Mode.rawValue)!
     }
     
     /// set lcd stat mode
     public func writeLCDStatMode(_ mode:LCDStatMode) {
         let val = self.readLCDStatMode()
-        mmu.write(address: IOAddresses.LCD_STATUS.rawValue, val: (val.rawValue & ~LCDStatMask.Mode.rawValue) | mode.rawValue)
+        mmu.directWrite(address: IOAddresses.LCD_STATUS.rawValue, val: (val.rawValue & ~LCDStatMask.Mode.rawValue) | mode.rawValue)
     }
     
     /// read LCDControl corresponding flag
