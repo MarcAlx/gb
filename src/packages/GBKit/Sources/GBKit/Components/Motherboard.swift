@@ -22,7 +22,6 @@ class Motherboard: Clockable {
     
     public func insert(cartridge:Cartridge) {
         self.insertedCartridge = cartridge
-        self.mmu.loadCartridge(cartridge: cartridge)
     }
     
     private func reset() {
@@ -34,11 +33,12 @@ class Motherboard: Clockable {
     }
     
     public func powerUp() {
-        self.isOn = true
         if(self.hasCartridgeInserted) {
             self.reset()
+            self.mmu.loadCartridge(cartridge: self.insertedCartridge!)
             GBLogService.log(LogCategory.MOTHERBOARD,"# \(self.cpu.registers.describe())")
         }
+        self.isOn = true
     }
     
     public func powerOff() {
