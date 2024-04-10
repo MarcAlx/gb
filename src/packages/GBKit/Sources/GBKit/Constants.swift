@@ -423,6 +423,7 @@ public enum MMUAddressSpaces {
     static let WORK_RAM = MMUAddresses.WORK_RAM.rawValue...MMUAddresses.WORK_RAM_END.rawValue
     static let SWITCHABLE_WORK_RAM:ClosedRange<Short> = MMUAddresses.SWITCHABLE_WORK_RAM.rawValue...MMUAddresses.SWITCHABLE_WORK_RAM_END.rawValue
     static let ECHO_RAM = MMUAddresses.ECHO_RAM.rawValue...MMUAddresses.ECHO_RAM_END.rawValue
+    static let PROHIBITED_AREA = MMUAddresses.PROHIBITED_AREA.rawValue...MMUAddresses.PROHIBITED_AREA_END.rawValue
     static let OBJECT_ATTRIBUTE_MEMORY:ClosedRange<Short> = MMUAddresses.OBJECT_ATTRIBUTE_MEMORY.rawValue...MMUAddresses.OBJECT_ATTRIBUTE_MEMORY_END.rawValue
     static let IO_REGISTERS = MMUAddresses.IO_REGISTERS.rawValue...MMUAddresses.IO_REGISTERS_END.rawValue
     static let HIGH_RAM:ClosedRange<Short> = MMUAddresses.HIGH_RAM.rawValue...MMUAddresses.HIGH_RAM_END.rawValue
