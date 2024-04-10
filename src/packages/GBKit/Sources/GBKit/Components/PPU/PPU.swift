@@ -91,13 +91,13 @@ public class PPU: Component, Clockable {
         {
             newMode = LCDStatMode.VBLANK
             //trigger stat interrupt if VBlank LCDStatus bit is set
-            statInterruptTriggered = ios.readLCDStatusFlag(.VBlankInterruptSource)
+            statInterruptTriggered = ios.readLCDStatFlag(.VBlankInterruptSource)
         }
         else if(self.lineSync < GBConstants.PIXEL_RENDER_TRIGGER)
         {
             newMode = LCDStatMode.OAM_SEARCH
             //trigger stat interrupt if OAM LCDStatus bit is set
-            statInterruptTriggered = ios.readLCDStatusFlag(.OAMInterruptSource)
+            statInterruptTriggered = ios.readLCDStatFlag(.OAMInterruptSource)
         }
         else if(self.lineSync < GBConstants.HBLANK_TRIGGER)
         {
@@ -107,13 +107,13 @@ public class PPU: Component, Clockable {
         {
             newMode = LCDStatMode.HBLANK
             //trigger stat interrupt if HBLANK LCDStatus bit is set
-            statInterruptTriggered = ios.readLCDStatusFlag(.HBlankInterruptSource)
+            statInterruptTriggered = ios.readLCDStatFlag(.HBlankInterruptSource)
         }
                
         // LY === LYC is constantly checked
         let lyEqLyc = (ly == ios.LYC);
         //trigger stat interrupt if LYeqLYC LCDStatus bit is set
-        statInterruptTriggered = statInterruptTriggered || (lyEqLyc && ios.readLCDStatusFlag(.LYCeqLYInterruptSource))
+        statInterruptTriggered = statInterruptTriggered || (lyEqLyc && ios.readLCDStatFlag(.LYCeqLYInterruptSource))
         ios.setLCDStatFlag(.LYCeqLY, enabled: lyEqLyc)
         
         //mode has changed

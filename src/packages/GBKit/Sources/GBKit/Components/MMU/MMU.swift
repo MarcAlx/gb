@@ -18,10 +18,50 @@ class MMU:Component {
     ///subscript to dispatch address to its corresponding location
     public subscript(address:Short) -> Byte {
         get {
-            return self.ram[address]
+            switch address {
+            case IOAddresses.JOYPAD_INPUT.rawValue:
+                return 0xFF//TODO read joypad
+            case IOAddresses.LCD_STATUS.rawValue:
+                return self.ram[address] | 0x80 //bit 7 is always 1
+            //prohibited area, always return 0
+            case MMUAddressSpaces.PROHIBITED_AREA:
+                return 0x00
+            //mirror C000-DDFF (which is 0x2000 behind)
+            case MMUAddressSpaces.ECHO_RAM:
+                return self.ram[address-0x2000]
+            //set ram value
+            default:
+                return self.ram[address]
+            }
         }
         set {
-            self.ram[address] = newValue
+            switch address {
+            //mirror C000-DDFF (which is 0x2000 behind)
+            case MMUAddressSpaces.ECHO_RAM:
+                self.ram[address-0x2000] = newValue
+            //prohibited area cannot be set
+            case MMUAddressSpaces.PROHIBITED_AREA:
+                break
+            //bank 0 is read only
+            case MMUAddressSpaces.CARTRIDGE_BANK0:
+                break
+            //switchable bank, switch bank on write
+            case MMUAddressSpaces.CARTRIDGE_SWITCHABLE_BANK:
+                break//TODO bank switch on write
+            //joy pad is not fully W
+            case IOAddresses.JOYPAD_INPUT.rawValue:
+                //programs often write to 0xFF00 to debounce keys, be sure that the readonly part is not erased in this process.
+                
+                //bit 7/6 are not used, 5/4 bits are R/W bits 3->0 are read only
+                self.ram[address] = (self.ram[address] & 0b1100_1111 /*clear bits 5/4 in ram*/)
+                                  | (newValue & 0b0011_0000 /*keep only RW bits of value*/)
+            //LCD status first three bits are read only
+            case IOAddresses.LCD_STATUS.rawValue:
+                self.ram[address] = (self.ram[address] & 0b0000_0111) | (newValue & 0b1111_1000)
+            //default to ram
+            default:
+                self.ram[address] = newValue
+            }
         }
     }
     
@@ -34,7 +74,7 @@ class MMU:Component {
     
     public func reset() {
         self.currentSwitchableBank = 1
-        //todo init memory with default value
+        self.ram.reset()
     }
     
     /// read byte at address
@@ -52,6 +92,16 @@ class MMU:Component {
     /// write byte to address
     public func write(address:Short, val:Byte) -> Void {
         self[address] = val
+    }
+    
+    /// read byte at address without control
+    public func directRead(address:Short) -> Byte {
+        return self.ram[address]
+    }
+    
+    /// write byte to address without control
+    public func directWrite(address:Short, val:Byte) -> Void {
+        self.ram[address] = val
     }
     
     /// write short to address (lsb at address, msb at address+1

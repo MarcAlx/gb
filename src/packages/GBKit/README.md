@@ -42,7 +42,7 @@ Core package to emulate GameBoy.
 
 ### gameboy doctor
 
-This repo is compliant with [gameboy doctor](https://github.com/robert/gameboy-doctor) for the following roms:
+This repo is compliant with [gameboy doctor](https://github.com/robert/gameboy-doctor) for the following roms [found here](https://github.com/retrio/gb-test-roms/tree/master/cpu_instrs):
 
  - 01-special.gb
  - 03-op sp,hl.gb
