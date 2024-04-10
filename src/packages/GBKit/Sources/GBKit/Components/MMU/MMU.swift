@@ -34,7 +34,7 @@ class MMU:Component {
     
     public func reset() {
         self.currentSwitchableBank = 1
-        //todo init memory with default value
+        self.ram.reset()
     }
     
     /// read byte at address

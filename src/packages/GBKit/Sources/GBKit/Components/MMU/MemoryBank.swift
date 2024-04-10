@@ -1,5 +1,5 @@
 /// a memory bank
-class MemoryBank {
+class MemoryBank:Component {
     /// bank data
     private var _data:[Byte]
     private var _name:String
@@ -32,5 +32,11 @@ class MemoryBank {
         for i in 0..<bank._data.count {
             self._data[at+i] = bank[Short(i)]
         }
+    }
+    
+    /// clears all data
+    public func reset() {
+        //fill data with 0 while keeping same size
+        self._data = Array(repeating: 0, count: self._data.count)
     }
 }
