@@ -6,36 +6,37 @@ Core package to emulate GameBoy.
 
 ### Components dependency tree
 
-```
-- GB
-    MB
+```mermaid
+graph BT;
+  GB[Game Boy]
+  MB[MotherBoard]
+  CPU[CPU]
+  MMU[MMU]
+  IO[I/O]
+  R[Registers]
 
-- MB
-    CPU
-    MMU
-    PPU
-    I/O
+  INT[Interrupts]
+  PM[Palette Manager]
 
-- CPU
-    Interrupts
-    MMU
-    Registers (not singleton)
-    
-- MMU
-    N/A
-    
-- Interrupts
-    CPU
-    MMU
-    
-- I/O
-    MMU
+  MB --> GB;
+  CPU --> MB;
+  MMU --> MB;
+  PPU --> MB;
+  IO --> MB;
 
-- PPU
-    MMU
-    I/O
-    Interrups
-    PaletteManager
+  R ---> CPU;
+  INT --> CPU;
+  MMU --> CPU;
+  CPU --> INT;
+  MMU --> INT;
+
+  MMU --> IO;
+
+  IO --> PPU;
+  MMU --> PPU;
+  INT --> PPU;
+  PM --> PPU;
+  
 ```
 
 ## Quality 
