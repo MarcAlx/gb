@@ -88,7 +88,7 @@ final class CPUInstructionsTests: XCTestCase {
         XCTAssertTrue(cpu.registers.isFlagSet(.NEGATIVE))
         
         //0x35
-        cpu.registers.HL = 0x0000
+        cpu.registers.HL = MMUAddresses.WORK_RAM.rawValue
         cpu.mmu[cpu.registers.HL] = 1
         cpu.dec_hlp()
         XCTAssertTrue(cpu.mmu[cpu.registers.HL] == 0)
@@ -187,10 +187,11 @@ final class CPUInstructionsTests: XCTestCase {
         XCTAssertTrue(cpu.registers.H == 1)
         
         //0x34
-        cpu.registers.HL = 0x0000
+        cpu.registers.HL = MMUAddresses.WORK_RAM.rawValue
         cpu.mmu[cpu.registers.HL] = 0x22
         cpu.inc_hlp()
         XCTAssertTrue(cpu.mmu[cpu.registers.HL] == 0x23)
+        XCTAssertTrue(cpu.registers.HL == MMUAddresses.WORK_RAM.rawValue)
         
         //0x0C
         cpu.registers.C = 0
@@ -248,35 +249,35 @@ final class CPUInstructionsTests: XCTestCase {
         
         //0x02
         cpu.registers.A = 0x6
-        cpu.registers.BC = 0x8
+        cpu.registers.BC = MMUAddresses.WORK_RAM.rawValue
         cpu.ld_bcp_a()
-        XCTAssertTrue(cpu.mmu[0x8] == 0x6)
+        XCTAssertTrue(cpu.mmu[MMUAddresses.WORK_RAM.rawValue] == 0x6)
         
         //0x12
         cpu.registers.A = 0x6
-        cpu.registers.DE = 0x8
+        cpu.registers.DE = MMUAddresses.WORK_RAM.rawValue
         cpu.ld_dep_a()
-        XCTAssertTrue(cpu.mmu[0x8] == 0x6)
+        XCTAssertTrue(cpu.mmu[MMUAddresses.WORK_RAM.rawValue] == 0x6)
         
         //0x22
         cpu.registers.A = 0x6
-        cpu.registers.HL = 0x8
+        cpu.registers.HL = MMUAddresses.WORK_RAM.rawValue
         cpu.ld_hlpi_a()
-        XCTAssertTrue(cpu.mmu[0x8] == 0x6)
-        XCTAssertTrue(cpu.registers.HL == 0x9)
+        XCTAssertTrue(cpu.mmu[MMUAddresses.WORK_RAM.rawValue] == 0x6)
+        XCTAssertTrue(cpu.registers.HL == MMUAddresses.WORK_RAM.rawValue+1)
         
         //0x32
         cpu.registers.A = 0x6
-        cpu.registers.HL = 0x8
+        cpu.registers.HL = MMUAddresses.WORK_RAM.rawValue
         cpu.ld_hlpd_a()
-        XCTAssertTrue(cpu.mmu[0x8] == 0x6)
-        XCTAssertTrue(cpu.registers.HL == 0x7)
+        XCTAssertTrue(cpu.mmu[MMUAddresses.WORK_RAM.rawValue] == 0x6)
+        XCTAssertTrue(cpu.registers.HL == MMUAddresses.WORK_RAM.rawValue-1)
         
         //0x08
         cpu.registers.SP = 0x6
-        cpu.mmu[0x0000] = 0x01
-        cpu.ld_nnp_sp(address: EnhancedShort(0x0000))
-        XCTAssertTrue(cpu.mmu[0x01] == 0x6)
+        cpu.mmu[MMUAddresses.WORK_RAM.rawValue] = 0x01
+        cpu.ld_nnp_sp(address: EnhancedShort(MMUAddresses.WORK_RAM.rawValue))
+        XCTAssertTrue(cpu.mmu[MMUAddresses.WORK_RAM.rawValue] == 0x6)
         
         //0xFA
         cpu.registers.SP = 0x6
@@ -300,39 +301,39 @@ final class CPUInstructionsTests: XCTestCase {
         XCTAssertTrue(cpu.registers.H == 0x6)
         
         //0x36
-        cpu.registers.HL = 0x0000
+        cpu.registers.HL = MMUAddresses.WORK_RAM.rawValue
         cpu.ld_hlp_n(val:0x6)
-        XCTAssertTrue(cpu.mmu[0x0000] == 0x6)
+        XCTAssertTrue(cpu.mmu[MMUAddresses.WORK_RAM.rawValue] == 0x6)
         
         //0x0A
         cpu.registers.A = 0x4
-        cpu.registers.BC = 0x0000
+        cpu.registers.BC = MMUAddresses.WORK_RAM.rawValue
         cpu.mmu[cpu.registers.BC] = 0x22
         cpu.ld_a_bcp()
         XCTAssertTrue(cpu.registers.A == 0x22)
         
         //0x1A
         cpu.registers.A = 0x4
-        cpu.registers.DE = 0x0000
+        cpu.registers.DE = MMUAddresses.WORK_RAM.rawValue
         cpu.mmu[cpu.registers.DE] = 0x22
         cpu.ld_a_dep()
         XCTAssertTrue(cpu.registers.A == 0x22)
         
         //0x2A
         cpu.registers.A = 0x4
-        cpu.registers.HL = 0x0000
+        cpu.registers.HL = MMUAddresses.WORK_RAM.rawValue
         cpu.mmu[cpu.registers.HL] = 0x22
         cpu.ld_a_hlpi()
         XCTAssertTrue(cpu.registers.A == 0x22)
-        XCTAssertTrue(cpu.registers.HL == 0x1)
+        XCTAssertTrue(cpu.registers.HL == MMUAddresses.WORK_RAM.rawValue+1)
         
         //0x3A
         cpu.registers.A = 0x4
-        cpu.registers.HL = 0x0001
+        cpu.registers.HL = MMUAddresses.WORK_RAM.rawValue
         cpu.mmu[cpu.registers.HL] = 0x22
         cpu.ld_a_hlpd()
         XCTAssertTrue(cpu.registers.A == 0x22)
-        XCTAssertTrue(cpu.registers.HL == 0x0)
+        XCTAssertTrue(cpu.registers.HL == MMUAddresses.WORK_RAM.rawValue-1)
         
         //0x0E
         cpu.registers.C = 0x0
@@ -391,8 +392,8 @@ final class CPUInstructionsTests: XCTestCase {
         
         //0x46
         cpu.registers.B = 0x4
-        cpu.registers.HL = 0x0000
-        cpu.mmu[0x0000] = 0x5
+        cpu.registers.HL = MMUAddresses.WORK_RAM.rawValue
+        cpu.mmu[MMUAddresses.WORK_RAM.rawValue] = 0x5
         cpu.ld_b_hlp()
         XCTAssertTrue(cpu.registers.B == 0x5)
         
@@ -439,8 +440,8 @@ final class CPUInstructionsTests: XCTestCase {
 
         //0x4E
         cpu.registers.C = 0x4
-        cpu.registers.HL = 0x0000
-        cpu.mmu[0x0000] = 0x5
+        cpu.registers.HL = MMUAddresses.WORK_RAM.rawValue
+        cpu.mmu[MMUAddresses.WORK_RAM.rawValue] = 0x5
         cpu.ld_c_hlp()
         XCTAssertTrue(cpu.registers.C == 0x5)
 
@@ -487,8 +488,8 @@ final class CPUInstructionsTests: XCTestCase {
         
         //0x56
         cpu.registers.D = 0x4
-        cpu.registers.HL = 0x0000
-        cpu.mmu[0x0000] = 0x5
+        cpu.registers.HL = MMUAddresses.WORK_RAM.rawValue
+        cpu.mmu[MMUAddresses.WORK_RAM.rawValue] = 0x5
         cpu.ld_d_hlp()
         XCTAssertTrue(cpu.registers.D == 0x5)
         
@@ -535,8 +536,8 @@ final class CPUInstructionsTests: XCTestCase {
 
         //0x5E
         cpu.registers.E = 0x4
-        cpu.registers.HL = 0x0000
-        cpu.mmu[0x0000] = 0x5
+        cpu.registers.HL = MMUAddresses.WORK_RAM.rawValue
+        cpu.mmu[MMUAddresses.WORK_RAM.rawValue] = 0x5
         cpu.ld_e_hlp()
         XCTAssertTrue(cpu.registers.E == 0x5)
 
@@ -583,8 +584,8 @@ final class CPUInstructionsTests: XCTestCase {
         
         //0x66
         cpu.registers.H = 0x4
-        cpu.registers.HL = 0x0000
-        cpu.mmu[0x0000] = 0x6
+        cpu.registers.HL = MMUAddresses.WORK_RAM.rawValue
+        cpu.mmu[MMUAddresses.WORK_RAM.rawValue] = 0x6
         cpu.ld_h_hlp()
         XCTAssertTrue(cpu.registers.H == 0x6)
         
@@ -631,8 +632,8 @@ final class CPUInstructionsTests: XCTestCase {
 
         //0x6E
         cpu.registers.L = 0x4
-        cpu.registers.HL = 0x0000
-        cpu.mmu[0x0000] = 0x6
+        cpu.registers.HL = MMUAddresses.WORK_RAM.rawValue
+        cpu.mmu[MMUAddresses.WORK_RAM.rawValue] = 0x6
         cpu.ld_l_hlp()
         XCTAssertTrue(cpu.registers.L == 0x6)
 
@@ -643,32 +644,32 @@ final class CPUInstructionsTests: XCTestCase {
         XCTAssertTrue(cpu.registers.L == 0x6)
         
         //0x70
-        cpu.registers.HL = 0x0000
-        cpu.mmu[0x0000] = 0x6
+        cpu.registers.HL = MMUAddresses.WORK_RAM.rawValue
+        cpu.mmu[MMUAddresses.WORK_RAM.rawValue] = 0x6
         cpu.registers.B = 0x7
         cpu.ld_hlp_b()
-        XCTAssertTrue(cpu.mmu[0x0000] == 0x7)
+        XCTAssertTrue(cpu.mmu[MMUAddresses.WORK_RAM.rawValue] == 0x7)
         
         //0x71
-        cpu.registers.HL = 0x0000
-        cpu.mmu[0x0000] = 0x6
+        cpu.registers.HL = MMUAddresses.WORK_RAM.rawValue
+        cpu.mmu[MMUAddresses.WORK_RAM.rawValue] = 0x6
         cpu.registers.C = 0x7
         cpu.ld_hlp_c()
-        XCTAssertTrue(cpu.mmu[0x0000] == 0x7)
+        XCTAssertTrue(cpu.mmu[MMUAddresses.WORK_RAM.rawValue] == 0x7)
         
         //0x72
-        cpu.registers.HL = 0x0000
-        cpu.mmu[0x0000] = 0x6
+        cpu.registers.HL = MMUAddresses.WORK_RAM.rawValue
+        cpu.mmu[MMUAddresses.WORK_RAM.rawValue] = 0x6
         cpu.registers.D = 0x7
         cpu.ld_hlp_d()
-        XCTAssertTrue(cpu.mmu[0x0000] == 0x7)
+        XCTAssertTrue(cpu.mmu[MMUAddresses.WORK_RAM.rawValue] == 0x7)
         
         //0x73
-        cpu.registers.HL = 0x0000
-        cpu.mmu[0x0000] = 0x6
+        cpu.registers.HL = MMUAddresses.WORK_RAM.rawValue
+        cpu.mmu[MMUAddresses.WORK_RAM.rawValue] = 0x6
         cpu.registers.E = 0x7
         cpu.ld_hlp_e()
-        XCTAssertTrue(cpu.mmu[0x0000] == 0x7)
+        XCTAssertTrue(cpu.mmu[MMUAddresses.WORK_RAM.rawValue] == 0x7)
         
         //0x74
         cpu.registers.HL = 0x0000
@@ -678,18 +679,18 @@ final class CPUInstructionsTests: XCTestCase {
         XCTAssertTrue(cpu.mmu[0xFF00] == 0xFF)
         
         //0x75
-        cpu.registers.HL = 0x0000
-        cpu.mmu[0x0000] = 0x6
+        cpu.registers.HL = MMUAddresses.WORK_RAM.rawValue
+        cpu.mmu[MMUAddresses.WORK_RAM.rawValue] = 0x6
         cpu.registers.L = 0xFF
         cpu.ld_hlp_l()
-        XCTAssertTrue(cpu.mmu[0x00FF] == 0xFF)
+        XCTAssertTrue(cpu.mmu[MMUAddresses.WORK_RAM.rawValue+0xFF] == 0xFF)
         
         //0x77
-        cpu.registers.HL = 0x0000
-        cpu.mmu[0x0000] = 0x6
+        cpu.registers.HL = MMUAddresses.WORK_RAM.rawValue
+        cpu.mmu[MMUAddresses.WORK_RAM.rawValue] = 0x6
         cpu.registers.A = 0x7
         cpu.ld_hlp_a()
-        XCTAssertTrue(cpu.mmu[0x0000] == 0x7)
+        XCTAssertTrue(cpu.mmu[MMUAddresses.WORK_RAM.rawValue] == 0x7)
         
         //0x78
         cpu.registers.A = 0x3
@@ -729,8 +730,8 @@ final class CPUInstructionsTests: XCTestCase {
 
         //0x7E
         cpu.registers.A = 0x4
-        cpu.registers.HL = 0x0000
-        cpu.mmu[0x0000] = 0x6
+        cpu.registers.HL = MMUAddresses.WORK_RAM.rawValue
+        cpu.mmu[MMUAddresses.WORK_RAM.rawValue] = 0x6
         cpu.ld_a_hlp()
         XCTAssertTrue(cpu.registers.A == 0x6)
 
@@ -792,13 +793,13 @@ final class CPUInstructionsTests: XCTestCase {
         
         //0xEA
         cpu.registers.A = 0x66
-        cpu.ld_nnp_a(address: EnhancedShort(0x00FF))
-        XCTAssertTrue(cpu.mmu[0x00FF] == 0x66)
+        cpu.ld_nnp_a(address: EnhancedShort(MMUAddresses.WORK_RAM.rawValue))
+        XCTAssertTrue(cpu.mmu[MMUAddresses.WORK_RAM.rawValue] == 0x66)
         
         //0xFA
         cpu.registers.A = 0xFF
-        cpu.mmu[0x00FF] = 0xDD
-        cpu.ld_a_nnp(address: EnhancedShort(0x00FF) )
+        cpu.mmu[MMUAddresses.WORK_RAM.rawValue] = 0xDD
+        cpu.ld_a_nnp(address: EnhancedShort(MMUAddresses.WORK_RAM.rawValue) )
         XCTAssertTrue(cpu.registers.A == 0xDD)
     }
 
@@ -1009,7 +1010,7 @@ final class CPUInstructionsTests: XCTestCase {
         cpu.registers.B = 0xFF
         cpu.adc_a_b()
         XCTAssertTrue(cpu.registers.A == 0x01)
-        XCTAssertTrue(cpu.registers.isFlagCleared(.CARRY))
+        XCTAssertTrue(cpu.registers.isFlagSet(.CARRY))
         XCTAssertTrue(cpu.registers.isFlagCleared(.ZERO))
         
         //0x81
@@ -1025,7 +1026,7 @@ final class CPUInstructionsTests: XCTestCase {
         cpu.registers.C = 0xFF
         cpu.adc_a_c()
         XCTAssertTrue(cpu.registers.A == 0x01)
-        XCTAssertTrue(cpu.registers.isFlagCleared(.CARRY))
+        XCTAssertTrue(cpu.registers.isFlagSet(.CARRY))
         XCTAssertTrue(cpu.registers.isFlagCleared(.ZERO))
         
         //0x82
@@ -1041,7 +1042,7 @@ final class CPUInstructionsTests: XCTestCase {
         cpu.registers.D = 0xFF
         cpu.adc_a_d()
         XCTAssertTrue(cpu.registers.A == 0x01)
-        XCTAssertTrue(cpu.registers.isFlagCleared(.CARRY))
+        XCTAssertTrue(cpu.registers.isFlagSet(.CARRY))
         XCTAssertTrue(cpu.registers.isFlagCleared(.ZERO))
         
         //0x83
@@ -1057,7 +1058,7 @@ final class CPUInstructionsTests: XCTestCase {
         cpu.registers.E = 0xFF
         cpu.adc_a_e()
         XCTAssertTrue(cpu.registers.A == 0x01)
-        XCTAssertTrue(cpu.registers.isFlagCleared(.CARRY))
+        XCTAssertTrue(cpu.registers.isFlagSet(.CARRY))
         XCTAssertTrue(cpu.registers.isFlagCleared(.ZERO))
         
         //0x84
@@ -1073,7 +1074,7 @@ final class CPUInstructionsTests: XCTestCase {
         cpu.registers.H = 0xFF
         cpu.adc_a_h()
         XCTAssertTrue(cpu.registers.A == 0x01)
-        XCTAssertTrue(cpu.registers.isFlagCleared(.CARRY))
+        XCTAssertTrue(cpu.registers.isFlagSet(.CARRY))
         XCTAssertTrue(cpu.registers.isFlagCleared(.ZERO))
         
         //0x85
@@ -1089,7 +1090,7 @@ final class CPUInstructionsTests: XCTestCase {
         cpu.registers.L = 0xFF
         cpu.adc_a_l()
         XCTAssertTrue(cpu.registers.A == 0x01)
-        XCTAssertTrue(cpu.registers.isFlagCleared(.CARRY))
+        XCTAssertTrue(cpu.registers.isFlagSet(.CARRY))
         XCTAssertTrue(cpu.registers.isFlagCleared(.ZERO))
         
         //0x86
@@ -1106,7 +1107,7 @@ final class CPUInstructionsTests: XCTestCase {
         cpu.mmu[0xFFFF] = 0xFF
         cpu.adc_a_hlp()
         XCTAssertTrue(cpu.registers.A == 0x01)
-        XCTAssertTrue(cpu.registers.isFlagCleared(.CARRY))
+        XCTAssertTrue(cpu.registers.isFlagSet(.CARRY))
         XCTAssertTrue(cpu.registers.isFlagCleared(.ZERO))
         
         //0xC6
@@ -1120,7 +1121,7 @@ final class CPUInstructionsTests: XCTestCase {
         cpu.registers.A = 0x01
         cpu.adc_a_n(val: 0xFF)
         XCTAssertTrue(cpu.registers.A == 0x01)
-        XCTAssertTrue(cpu.registers.isFlagCleared(.CARRY))
+        XCTAssertTrue(cpu.registers.isFlagSet(.CARRY))
         XCTAssertTrue(cpu.registers.isFlagCleared(.ZERO))
     }
     
@@ -1132,7 +1133,7 @@ final class CPUInstructionsTests: XCTestCase {
         cpu.sub_a_b()
         XCTAssertTrue(cpu.registers.A == 0b0000_1111)
         XCTAssertTrue(cpu.registers.isFlagSet(.HALF_CARRY))
-        XCTAssertTrue(cpu.registers.isFlagCleared(.NEGATIVE))
+        XCTAssertTrue(cpu.registers.isFlagSet(.NEGATIVE))//raise by sub
         cpu.registers.A = 0x00
         cpu.registers.B = 0x01
         cpu.sub_a_b()
@@ -1150,7 +1151,7 @@ final class CPUInstructionsTests: XCTestCase {
         cpu.sub_a_c()
         XCTAssertTrue(cpu.registers.A == 0b0000_1111)
         XCTAssertTrue(cpu.registers.isFlagSet(.HALF_CARRY))
-        XCTAssertTrue(cpu.registers.isFlagCleared(.NEGATIVE))
+        XCTAssertTrue(cpu.registers.isFlagSet(.NEGATIVE))//raise by sub
         cpu.registers.A = 0x00
         cpu.registers.C = 0x01
         cpu.sub_a_c()
@@ -1168,7 +1169,7 @@ final class CPUInstructionsTests: XCTestCase {
         cpu.sub_a_d()
         XCTAssertTrue(cpu.registers.A == 0b0000_1111)
         XCTAssertTrue(cpu.registers.isFlagSet(.HALF_CARRY))
-        XCTAssertTrue(cpu.registers.isFlagCleared(.NEGATIVE))
+        XCTAssertTrue(cpu.registers.isFlagSet(.NEGATIVE))//raise by sub
         cpu.registers.A = 0x00
         cpu.registers.D = 0x01
         cpu.sub_a_d()
@@ -1186,7 +1187,7 @@ final class CPUInstructionsTests: XCTestCase {
         cpu.sub_a_e()
         XCTAssertTrue(cpu.registers.A == 0b0000_1111)
         XCTAssertTrue(cpu.registers.isFlagSet(.HALF_CARRY))
-        XCTAssertTrue(cpu.registers.isFlagCleared(.NEGATIVE))
+        XCTAssertTrue(cpu.registers.isFlagSet(.NEGATIVE))//raise by sub
         cpu.registers.A = 0x00
         cpu.registers.E = 0x01
         cpu.sub_a_e()
@@ -1204,7 +1205,7 @@ final class CPUInstructionsTests: XCTestCase {
         cpu.sub_a_h()
         XCTAssertTrue(cpu.registers.A == 0b0000_1111)
         XCTAssertTrue(cpu.registers.isFlagSet(.HALF_CARRY))
-        XCTAssertTrue(cpu.registers.isFlagCleared(.NEGATIVE))
+        XCTAssertTrue(cpu.registers.isFlagSet(.NEGATIVE))//raise by sub
         cpu.registers.A = 0x00
         cpu.registers.H = 0x01
         cpu.sub_a_h()
@@ -1222,7 +1223,7 @@ final class CPUInstructionsTests: XCTestCase {
         cpu.sub_a_l()
         XCTAssertTrue(cpu.registers.A == 0b0000_1111)
         XCTAssertTrue(cpu.registers.isFlagSet(.HALF_CARRY))
-        XCTAssertTrue(cpu.registers.isFlagCleared(.NEGATIVE))
+        XCTAssertTrue(cpu.registers.isFlagSet(.NEGATIVE))//raise by sub
         cpu.registers.A = 0x00
         cpu.registers.L = 0x01
         cpu.sub_a_l()
@@ -1239,7 +1240,7 @@ final class CPUInstructionsTests: XCTestCase {
         cpu.sub_a_n(val: 0b0000_0001)
         XCTAssertTrue(cpu.registers.A == 0b0000_1111)
         XCTAssertTrue(cpu.registers.isFlagSet(.HALF_CARRY))
-        XCTAssertTrue(cpu.registers.isFlagCleared(.NEGATIVE))
+        XCTAssertTrue(cpu.registers.isFlagSet(.NEGATIVE))//raise by sub
         cpu.registers.A = 0x00
         cpu.sub_a_n(val:0x01)
         XCTAssertTrue(cpu.registers.A == 0xFF)
@@ -1256,7 +1257,7 @@ final class CPUInstructionsTests: XCTestCase {
         cpu.sub_a_hlp()
         XCTAssertTrue(cpu.registers.A == 0b0000_1111)
         XCTAssertTrue(cpu.registers.isFlagSet(.HALF_CARRY))
-        XCTAssertTrue(cpu.registers.isFlagCleared(.NEGATIVE))
+        XCTAssertTrue(cpu.registers.isFlagSet(.NEGATIVE))//raise by sub
         cpu.registers.A = 0x00
         cpu.mmu[cpu.registers.HL] = 0b0000_0001
         cpu.sub_a_hlp()
@@ -1279,7 +1280,7 @@ final class CPUInstructionsTests: XCTestCase {
         cpu.sbc_a_b()
         XCTAssertTrue(cpu.registers.A == 0b0000_1111)
         XCTAssertTrue(cpu.registers.isFlagSet(.HALF_CARRY))
-        XCTAssertTrue(cpu.registers.isFlagCleared(.NEGATIVE))
+        XCTAssertTrue(cpu.registers.isFlagSet(.NEGATIVE))//raise by sub
         cpu.registers.A = 0x00
         cpu.registers.B = 0x00
         cpu.registers.raiseFlag(.CARRY)
@@ -1300,7 +1301,7 @@ final class CPUInstructionsTests: XCTestCase {
         cpu.sbc_a_c()
         XCTAssertTrue(cpu.registers.A == 0b0000_1111)
         XCTAssertTrue(cpu.registers.isFlagSet(.HALF_CARRY))
-        XCTAssertTrue(cpu.registers.isFlagCleared(.NEGATIVE))
+        XCTAssertTrue(cpu.registers.isFlagSet(.NEGATIVE))//raise by sub
         cpu.registers.A = 0x00
         cpu.registers.C = 0x00
         cpu.registers.raiseFlag(.CARRY)
@@ -1321,7 +1322,7 @@ final class CPUInstructionsTests: XCTestCase {
         cpu.sbc_a_d()
         XCTAssertTrue(cpu.registers.A == 0b0000_1111)
         XCTAssertTrue(cpu.registers.isFlagSet(.HALF_CARRY))
-        XCTAssertTrue(cpu.registers.isFlagCleared(.NEGATIVE))
+        XCTAssertTrue(cpu.registers.isFlagSet(.NEGATIVE))//raise by sub
         cpu.registers.A = 0x00
         cpu.registers.D = 0x00
         cpu.registers.raiseFlag(.CARRY)
@@ -1342,7 +1343,7 @@ final class CPUInstructionsTests: XCTestCase {
         cpu.sbc_a_e()
         XCTAssertTrue(cpu.registers.A == 0b0000_1111)
         XCTAssertTrue(cpu.registers.isFlagSet(.HALF_CARRY))
-        XCTAssertTrue(cpu.registers.isFlagCleared(.NEGATIVE))
+        XCTAssertTrue(cpu.registers.isFlagSet(.NEGATIVE))//raise by sub
         cpu.registers.A = 0x00
         cpu.registers.E = 0x00
         cpu.registers.raiseFlag(.CARRY)
@@ -1363,7 +1364,7 @@ final class CPUInstructionsTests: XCTestCase {
         cpu.sbc_a_h()
         XCTAssertTrue(cpu.registers.A == 0b0000_1111)
         XCTAssertTrue(cpu.registers.isFlagSet(.HALF_CARRY))
-        XCTAssertTrue(cpu.registers.isFlagCleared(.NEGATIVE))
+        XCTAssertTrue(cpu.registers.isFlagSet(.NEGATIVE))//raise by sub
         cpu.registers.A = 0x00
         cpu.registers.H = 0x00
         cpu.registers.raiseFlag(.CARRY)
@@ -1384,7 +1385,7 @@ final class CPUInstructionsTests: XCTestCase {
         cpu.sbc_a_l()
         XCTAssertTrue(cpu.registers.A == 0b0000_1111)
         XCTAssertTrue(cpu.registers.isFlagSet(.HALF_CARRY))
-        XCTAssertTrue(cpu.registers.isFlagCleared(.NEGATIVE))
+        XCTAssertTrue(cpu.registers.isFlagSet(.NEGATIVE))//raise by sub
         cpu.registers.A = 0x00
         cpu.registers.L = 0x00
         cpu.registers.raiseFlag(.CARRY)
@@ -1404,7 +1405,7 @@ final class CPUInstructionsTests: XCTestCase {
         cpu.sbc_a_n(val: 0b0000_0000)
         XCTAssertTrue(cpu.registers.A == 0b0000_1111)
         XCTAssertTrue(cpu.registers.isFlagSet(.HALF_CARRY))
-        XCTAssertTrue(cpu.registers.isFlagCleared(.NEGATIVE))
+        XCTAssertTrue(cpu.registers.isFlagSet(.NEGATIVE))//raise by sub
         cpu.registers.A = 0x00
         cpu.registers.raiseFlag(.CARRY)
         cpu.sbc_a_n(val:0x00)
@@ -1424,7 +1425,7 @@ final class CPUInstructionsTests: XCTestCase {
         cpu.sbc_a_hlp()
         XCTAssertTrue(cpu.registers.A == 0b0000_1111)
         XCTAssertTrue(cpu.registers.isFlagSet(.HALF_CARRY))
-        XCTAssertTrue(cpu.registers.isFlagCleared(.NEGATIVE))
+        XCTAssertTrue(cpu.registers.isFlagSet(.NEGATIVE))//raise by sub
         cpu.registers.A = 0x00
         cpu.mmu[cpu.registers.HL] = 0b0000_0000
         cpu.registers.raiseFlag(.CARRY)
@@ -1523,12 +1524,12 @@ final class CPUInstructionsTests: XCTestCase {
         
         //0xA6
         cpu.registers.A = 0b0000_0001
-        cpu.registers.HL = 0x0000
-        cpu.mmu[0x0000] = 0b0000_0001
+        cpu.registers.HL = MMUAddresses.WORK_RAM.rawValue
+        cpu.mmu[MMUAddresses.WORK_RAM.rawValue] = 0b0000_0001
         cpu.and_a_hlp()
         XCTAssertTrue(cpu.registers.isFlagCleared(.ZERO))
         cpu.registers.A = 0b0000_0000
-        cpu.mmu[0x0000] = 0b0000_0001
+        cpu.mmu[MMUAddresses.WORK_RAM.rawValue] = 0b0000_0001
         cpu.and_a_hlp()
         XCTAssertTrue(cpu.registers.isFlagSet(.ZERO))
         XCTAssertTrue(cpu.registers.isFlagCleared(.NEGATIVE))
@@ -1632,14 +1633,14 @@ final class CPUInstructionsTests: XCTestCase {
         
         //0xAE
         cpu.registers.A = 0b0000_1111
-        cpu.registers.HL = 0x0000
-        cpu.mmu[0x0000] = 0b1111_0000
+        cpu.registers.HL = MMUAddresses.WORK_RAM.rawValue
+        cpu.mmu[MMUAddresses.WORK_RAM.rawValue] = 0b1111_0000
         cpu.xor_a_hlp()
         XCTAssertTrue(cpu.registers.A == 0b1111_1111)
         XCTAssertTrue(cpu.registers.isFlagCleared(.ZERO))
         cpu.registers.A = 0b0000_0000
-        cpu.registers.HL = 0x0000
-        cpu.mmu[0x0000] = 0b0000_0000
+        cpu.registers.HL = MMUAddresses.WORK_RAM.rawValue
+        cpu.mmu[MMUAddresses.WORK_RAM.rawValue] = 0b0000_0000
         cpu.xor_a_hlp()
         XCTAssertTrue(cpu.registers.A == 0b0000_0000)
         XCTAssertTrue(cpu.registers.isFlagSet(.ZERO))
@@ -1806,14 +1807,14 @@ final class CPUInstructionsTests: XCTestCase {
         
         //0xB6
         cpu.registers.A = 0b0000_1111
-        cpu.registers.HL = 0x0000
-        cpu.mmu[0x0000] = 0b1111_0000
+        cpu.registers.HL = MMUAddresses.WORK_RAM.rawValue
+        cpu.mmu[MMUAddresses.WORK_RAM.rawValue] = 0b1111_0000
         cpu.or_a_hlp()
         XCTAssertTrue(cpu.registers.A == 0b1111_1111)
         XCTAssertTrue(cpu.registers.isFlagCleared(.ZERO))
         cpu.registers.A = 0b0000_0000
-        cpu.registers.HL = 0x0000
-        cpu.mmu[0x0000] = 0b0000_0000
+        cpu.registers.HL = MMUAddresses.WORK_RAM.rawValue
+        cpu.mmu[MMUAddresses.WORK_RAM.rawValue] = 0b0000_0000
         cpu.or_a_hlp()
         XCTAssertTrue(cpu.registers.A == 0b0000_0000)
         XCTAssertTrue(cpu.registers.isFlagSet(.ZERO))
@@ -2133,9 +2134,9 @@ final class CPUInstructionsTests: XCTestCase {
         
         //0xF6
         cpu.registers.SP = 0xFFFF
-        cpu.registers.AF = 0xAAFF
+        cpu.registers.AF = 0xAAF0
         cpu.push_af()
-        XCTAssertTrue(cpu.mmu[0xFFFE] == 0xAA && cpu.mmu[0xFFFD] == 0xFF)
+        XCTAssertTrue(cpu.mmu[0xFFFE] == 0xAA && cpu.mmu[0xFFFD] == 0xF0)
     }
     
     func test_pop() throws {
@@ -2169,9 +2170,9 @@ final class CPUInstructionsTests: XCTestCase {
         cpu.registers.SP = 0xFFFD
         cpu.registers.BC = 0x0000
         cpu.mmu[0xFFFE] = 0xAA
-        cpu.mmu[0xFFFD] = 0xFF
+        cpu.mmu[0xFFFD] = 0xF0
         cpu.pop_af()
-        XCTAssertTrue(cpu.registers.AF == 0xAAFF)
+        XCTAssertTrue(cpu.registers.AF == 0xAAF0)
     }
     
     func test_rst() throws {
@@ -2220,6 +2221,7 @@ final class CPUInstructionsTests: XCTestCase {
     
     func test_daa() throws {
         let cpu:CPU = CPU()
+        cpu.registers.clearFlags(.CARRY,.HALF_CARRY,.NEGATIVE,.ZERO)
         
         cpu.registers.A = 0
         cpu.daa()
@@ -2256,7 +2258,7 @@ final class CPUInstructionsTests: XCTestCase {
         cpu.registers.A = 0b0000_0001
         cpu.rra()
         XCTAssertTrue(cpu.registers.A == 0b0000_0000)
-        XCTAssertTrue(cpu.registers.isFlagSet(.ZERO))
+        XCTAssertTrue(cpu.registers.isFlagCleared(.ZERO))//cleared
         XCTAssertTrue(cpu.registers.isFlagSet(.CARRY))
         XCTAssertTrue(cpu.registers.isFlagCleared(.HALF_CARRY))
         XCTAssertTrue(cpu.registers.isFlagCleared(.NEGATIVE))
@@ -2268,7 +2270,35 @@ final class CPUInstructionsTests: XCTestCase {
         cpu.registers.A = 0b0000_0001
         cpu.rrca()
         XCTAssertTrue(cpu.registers.A == 0b1000_0000)
-        XCTAssertTrue(cpu.registers.isFlagCleared(.ZERO))
+        XCTAssertTrue(cpu.registers.isFlagCleared(.ZERO))//cleared
+        XCTAssertTrue(cpu.registers.isFlagSet(.CARRY))
+        XCTAssertTrue(cpu.registers.isFlagCleared(.HALF_CARRY))
+        XCTAssertTrue(cpu.registers.isFlagCleared(.NEGATIVE))
+    }
+    
+    func test_rla() throws {
+        let cpu:CPU = CPU()
+        
+        cpu.registers.clearFlag(.ZERO)
+        cpu.registers.raiseFlag(.HALF_CARRY)
+        cpu.registers.raiseFlag(.NEGATIVE)
+        cpu.registers.clearFlag(.CARRY)
+        cpu.registers.A = 0b0100_0000
+        cpu.rla()
+        XCTAssertTrue(cpu.registers.A == 0b1000_0000)
+        XCTAssertTrue(cpu.registers.isFlagCleared(.ZERO))//cleared
+        XCTAssertTrue(cpu.registers.isFlagCleared(.CARRY))
+        XCTAssertTrue(cpu.registers.isFlagCleared(.HALF_CARRY))
+        XCTAssertTrue(cpu.registers.isFlagCleared(.NEGATIVE))
+        
+        cpu.registers.clearFlag(.ZERO)
+        cpu.registers.raiseFlag(.HALF_CARRY)
+        cpu.registers.raiseFlag(.NEGATIVE)
+        cpu.registers.clearFlag(.CARRY)
+        cpu.registers.A = 0b1000_0000
+        cpu.rlca()
+        XCTAssertTrue(cpu.registers.A == 0b0000_0001)
+        XCTAssertTrue(cpu.registers.isFlagCleared(.ZERO))//cleared
         XCTAssertTrue(cpu.registers.isFlagSet(.CARRY))
         XCTAssertTrue(cpu.registers.isFlagCleared(.HALF_CARRY))
         XCTAssertTrue(cpu.registers.isFlagCleared(.NEGATIVE))
