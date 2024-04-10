@@ -16,7 +16,6 @@ public class PPU: Component, Clockable {
     
     public static let sharedInstance = PPU()
     
-    private let cpu:CPU = CPU.sharedInstance
     private let mmu:MMU = MMU.sharedInstance
     private let ios:IOInterface = IOInterface.sharedInstance
     private let interrupts:Interrupts = Interrupts.sharedInstance
