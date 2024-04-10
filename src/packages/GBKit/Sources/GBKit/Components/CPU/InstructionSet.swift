@@ -1,5 +1,5 @@
 /// A note on function naming
-/// i8 is n
+/// i8 is i8 (signed int)
 /// u8 is n
 /// u16 is nn
 /// + is p
@@ -7,7 +7,8 @@
 /// Increments are suffixed i, BD+  is _bci_
 /// Decrements are suffixed d, BC-  is _bcd_
 /// Pointer increment are suffixed ip and so on... 
-/// (HL+) is hlip
+/// (HL+) is hlpi (post increment)
+/// (HL-) is hlpd (post decrement)
 /// ff00pnp is ff00 +(u8)
 ///
 /// misc :
@@ -90,7 +91,7 @@ protocol StandardInstructionSet {
     func rla() -> Void
     
     /// jump relative by val
-    func jr_n(val:Byte) -> Void
+    func jr_i8(val:Byte) -> Void
     
     /// adds DE to HL
     func add_hl_de() -> Void
@@ -114,13 +115,13 @@ protocol StandardInstructionSet {
     func rra() -> Void
     
     /// jump relative by val if Z flag not set
-    func jr_nz_n(val:Byte) -> Void
+    func jr_nz_i8(val:Byte) -> Void
     
     /// loads val into HL 
     func ld_hl_nn(val:EnhancedShort) -> Void
     
     /// increments HL then loads A into address pointed by (incremented) HL
-    func ld_hlip_a() -> Void
+    func ld_hlpi_a() -> Void
     
     /// increments address HL
     func inc_hl() -> Void
@@ -134,17 +135,17 @@ protocol StandardInstructionSet {
     /// loads N into H 
     func ld_h_n(val:Byte) -> Void
     
-    /// Deciman Adjust A, replace the contents of A by its BCD value
+    /// Decimal Adjust A, replace the contents of A by its BCD value, (in fact it's more Binary Coded Hex, 0x32 -> 0b0011_0010)
     func daa() -> Void
     
     /// jump relative by val if Z flag is set 
-    func jr_z_n(val:Byte) -> Void
+    func jr_z_i8(val:Byte) -> Void
     
     /// adds HL to HL
     func add_hl_hl() -> Void
     
     /// increments HL then loads into A value pointed by (incremented) HL 
-    func ld_a_hlip() -> Void
+    func ld_a_hlpi() -> Void
     
     /// decrements HL 
     func dec_hl() -> Void
@@ -162,7 +163,7 @@ protocol StandardInstructionSet {
     func cpl() -> Void
     
     /// jump relative by val if NC flags are set 
-    func jr_nc_n(val:Byte) -> Void
+    func jr_nc_i8(val:Byte) -> Void
     
     /// loads val into SP 
     func ld_sp_nn(val:EnhancedShort) -> Void
@@ -186,7 +187,7 @@ protocol StandardInstructionSet {
     func scf() -> Void
     
     /// jump relative by val if C flag is set
-    func jr_c_n(val:Byte) -> Void
+    func jr_c_i8(val:Byte) -> Void
     
     /// adds SP to HL
     func add_hl_sp() -> Void
@@ -695,8 +696,8 @@ protocol StandardInstructionSet {
     /// push PC to stack then jump to 00, same as call to 0x0020
     func rst_20h() -> Void
     
-    /// adds val to sp 
-    func add_sp_n(val:EnhancedShort) -> Void
+    /// adds val to sp (can be negative)
+    func add_sp_i8(val:Byte) -> Void
     
     /// jump to address designed by HL 
     func jp_hl() -> Void
@@ -731,8 +732,8 @@ protocol StandardInstructionSet {
     /// push PC to stack then jump to 00, same as call to 0x0030
     func rst_30h() -> Void
     
-    /// adds val to SP then load into HL, affect carry anf half carry flags
-    func ld_hl_sppn(val:EnhancedShort) -> Void
+    /// adds val (can be negative) to SP then load into HL, affect carry anf half carry flags
+    func ld_hl_sppi8(val:Byte) -> Void
     
     /// loads HL into SP 
     func ld_sp_hl() -> Void

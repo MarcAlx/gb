@@ -413,7 +413,7 @@ enum MMUAddresses:Short {
     case INTERRUPT_ENABLE_REGISTER     = 0xFFFF
 }
 
-enum MMUAddressSpaces {
+public enum MMUAddressSpaces {
     //n.b enum doesn't support ClosedRange<Int> but using static let does the tricks
     
     static let CARTRIDGE_BANK0:ClosedRange<Short> = MMUAddresses.CARTRIDGE_BANK0.rawValue...MMUAddresses.CARTRIDGE_BANK0_END.rawValue
@@ -423,6 +423,7 @@ enum MMUAddressSpaces {
     static let WORK_RAM = MMUAddresses.WORK_RAM.rawValue...MMUAddresses.WORK_RAM_END.rawValue
     static let SWITCHABLE_WORK_RAM:ClosedRange<Short> = MMUAddresses.SWITCHABLE_WORK_RAM.rawValue...MMUAddresses.SWITCHABLE_WORK_RAM_END.rawValue
     static let ECHO_RAM = MMUAddresses.ECHO_RAM.rawValue...MMUAddresses.ECHO_RAM_END.rawValue
+    static let PROHIBITED_AREA = MMUAddresses.PROHIBITED_AREA.rawValue...MMUAddresses.PROHIBITED_AREA_END.rawValue
     static let OBJECT_ATTRIBUTE_MEMORY:ClosedRange<Short> = MMUAddresses.OBJECT_ATTRIBUTE_MEMORY.rawValue...MMUAddresses.OBJECT_ATTRIBUTE_MEMORY_END.rawValue
     static let IO_REGISTERS = MMUAddresses.IO_REGISTERS.rawValue...MMUAddresses.IO_REGISTERS_END.rawValue
     static let HIGH_RAM:ClosedRange<Short> = MMUAddresses.HIGH_RAM.rawValue...MMUAddresses.HIGH_RAM_END.rawValue
@@ -435,7 +436,7 @@ enum MMUAddressSpaces {
 }
 
 //IO Addresses
-enum IOAddresses:Short {
+public enum IOAddresses:Short {
     case JOYPAD_INPUT       = 0xFF00
     case SERIAL_TRANSFER_SB = 0xFF01
     case SERIAL_TRANSFER_SC = 0xFF02
@@ -493,7 +494,7 @@ enum IOAddresses:Short {
 }
 
 /// standard color palettes
-enum StandardColorPalettes {
+public enum StandardColorPalettes {
     /// Game Boy
     static let DMG = ColorPalette([Color(0x9B, 0xBC, 0x0F),Color(0x8B, 0xAC, 0x0F),Color(0x30, 0x62, 0x30),Color(0x0F, 0x38, 0x15)])
     

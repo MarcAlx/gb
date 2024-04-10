@@ -14,8 +14,8 @@ class Registers: Component,Describable {
     //accumulator
     public var A:Byte { get { return self._AF.msb } set { self._AF.msb = newValue} }
     //flags
-    public var F:Byte { get { return self._AF.lsb } set { self._AF.lsb = newValue} }
-    public var AF:Short { get { return self._AF.value } set { self._AF.value = newValue } }
+    public var F:Byte { get { return self._AF.lsb } set { self._AF.lsb = newValue & 0xF0 } }
+    public var AF:Short { get { return self._AF.value } set { self._AF.value = newValue & 0xFFF0 } }
     
     private var _BC:EnhancedShort = EnhancedShort()
     public var B:Byte { get { return self._BC.msb } set { self._BC.msb = newValue} }
@@ -68,6 +68,11 @@ class Registers: Component,Describable {
         return (self.F & flag.rawValue) > 0
     }
     
+    //true if flag is clear
+    public func isFlagCleared(_ flag:CPUFlag) -> Bool {
+        return (self.F & flag.rawValue) == 0
+    }
+    
     /// raise or clear flag on condition
     public func conditionalSet(cond:Bool, flag:CPUFlag) {
         cond ? self.raiseFlag(flag) : self.clearFlag(flag)
@@ -88,7 +93,7 @@ class Registers: Component,Describable {
     }
     
     public func describe() -> String {
-        return String(format: "A:%02X F:%02X B:%02X C:%02X D:%02X E:%02X H:%02X L:%02X SP:%02X PC:%04X PCMEM:%02X,%02X,%02X,%02X (z:%d,n:%d,hc:%d,c:%d)",
+        return String(format: "A:%02X F:%02X B:%02X C:%02X D:%02X E:%02X H:%02X L:%02X SP:%04X PC:%04X PCMEM:%02X,%02X,%02X,%02X (z:%d,n:%d,hc:%d,c:%d)",
                       self.A,self.F,self.B,self.C,self.D,self.E,self.H,self.L,
                       self.SP,
                       self.PC,

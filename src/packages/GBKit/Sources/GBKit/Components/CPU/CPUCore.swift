@@ -54,36 +54,59 @@ class CPUCore: Component {
     
     /// add val to HL, assign flag and return val
     internal func add_hl(_ val:Short) -> Void {
+        let old:Short = val
         let res:Short = self.registers.HL &+ val
         self.registers.clearFlag(.NEGATIVE)
         self.registers.conditionalSet(cond: isAddHalfCarry(self.registers.HL, val), flag: .HALF_CARRY)
-        self.registers.conditionalSet(cond: hasCarry(val, res), flag: .CARRY)
+        self.registers.conditionalSet(cond: hasOverflown(old, res), flag: .CARRY)
         self.registers.HL = res
     }
     
     /// add val to HL, assign flag and return val
     internal func add_sp(_ val:Short) -> Void {
+        let old:Short = val
         let res:Short = self.registers.SP &+ val
         self.registers.clearFlag(.ZERO)
         self.registers.clearFlag(.NEGATIVE)
         self.registers.conditionalSet(cond: isAddHalfCarry(self.registers.SP, Short(val)), flag: .HALF_CARRY)
-        self.registers.conditionalSet(cond: hasCarry(val, res), flag: .CARRY)
+        self.registers.conditionalSet(cond: hasOverflown(old, res), flag: .CARRY)
         self.registers.SP = res
+    }
+    
+    // add sp + n, assign flags and return result as short, n can be negative
+    internal func _add_sp_i8(val:Byte) -> Short {
+        let old:Short = self.registers.SP
+        let res = add_short_i8(val: old, i8: val)
+        
+        //carry and half carry are checked over lsb part
+        self.registers.conditionalSet(cond: hasOverflown(Byte(0xFF&old), Byte(0xFF&res)), flag: .CARRY)
+        self.registers.conditionalSet(cond: isAddHalfCarry(old, val) , flag: .HALF_CARRY)
+        
+        self.registers.clearFlags(.NEGATIVE,.ZERO)
+        return res
     }
     
     /// add val to A
     internal func add_a(_ val:Byte) -> Void {
+        let old = val
         let res:Byte = self.registers.A &+ val
         self.registers.conditionalSet(cond: res==0, flag: .ZERO)
         self.registers.clearFlag(.NEGATIVE)
         self.registers.conditionalSet(cond: isAddHalfCarry(self.registers.A, val), flag: .HALF_CARRY)
-        self.registers.conditionalSet(cond: hasCarry(val, res), flag: .CARRY)
+        self.registers.conditionalSet(cond: hasOverflown(old, res), flag: .CARRY)
         self.registers.A = res
     }
     
     /// add val + carry to A
     internal func adc_a(_ val:Byte) -> Void {
-        self.add_a(val &+ (self.registers.isFlagSet(.CARRY) ? 1 : 0))
+        let carry:Byte = (self.registers.isFlagSet(.CARRY) ? 1 : 0)
+        let res:Byte = self.registers.A &+ val &+ carry
+        self.registers.conditionalSet(cond: res==0, flag: .ZERO)
+        self.registers.clearFlag(.NEGATIVE)
+        self.registers.conditionalSet(cond: isAddHalfCarry(val, self.registers.A, carry), flag: .HALF_CARRY)
+        //carry if sum is over 255
+        self.registers.conditionalSet(cond: isAddCarry(self.registers.A, val, carry), flag: .CARRY)
+        self.registers.A = res
     }
     
     /// and val with A then stores result in A
@@ -136,35 +159,42 @@ class CPUCore: Component {
         // - adding 0x60 if A overflow  0x99
         // - adding 0x06 if lsb of A greater than 0x09
         // for negative don't check overflow, and substract instead
+        // DAA is more Binary coded Hex than Binary coded decimal,
+        // ex don't think 32(0x20) as 0b0011_0010 but think 32(0x20) -> 0b0001_0000, whereas 0x32(50) is 0b0011_0010
+        
+        var raiseCarry = false
         
         if(self.registers.isFlagSet(.NEGATIVE)) // after substraction
         {
             if(self.registers.isFlagSet(.CARRY)){
-                self.registers.A = self.registers.A - 0x60;
+                self.registers.A = self.registers.A &- 0x60;
+                raiseCarry = true
             }
             if(self.registers.isFlagSet(.HALF_CARRY)){
-                self.registers.A = self.registers.A - 0x06;
+                self.registers.A = self.registers.A &- 0x06;
             }
         }
         else //after addition
         {
             if(self.registers.isFlagSet(.CARRY) || self.registers.A > 0x99){
-                self.registers.A = self.registers.A + 0x60;
+                self.registers.A = self.registers.A &+ 0x60;
+                raiseCarry = true
             }
             if(self.registers.isFlagSet(.HALF_CARRY) || (self.registers.A & 0x0F) > 0x09){
-                self.registers.A = self.registers.A + 0x06;
+                self.registers.A = self.registers.A &+ 0x06;
             }
         }
         
+        //carry raised if positive and above 0x99, or negative with carry
+        self.registers.conditionalSet(cond: raiseCarry, flag: .CARRY)
         self.registers.clearFlag(.HALF_CARRY)
-        self.registers.conditionalSet(cond: self.registers.A>0x99, flag: .CARRY)
         self.registers.conditionalSet(cond: self.registers.A == 0, flag: .ZERO)
     }
     
     /// jump to address, any provided flag is checked in order to conditionnaly jump, (if so a cycle overhead is applied by default 4), if inverseFlag is true flag are checked at inverse
     internal func jumpTo(_ address:EnhancedShort, _ flag:CPUFlag, inverseFlag:Bool = false, _ branchingCycleOverhead:Int = 4) {
         if((!inverseFlag &&  self.registers.isFlagSet(flag))
-        ||   inverseFlag && !self.registers.isFlagSet(flag)) {
+        ||  (inverseFlag && !self.registers.isFlagSet(flag))) {
             self.jumpTo(address)
             self.cycles += branchingCycleOverhead // jumping with condition implies some extra cycles
         }
@@ -180,10 +210,9 @@ class CPUCore: Component {
     
     /// jump relative by val, any provided flag is checked in order to conditionnaly jump, (if so a cycle overhead is applied by default +4)
     internal func jumpRelative(_ val:Byte, _ flag:CPUFlag, inverseFlag:Bool = false, branchingCycleOverhead:Int = 4) {
-        let delta:Int8 = Int8(bitPattern: val)//delta can be negative, aka two bit complement
-        let newPC:Int = Int(self.registers.PC) + Int(delta)
+        let res = add_short_i8(val: self.registers.PC, i8: val)
         //a relative jump is just an absolute jump from PC
-        self.jumpTo(EnhancedShort(fit(newPC)), flag, inverseFlag: inverseFlag, branchingCycleOverhead)
+        self.jumpTo(EnhancedShort(res), flag, inverseFlag: inverseFlag, branchingCycleOverhead)
     }
     
     /// perform a relative jump
@@ -264,7 +293,7 @@ class CPUCore: Component {
         
         self.registers.conditionalSet(cond: res == 0, flag: .ZERO)
         self.registers.clearFlags(.HALF_CARRY,.NEGATIVE)
-        self.registers.conditionalSet(cond: isBitSet(.Bit_0, val), flag: .CARRY)
+        self.registers.conditionalSet(cond: isBitSet(.Bit_7, val), flag: .CARRY)
         return res
     }
     
@@ -291,7 +320,7 @@ class CPUCore: Component {
     internal func sub_a(_ val:Byte) -> Void {
         let res:Byte = self.registers.A &- val
         self.registers.conditionalSet(cond: res==0, flag: .ZERO)
-        self.registers.clearFlag(.NEGATIVE)
+        self.registers.raiseFlag(.NEGATIVE)
         self.registers.conditionalSet(cond: isSubHalfBorrow(self.registers.A, val), flag: .HALF_CARRY)
         self.registers.conditionalSet(cond: self.registers.A < val, flag: .CARRY) //
         self.registers.A = res
@@ -299,7 +328,16 @@ class CPUCore: Component {
     
     /// sub val + carry to A
     internal func sbc_a(_ val:Byte) -> Void {
-        self.add_a(val &+ (self.registers.isFlagSet(.CARRY) ? 1 : 0))
+        let carry:Byte = (self.registers.isFlagSet(.CARRY) ? 1 : 0)
+        let res:Byte = self.registers.A &- val &- carry
+        self.registers.conditionalSet(cond: res==0, flag: .ZERO)
+        self.registers.raiseFlag(.NEGATIVE)
+        
+        //sub borrow
+        self.registers.conditionalSet(cond: isSubHalfBorrow(self.registers.A, val, carry), flag: .HALF_CARRY)
+        //carry if borrow
+        self.registers.conditionalSet(cond: isSubBorrow(self.registers.A, val, carry), flag: .CARRY)
+        self.registers.A = res
     }
     
     /// perform an arithemtical shift left of val (same as logical one)
@@ -331,7 +369,7 @@ class CPUCore: Component {
     internal func sra(_ val:Byte) -> Byte {
         var res = self.srl(val)
         if(isBitSet(.Bit_7, val)){
-            res = res & ByteMask.Bit_7.rawValue
+            res = res | ByteMask.Bit_7.rawValue
         }
         self.registers.conditionalSet(cond: res == 0, flag: .ZERO)
         return res;
@@ -352,36 +390,16 @@ class CPUCore: Component {
     }
     
     // mark : stack related
-    
-    /// read a byte from stack, an offset can be applied
-    internal func readFromStack(_ pcOffset:UInt16 = 0) -> Byte {
-        return mmu.read(address: self.registers.SP+pcOffset)
-    }
-    
     /// read a short from stack
     internal func readFromStack() -> Short {
-        return EnhancedShort(self.readFromStack(1),self.readFromStack(0)).value
-    }
-    
-    /// read a byte from stack along with PC increment
-    internal func popFromStack() -> Byte {
-        let res:Byte = self.readFromStack(0)
-        self.registers.SP += 1
-        return res
+        return self.mmu.read(address: self.registers.SP)
     }
     
     /// read a byte from stack along with PC increment
     internal func popFromStack() -> Short {
-        //must be done in two times as msb is retreived before lsb
-        let msb:Byte = self.popFromStack()
-        let lsb:Byte = self.popFromStack()
-        return EnhancedShort(lsb,msb).value
-    }
-    
-    /// write a byte to stack along with PC decrement
-    internal func writeToStack(_ val:Byte) -> Void {
-        self.registers.SP -= 1
-        mmu.write(address: self.registers.SP, val: val)
+        let res:Short = self.mmu.read(address: self.registers.SP)
+        self.registers.SP += 2
+        return res
     }
     
     /// write a short to stack along with PC decrements
@@ -391,7 +409,7 @@ class CPUCore: Component {
     
     /// write a short to stack along with PC decrements
     internal func writeToStack(_ val:EnhancedShort) -> Void {
-        self.writeToStack(val.lsb)
-        self.writeToStack(val.msb)
+        self.registers.SP -= 2
+        self.mmu.write(address: self.registers.SP, val: val)
     }
 }
