@@ -84,7 +84,7 @@ class IOInterface: Component {
     }
     
     /// read LCD stat corresponding flag
-    public func readLCDStatusFlag(_ flag:LCDStatMask) -> Bool {
+    public func readLCDStatFlag(_ flag:LCDStatMask) -> Bool {
         return ((mmu.read(address: IOAddresses.LCD_STATUS.rawValue) as Byte) & flag.rawValue) > 0
     }
     
