@@ -234,7 +234,7 @@ public class PPU: Component, Clockable {
         let byte2:Byte = self.mmu.read(address: lineAddr+1)
         
         //inline 2d array indexy, *4 as each color is indexed with 4 values (rgba)
-        var dest:Int = (((Int(destY) * GBConstants.ScreenWidth) + Int(destX)) * 4) //substracted to ScreenHeight as data are drawn in swift from bottom to top
+        var dest:Int = (((Int(destY) * GBConstants.ScreenWidth) + Int(destX)) * 4)
         
         //from msb to lsb
         for col in stride(from: Int(GBConstants.TileWidth-offsetX-1), to: Int(stopX)-1, by: -1) {
