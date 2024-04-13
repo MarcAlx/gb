@@ -168,6 +168,8 @@ public class PPU: Component, Clockable {
             let tileRow = Byte(effectiveY / 8)
             var offsetX:Byte = scx
             
+            //view port y
+            let vpy = ly;
             //for each tile in BG
             for vpx in stride(from: Byte(0), to: Byte(GBConstants.ScreenWidth), by: Byte.Stride(tw)) {
                 //tile column considering view port
@@ -193,7 +195,7 @@ public class PPU: Component, Clockable {
                                   withPalette: bgWinPalette,
                                   tileLine: tileLine,
                                   destX: vpx,
-                                  destY: ly,
+                                  destY: vpy,
                                   offsetX: offsetX % tw,
                                   stopX: (vpx+tw != GBConstants.ScreenWidth) ? 0 : scx % tw)
                 
