@@ -181,7 +181,7 @@ public class PPU: Component, Clockable {
                                                                          range: bgTileMap))
                 
                 //depending on tileDataFlag, tileindex must be considered as a signed Int8 or a Byte
-                let effectiveTileIndex:Byte = tileDataFlag ? tileIndex : Byte(128 + Int(Int8(bitPattern: tileIndex)))
+                let effectiveTileIndex:Byte = tileDataFlag ? tileIndex : add_byte_i8(val: 128, i8: tileIndex)
                 
                 //get tile starting address from tile index
                 let tileAddress:Short = self.getAddressAt(index: UInt16(effectiveTileIndex) * UInt16(GBConstants.TileLength),
