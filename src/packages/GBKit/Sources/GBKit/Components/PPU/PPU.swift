@@ -171,12 +171,12 @@ public class PPU: Component, Clockable {
             var effectiveX = scx
             
             //for each tile in BG
-            for vpx in stride(from: UInt8(0), to: UInt8(GBConstants.ScreenWidth), by: UInt8.Stride(tw)) {
+            for vpx in stride(from: Byte(0), to: Byte(GBConstants.ScreenWidth), by: Byte.Stride(tw)) {
                 //tile column considering view port
                 let tileCol = UInt8((Int(vpx) + Int(scx)) / 8)
                 
                 //index of tile in BG, (inline 2d array indexing), x32 -> tilemap are 32x32 square
-                let index:UInt16 = (32 * UInt16(tileRow)) + UInt16(tileCol)
+                let index:Short = (32 * Short(tileRow)) + Short(tileCol)
                 
                 //get tile index in tile map (value at indexed address in tile map)
                 let tileIndex:Byte = mmu.read(address: self.getAddressAt(index: index,
