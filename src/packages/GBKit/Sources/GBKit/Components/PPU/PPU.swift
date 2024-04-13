@@ -151,7 +151,7 @@ public class PPU: Component, Clockable {
         {
             let scx = ios.SCX
             let scy = ios.SCY
-            let effectiveY:Int = Int(ly) + Int(scy)
+            let effectiveY:Byte = ly &+ scy //avoid overflow
             let bgWinPalette = ColorPalette(paletteData: ios.LCD_BGP, reference: pManager.currentPalette)
             
             //draw BG
@@ -165,8 +165,8 @@ public class PPU: Component, Clockable {
             let bgTileMap = ios.readLCDControlFlag(.BG_TILE_MAP_AREA) ? MMUAddressSpaces.BG_TILE_MAP_AREA_1 : MMUAddressSpaces.BG_TILE_MAP_AREA_0
             
             //tile row considering viewport
-            let tileRow = UInt8(effectiveY / 8)
-            var offsetX:UInt8 = scx
+            let tileRow = Byte(effectiveY / 8)
+            var offsetX:Byte = scx
             //x drawn without considering viewport
             var effectiveX = scx
             
@@ -190,7 +190,7 @@ public class PPU: Component, Clockable {
                                                           range: tiledata)
                 
                 //draw tile line
-                let tileLine:UInt8 = UInt8(effectiveY % Int(tw))
+                let tileLine:Byte = effectiveY % tw
                 self.drawTileLine(tileAddress: tileAddress,
                                   withPalette: bgWinPalette,
                                   tileLine: tileLine,
