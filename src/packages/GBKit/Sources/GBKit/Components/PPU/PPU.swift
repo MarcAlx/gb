@@ -173,7 +173,7 @@ public class PPU: Component, Clockable {
             //for each tile in BG
             for vpx in stride(from: Byte(0), to: Byte(GBConstants.ScreenWidth), by: Byte.Stride(tw)) {
                 //tile column considering view port
-                let tileCol = UInt8((Int(vpx) + Int(scx)) / 8)
+                let tileCol = (vpx &+ scx) / 8
                 
                 //index of tile in BG, (inline 2d array indexing), x32 -> tilemap are 32x32 square
                 let index:Short = (32 * Short(tileRow)) + Short(tileCol)
