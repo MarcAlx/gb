@@ -194,8 +194,8 @@ public class PPU: Component, Clockable {
                 self.drawTileLine(tileAddress: tileAddress,
                                   withPalette: bgWinPalette,
                                   tileLine: tileLine,
-                                  startX: vpx,
-                                  startY: ly,
+                                  destX: vpx,
+                                  destY: ly,
                                   offsetX: offsetX % tw,
                                   stopX: (vpx+tw != GBConstants.ScreenWidth) ? 0 : scx % tw)
                 
@@ -225,7 +225,13 @@ public class PPU: Component, Clockable {
     
     /// draw tileLine from tile at tileAddress) withPalette into framebuffer at (startX, startY)
     /// tile can be limited from start via offsetX or from end via stopX
-    private func drawTileLine(tileAddress:Short, withPalette:ColorPalette, tileLine:UInt8, startX:UInt8, startY:UInt8, offsetX:UInt8 = 0, stopX:UInt8 = 0) {
+    private func drawTileLine(tileAddress:Short, 
+                              withPalette:ColorPalette,
+                              tileLine:UInt8,
+                              destX:UInt8,
+                              destY:UInt8,
+                              offsetX:UInt8 = 0,
+                              stopX:UInt8 = 0) {
         //each tile is 8x8, encoded on 16 bytes, 2 bytes per line
         let lineAddr = tileAddress + Short(tileLine * 2)
         //get two bytes of line to draw
@@ -233,7 +239,7 @@ public class PPU: Component, Clockable {
         let byte2:Byte = self.mmu.read(address: lineAddr+1)
         
         //inline 2d array indexy, *4 as each color is indexed with 4 values (rgba)
-        var dest:Int = (((Int(startY) * GBConstants.ScreenWidth) + Int(startX)) * 4) //substracted to ScreenHeight as data are drawn in swift from bottom to top
+        var dest:Int = (((Int(destY) * GBConstants.ScreenWidth) + Int(destX)) * 4) //substracted to ScreenHeight as data are drawn in swift from bottom to top
         
         //from msb to lsb
         for col in stride(from: Int(GBConstants.TileWidth-offsetX-1), to: Int(stopX)-1, by: -1) {
