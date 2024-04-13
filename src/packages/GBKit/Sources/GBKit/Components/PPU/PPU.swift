@@ -167,8 +167,6 @@ public class PPU: Component, Clockable {
             //tile row considering viewport
             let tileRow = Byte(effectiveY / 8)
             var offsetX:Byte = scx
-            //x drawn without considering viewport
-            var effectiveX = scx
             
             //for each tile in BG
             for vpx in stride(from: Byte(0), to: Byte(GBConstants.ScreenWidth), by: Byte.Stride(tw)) {
@@ -201,9 +199,6 @@ public class PPU: Component, Clockable {
                 
                 //reset offsetX after first use
                 offsetX = 0
-                
-                //update effectiveX
-                effectiveX += tw
             }
             
             if(ios.readLCDControlFlag(.WINDOW_ENABLE)) {
