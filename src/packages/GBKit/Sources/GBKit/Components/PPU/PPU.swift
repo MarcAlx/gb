@@ -184,7 +184,7 @@ public class PPU: Component, Clockable {
                 let effectiveTileIndex:Byte = tileDataFlag ? tileIndex : add_byte_i8(val: 128, i8: tileIndex)
                 
                 //get tile starting address from tile index
-                let tileAddress:Short = self.getAddressAt(index: UInt16(effectiveTileIndex) * UInt16(GBConstants.TileLength),
+                let tileAddress:Short = self.getAddressAt(index: Short(effectiveTileIndex) * Short(GBConstants.TileLength),
                                                           range: tiledata)
                 
                 //draw tile line
