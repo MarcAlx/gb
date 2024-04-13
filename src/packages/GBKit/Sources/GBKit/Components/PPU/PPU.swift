@@ -160,9 +160,11 @@ public class PPU: Component, Clockable {
             
             //tile data to use for BG and WIN
             let tileDataFlag = ios.readLCDControlFlag(.BG_AND_WINDOW_TILE_DATA_AREA)
-            let tiledata = tileDataFlag ? MMUAddressSpaces.BG_WINDOW_TILE_DATA_AREA_1 : MMUAddressSpaces.BG_WINDOW_TILE_DATA_AREA_0
+            let tiledata = tileDataFlag ? MMUAddressSpaces.BG_WINDOW_TILE_DATA_AREA_1 
+                                        : MMUAddressSpaces.BG_WINDOW_TILE_DATA_AREA_0
             //tile map to use
-            let bgTileMap = ios.readLCDControlFlag(.BG_TILE_MAP_AREA) ? MMUAddressSpaces.BG_TILE_MAP_AREA_1 : MMUAddressSpaces.BG_TILE_MAP_AREA_0
+            let bgTileMap = ios.readLCDControlFlag(.BG_TILE_MAP_AREA) ? MMUAddressSpaces.BG_TILE_MAP_AREA_1 
+                                                                      : MMUAddressSpaces.BG_TILE_MAP_AREA_0
             
             //tile row considering viewport
             let tileRow = Byte(effectiveY / 8)
