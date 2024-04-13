@@ -161,6 +161,8 @@ This project contains some unit tests, objective is to test each core fonction o
 ### Test roms
 
 - https://github.com/mattcurrie/dmg-acid2
+- https://github.com/retrio/gb-test-roms
+- https://github.com/c-sp/gameboy-test-roms?tab=readme-ov-file
 
 ### GB Source code
 
