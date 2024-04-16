@@ -55,9 +55,16 @@ class MMU:Component {
                 //bit 7/6 are not used, 5/4 bits are R/W bits 3->0 are read only
                 self.ram[address] = (self.ram[address] & 0b1100_1111 /*clear bits 5/4 in ram*/)
                                   | (newValue & 0b0011_0000 /*keep only RW bits of value*/)
+                break
             //LCD status first three bits are read only
             case IOAddresses.LCD_STATUS.rawValue:
                 self.ram[address] = (self.ram[address] & 0b0000_0111) | (newValue & 0b1111_1000)
+                break
+            //LYC is update check LYCeqLY flag
+            case IOAddresses.LCD_LYC.rawValue:
+                IOInterface.sharedInstance.setLCDStatFlag(.LYCeqLY, enabled: newValue == self[IOAddresses.LCD_LY.rawValue])
+                self.ram[address] = newValue
+                break
             //default to ram
             default:
                 self.ram[address] = newValue
