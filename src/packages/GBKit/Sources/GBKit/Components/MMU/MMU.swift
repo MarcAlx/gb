@@ -22,7 +22,7 @@ class MMU:Component {
             case IOAddresses.JOYPAD_INPUT.rawValue:
                 return 0xFF//TODO read joypad
             case IOAddresses.LCD_STATUS.rawValue:
-                return self.ram[address] | 0x80 //bit 7 is always 1
+                return self.ram[address] | 0b1000_0000 //bit 7 is always 1
             //prohibited area, always return 0
             case MMUAddressSpaces.PROHIBITED_AREA:
                 return 0x00
