@@ -102,8 +102,9 @@ class IOInterface: Component {
     
     /// set lcd stat mode
     public func writeLCDStatMode(_ mode:LCDStatMode) {
-        let val = self.readLCDStatMode()
-        mmu.directWrite(address: IOAddresses.LCD_STATUS.rawValue, val: (val.rawValue & ~LCDStatMask.Mode.rawValue) | mode.rawValue)
+        let cur:Byte = mmu.read(address: IOAddresses.LCD_STATUS.rawValue)
+        let val:Byte = (cur & ~LCDStatMask.Mode.rawValue) | mode.rawValue
+        mmu.directWrite(address: IOAddresses.LCD_STATUS.rawValue, val: val)
     }
     
     /// read LCDControl corresponding flag
