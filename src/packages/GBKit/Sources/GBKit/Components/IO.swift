@@ -108,7 +108,7 @@ class IOInterface: Component {
     
     /// read LCDControl corresponding flag
     public func readLCDControlFlag(_ flag:LCDControlMask) -> Bool {
-        let val = mmu.read(address: IOAddresses.LCD_CONTROL.rawValue) as Byte
+        let val:Byte = mmu.read(address: IOAddresses.LCD_CONTROL.rawValue)
         return ((val) & flag.rawValue) > 0
     }
     
