@@ -246,16 +246,10 @@ public class PPU: Component, Clockable {
         //from msb to lsb
         for col in stride(from: Int(GBConstants.TileWidth-offsetX-1), to: Int(stopX)-1, by: -1) {
             //decode each color
-            var color = 0
-            if(isBitSet(IntToByteMask[col], byte1)) {
-                color += 1
-            }
-            if(isBitSet(IntToByteMask[col], byte2)) {
-                color += 2
-            }
-            let effectiveColor = withPalette[color]
-            
-            //TODO decoding color in func
+            let effectiveColor = decodeColor(palette: withPalette,
+                                             b1: byte1,
+                                             b2: byte2,
+                                             at: IntToByteMask[col])
             
             //draw color to frame buffer
             self.nextFrame[dest]   = effectiveColor[0] //r
@@ -266,6 +260,19 @@ public class PPU: Component, Clockable {
             //move dest by the number of component written
             dest += 4
         }
+    }
+    
+    /// from two bytes and a ByteMask identifies color to use from palette
+    /// following the bit blending rule the GB uses
+    private func decodeColor(palette:ColorPalette, b1:Byte, b2:Byte, at:ByteMask) -> Color {
+        var color = 0
+        if(isBitSet(at, b1)) {
+            color += 1
+        }
+        if(isBitSet(at, b2)) {
+            color += 2
+        }
+        return palette[color]
     }
     
     /// generate a random frame, for debug purpose
