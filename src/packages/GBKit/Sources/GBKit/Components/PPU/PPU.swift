@@ -209,6 +209,9 @@ public class PPU: Component, Clockable {
                 //TODO draw Win
             }
         }
+        else {
+            //no bg or win, Color 0 should be drawn, see beginFrame that initialize frame
+        }
         
         //OBJ are enabled
         if(ios.readLCDControlFlag(.OBJ_ENABLE)) {
@@ -275,6 +278,17 @@ public class PPU: Component, Clockable {
                 UInt8(drand48() * 255), // blue
                 UInt8(255)              // alpha
             ]
+        })
+    }
+    
+    /// prepare next frame to be drawn
+    public func beginFrame() {
+        //needed to avoid pixel persistance accross frame generation
+        
+        //fill frame background with color 0
+        let bgWinPalette = ColorPalette(paletteData: ios.LCD_BGP, reference: pManager.currentPalette)
+        self.nextFrame = Data(stride(from: 0, to: GBConstants.PixelCount, by: 1).flatMap {
+            _ in return [bgWinPalette[0][0],bgWinPalette[0][1],bgWinPalette[0][2],255]//R,G,B,A
         })
     }
     

@@ -51,6 +51,7 @@ class Motherboard: Clockable {
     
     public func update() {
         if(self.isOn && self.hasCartridgeInserted) {
+            self.ppu.beginFrame()
             var tmpCycles = 0
             while(tmpCycles < GBConstants.MCyclesPerFrame){
                 self.cpu.tick(self.cycles, tmpCycles)
