@@ -151,15 +151,9 @@ func swap_lsb_msb(_ val:Byte) -> Byte {
 
 /// Add a Byte (considered as i8) to short value, while avoiding overflow
 func add_byte_i8(val:Byte, i8:Byte) -> Byte {
-    let delta:Int8 = Int8(bitPattern: i8)//delta can be negative, aka two bits complement (two's complement)
-    
-    //add must be circular
-    if(delta < 0){
-        return val &- Byte(-delta)
-    }
-    else {
-        return val &+ Byte(delta)
-    }
+    let delta:Int = Int(Int8(bitPattern: i8))//delta can be negative, aka two bits complement (two's complement)
+    let iVal:Int = Int(val);
+    return Byte((delta+iVal)%255)//mod 255 in order to keep circularity of add
 }
 
 /// Add a Byte (considered as i8) to short value, while avoiding overflow
