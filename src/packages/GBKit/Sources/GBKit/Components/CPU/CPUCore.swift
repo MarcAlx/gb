@@ -44,10 +44,8 @@ class CPUCore: Component {
         self.interrupts.setInterruptFlagValue(interrupt, false)
         //disable IME
         self.interrupts.IME = false
-        //write PC to stack
-        self.pushToStack(self.registers.PC)
-        //move PC to associated interrupt address
-        self.jumpTo(EnhancedShort(interruptLoc))
+        //handling interupt is: write PC to stack and move PC to associated interrupt address (a call...)
+        self.call(interruptLoc)
         //restore cpu state
         self.state = CPUState.RUNNING
     }
