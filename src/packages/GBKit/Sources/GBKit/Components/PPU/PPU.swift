@@ -156,8 +156,7 @@ public class PPU: Component, Clockable {
             //destination y
             let desty:Byte = ly
             //viewport y
-            let vpy:Byte = (ly &+ scy) //avoid overflow
-                                //% Byte(GBConstants.ScreenHeight) //ensure wrap arround
+            let vpy:Byte = (ly &+ scy) //avoid overflow and ensure horizontal wrap arround (all bg not only screen)
             let bgWinPalette = ColorPalette(paletteData: ios.LCD_BGP, reference: pManager.currentPalette)
             
             //tile row considering viewport
@@ -184,7 +183,7 @@ public class PPU: Component, Clockable {
             //for each pixel in line
             for destx in stride(from:Byte(0), to: Byte(GBConstants.ScreenWidth), by: Byte.Stride(1)){
                 //viewport x
-                let vpx:Byte = (destx &+ scx) // avoid overflow
+                let vpx:Byte = (destx &+ scx) // avoid overflow and ensure vertical wrap arround (all bg not only screen)
                 
                 //tile column considering view port
                 let tileCol = vpx / tw
