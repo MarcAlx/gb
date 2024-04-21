@@ -18,7 +18,7 @@ public struct GameBoyConstants {
     public let TileLength:UInt8 = 16
 
     // BG tile height
-    public let BGTileHeight:Int = 8
+    public let BGTileHeight:Byte = 8
 
     // Nb of scanline drawn per frame (144 + 10 VBlank)
     public let ScanlinesPerFrame:Int = 154

@@ -143,16 +143,28 @@ public class PPU: Component, Clockable {
     /// rendering by line is needed as game usually update drawing between lines to produce special effects
     private func scanline() -> Void {
         
-        let ly  = ios.LY
-        let tw  = GBConstants.TileWidth
+        let ly = ios.LY
+        let tw = GBConstants.TileWidth
         
         //BG an WINDOW are enabled
         if(ios.readLCDControlFlag(.BG_AND_WINDOW_ENABLE))
         {
-            let scx = ios.SCX
-            let scy = ios.SCY
-            let effectiveY:Byte = ly &+ scy //avoid overflow
+            //scroll x
+            let scx:Byte = ios.SCX
+            //scrol y
+            let scy:Byte = ios.SCY
+            //destination y
+            let desty:Byte = ly
+            //viewport y
+            let vpy:Byte = (ly &+ scy) //avoid overflow
+                                //% Byte(GBConstants.ScreenHeight) //ensure wrap arround
             let bgWinPalette = ColorPalette(paletteData: ios.LCD_BGP, reference: pManager.currentPalette)
+            
+            //tile row considering viewport
+            let tileRow = vpy / GBConstants.BGTileHeight
+            
+            //line in tile to consider
+            let tileLine:Byte = vpy % tw
             
             //draw BG
             
@@ -166,16 +178,16 @@ public class PPU: Component, Clockable {
             let bgTileMap = ios.readLCDControlFlag(.BG_TILE_MAP_AREA) ? MMUAddressSpaces.BG_TILE_MAP_AREA_1 
                                                                       : MMUAddressSpaces.BG_TILE_MAP_AREA_0
             
-            //tile row considering viewport
-            let tileRow = Byte(effectiveY / 8)
-            var offsetX:Byte = scx
+            //offset to consider for the first tile
+            let offsetX:Byte = scx % tw
             
-            //view port y
-            let vpy = ly;
-            //for each tile in BG
-            for vpx in stride(from: Byte(0), to: Byte(GBConstants.ScreenWidth), by: Byte.Stride(tw)) {
+            //for each pixel in line
+            for destx in stride(from:Byte(0), to: Byte(GBConstants.ScreenWidth), by: Byte.Stride(1)){
+                //viewport x
+                let vpx:Byte = (destx &+ scx) // avoid overflow
+                
                 //tile column considering view port
-                let tileCol = (vpx &+ scx) / 8
+                let tileCol = vpx / tw
                 
                 //index of tile in BG, (inline 2d array indexing), x32 -> tilemap are 32x32 square
                 let index:Short = (32 * Short(tileRow)) + Short(tileCol)
@@ -191,18 +203,20 @@ public class PPU: Component, Clockable {
                 let tileAddress:Short = self.getAddressAt(index: Short(effectiveTileIndex) * Short(GBConstants.TileLength),
                                                           range: tiledata)
                 
-                //draw tile line
-                let tileLine:Byte = effectiveY % tw
-                self.drawTileLine(tileAddress: tileAddress,
-                                  withPalette: bgWinPalette,
-                                  tileLine: tileLine,
-                                  destX: vpx,
-                                  destY: vpy,
-                                  offsetX: offsetX % tw,
-                                  stopX: (vpx+tw != GBConstants.ScreenWidth) ? 0 : scx % tw)
+                //bit in tile to consider, (7 minus value as bit are index from msb to lsb)
+                let tileBit:Byte = 7 - (vpx % tw)
                 
-                //reset offsetX after first use
-                offsetX = 0
+                //each bg tile is 8x8, encoded on 16 bytes, 2 bytes per line
+                let lineAddr = tileAddress + Short(tileLine * 2)
+                
+                //decode color using the two bytes (b1, b2) of the tile line that contains the pixel to draw (at)
+                let effectiveColor = decodeColor(palette: bgWinPalette,
+                                                 b1: self.mmu.read(address: lineAddr),
+                                                 b2: self.mmu.read(address: lineAddr+1),
+                                                 at: IntToByteMask[Int(tileBit)])
+                
+                //draw pixel
+                self.drawPixelAt(x: destx, y: desty, withColor: effectiveColor)
             }
             
             if(ios.readLCDControlFlag(.WINDOW_ENABLE)) {
@@ -225,43 +239,6 @@ public class PPU: Component, Clockable {
         return range.lowerBound+index
     }
     
-    /// draw tileLine from tile at tileAddress) withPalette into framebuffer at (startX, startY)
-    /// tile can be limited from start via offsetX or from end via stopX
-    private func drawTileLine(tileAddress:Short, 
-                              withPalette:ColorPalette,
-                              tileLine:UInt8,
-                              destX:UInt8,
-                              destY:UInt8,
-                              offsetX:UInt8 = 0,
-                              stopX:UInt8 = 0) {
-        //each tile is 8x8, encoded on 16 bytes, 2 bytes per line
-        let lineAddr = tileAddress + Short(tileLine * 2)
-        //get two bytes of line to draw
-        let byte1:Byte = self.mmu.read(address: lineAddr)
-        let byte2:Byte = self.mmu.read(address: lineAddr+1)
-        
-        //inline 2d array indexy, *4 as each color is indexed with 4 values (rgba)
-        var dest:Int = (((Int(destY) * GBConstants.ScreenWidth) + Int(destX)) * 4)
-        
-        //from msb to lsb
-        for col in stride(from: Int(GBConstants.TileWidth-offsetX-1), to: Int(stopX)-1, by: -1) {
-            //decode each color
-            let effectiveColor = decodeColor(palette: withPalette,
-                                             b1: byte1,
-                                             b2: byte2,
-                                             at: IntToByteMask[col])
-            
-            //draw color to frame buffer
-            self.nextFrame[dest]   = effectiveColor[0] //r
-            self.nextFrame[dest+1] = effectiveColor[1] //g
-            self.nextFrame[dest+2] = effectiveColor[2] //b
-            self.nextFrame[dest+3] = 0xFF              //a
-            
-            //move dest by the number of component written
-            dest += 4
-        }
-    }
-    
     /// from two bytes and a ByteMask identifies color to use from palette
     /// following the bit blending rule the GB uses
     private func decodeColor(palette:ColorPalette, b1:Byte, b2:Byte, at:ByteMask) -> Color {
@@ -273,6 +250,18 @@ public class PPU: Component, Clockable {
             color += 2
         }
         return palette[color]
+    }
+    
+    /// draw color at given x,y
+    private func drawPixelAt(x:Byte, y:Byte, withColor:Color) {
+        //inline 2d array indexy, *4 as each color is indexed with 4 values (rgba)
+        var dest:Int = (((Int(y) * GBConstants.ScreenWidth) + Int(x)) * 4)
+        
+        //draw color to frame buffer
+        self.nextFrame[dest]   = withColor[0] //r
+        self.nextFrame[dest+1] = withColor[1] //g
+        self.nextFrame[dest+2] = withColor[2] //b
+        self.nextFrame[dest+3] = 0xFF         //a
     }
     
     /// generate a random frame, for debug purpose
