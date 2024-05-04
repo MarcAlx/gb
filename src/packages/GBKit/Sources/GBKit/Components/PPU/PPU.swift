@@ -161,6 +161,7 @@ public class PPU: Component, Clockable {
             let desty:Byte = ly
             //viewport y
             let vpy:Byte = (ly &+ scy) //avoid overflow and ensure horizontal wrap arround (all bg not only screen)
+            //palette for bg and win
             let bgWinPalette = ColorPalette(paletteData: ios.LCD_BGP, reference: pManager.currentPalette)
             
             //tile row considering viewport
@@ -211,10 +212,10 @@ public class PPU: Component, Clockable {
                 let lineAddr = tileAddress + Short(tileLine * 2)
                 
                 //decode color using the two bytes (b1, b2) of the tile line that contains the pixel to draw (at)
-                let effectiveColor = decodeColor(palette: bgWinPalette,
-                                                 b1: self.mmu.read(address: lineAddr),
-                                                 b2: self.mmu.read(address: lineAddr+1),
-                                                 at: IntToByteMask[Int(tileBit)])
+                let effectiveColor = self.decodeColor(palette: bgWinPalette,
+                                                      b1: self.mmu.read(address: lineAddr),
+                                                      b2: self.mmu.read(address: lineAddr+1),
+                                                      at: IntToByteMask[Int(tileBit)])
                 
                 //draw pixel
                 self.drawPixelAt(x: destx, y: desty, withColor: effectiveColor)
@@ -225,7 +226,7 @@ public class PPU: Component, Clockable {
             }
         }
         else {
-            //no bg or win, Color 0 should be drawn, see beginFrame that initialize frame
+            //no bg or win, Color 0 should be drawn, see beginFrame that initializes frame with color 0
         }
         
         //OBJ are enabled
