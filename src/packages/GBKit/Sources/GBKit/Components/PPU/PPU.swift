@@ -153,6 +153,10 @@ public class PPU: Component, Clockable {
             let scx:Byte = ios.SCX
             //scrol y
             let scy:Byte = ios.SCY
+            //window x
+            let wx:Byte = ios.WX
+            //window y
+            let wy:Byte = ios.WY
             //destination y
             let desty:Byte = ly
             //viewport y
