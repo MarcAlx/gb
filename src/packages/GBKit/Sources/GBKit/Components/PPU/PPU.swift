@@ -181,8 +181,6 @@ public class PPU: Component, Clockable {
             let bgTileMap = ios.readLCDControlFlag(.BG_TILE_MAP_AREA) ? MMUAddressSpaces.BG_TILE_MAP_AREA_1 
                                                                       : MMUAddressSpaces.BG_TILE_MAP_AREA_0
             
-            //offset to consider for the first tile
-            let offsetX:Byte = scx % tw
             
             //for each pixel in line
             for destx in stride(from:Byte(0), to: Byte(GBConstants.ScreenWidth), by: Byte.Stride(1)){
