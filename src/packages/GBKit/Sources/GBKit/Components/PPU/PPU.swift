@@ -202,7 +202,7 @@ public class PPU: Component, Clockable {
                 //adjust params for window drawing
                 if(ios.readLCDControlFlag(.WINDOW_ENABLE) && ly >= wy && destx>=wx) {
                     tileMap = winTileMap
-                    tileBit = 7 - ((destx-wx)%tw) //(7 minus value as bit are index from msb to lsb)
+                    tileBit = 7 - ((destx-wx)%tw) //(7 minus value as bits are indexed from msb to lsb)
                     tileLine = self.windowLineCounter % GBConstants.BGTileHeight
                     tileCol = (destx-wx) / tw
                     tileRow = self.windowLineCounter / GBConstants.BGTileHeight
@@ -213,7 +213,7 @@ public class PPU: Component, Clockable {
                     //viewport x
                     let vpx:Byte = (destx &+ scx) // avoid overflow and ensure vertical wrap arround (all bg not only screen)
                     tileMap = bgTileMap
-                    tileBit = 7 - (vpx % tw) //(7 minus value as bit are index from msb to lsb)
+                    tileBit = 7 - (vpx % tw) //(7 minus value as bits are indexed from msb to lsb)
                     tileLine = vpy % GBConstants.BGTileHeight
                     tileCol = vpx / tw
                     tileRow = vpy / GBConstants.BGTileHeight
