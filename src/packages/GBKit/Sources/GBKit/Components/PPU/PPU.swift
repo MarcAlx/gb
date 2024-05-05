@@ -42,6 +42,7 @@ public class PPU: Component, Clockable {
         self.cycles = 0
         self.frameSync = 0
         self.lineSync = 0
+        self.windowLineCounter = 0
         self._frameBuffer = PPU.blankFrame
     }
     
@@ -67,6 +68,9 @@ public class PPU: Component, Clockable {
         }
     }
     
+    ///window has its own line counter
+    private var windowLineCounter:Byte = 0
+    
     public func tick(_ masterCycles:Int, _ frameCycles:Int) -> Void {
         //LCD disabled, do nothing
         if(!ios.readLCDControlFlag(LCDControlMask.LCD_AND_PPU_ENABLE)){
@@ -91,6 +95,8 @@ public class PPU: Component, Clockable {
             newMode = LCDStatMode.VBLANK
             //trigger stat interrupt if VBlank LCDStatus bit is set
             statInterruptTriggered = ios.readLCDStatFlag(.VBlankInterruptSource)
+            //frame has ended reset window line counter
+            self.windowLineCounter = 0
         }
         else if(self.lineSync < GBConstants.PIXEL_RENDER_TRIGGER)
         {
@@ -164,12 +170,6 @@ public class PPU: Component, Clockable {
             //palette for bg and win
             let bgWinPalette = ColorPalette(paletteData: ios.LCD_BGP, reference: pManager.currentPalette)
             
-            //tile row considering viewport
-            let tileRow = vpy / GBConstants.BGTileHeight
-            
-            //line in tile to consider
-            let tileLine:Byte = vpy % tw
-            
             //draw BG
             
             //tile map contains which tile to use, tile data is where effective tile are stored
@@ -178,25 +178,57 @@ public class PPU: Component, Clockable {
             let tileDataFlag = ios.readLCDControlFlag(.BG_AND_WINDOW_TILE_DATA_AREA)
             let tiledata = tileDataFlag ? MMUAddressSpaces.BG_WINDOW_TILE_DATA_AREA_1 
                                         : MMUAddressSpaces.BG_WINDOW_TILE_DATA_AREA_0
-            //tile map to use
-            let bgTileMap = ios.readLCDControlFlag(.BG_TILE_MAP_AREA) ? MMUAddressSpaces.BG_TILE_MAP_AREA_1 
+            //tile maps to use
+            let bgTileMap = ios.readLCDControlFlag(.BG_TILE_MAP_AREA) ? MMUAddressSpaces.BG_TILE_MAP_AREA_1
                                                                       : MMUAddressSpaces.BG_TILE_MAP_AREA_0
+            let winTileMap = ios.readLCDControlFlag(.WINDOW_TILE_AREA) ? MMUAddressSpaces.WINDOW_TILE_MAP_AREA_1
+                                                                       : MMUAddressSpaces.WINDOW_TILE_MAP_AREA_0
             
+            //effective tile map (differs between BG/Win)
+            var tileMap:ClosedRange<Short>
+            //tile column (in tileMap) considering view port
+            var tileCol:Byte = 0
+            //tile row (in tileMap) considering viewport
+            var tileRow:Byte = 0
+            //bit in tile line to consider
+            var tileBit:Byte = 0
+            //line in tile to consider
+            var tileLine:Byte = 0
+            //dest x is adjust by 7 in case of window
+            var effectivex:Byte = 0
+            //line has window ?
+            var lineHasWindow = false
             
             //for each pixel in line
             for destx in stride(from:Byte(0), to: Byte(GBConstants.ScreenWidth), by: Byte.Stride(1)){
-                //viewport x
-                let vpx:Byte = (destx &+ scx) // avoid overflow and ensure vertical wrap arround (all bg not only screen)
-                
-                //tile column considering view port
-                let tileCol = vpx / tw
+                //adjust params for window drawing
+                if(ios.readLCDControlFlag(.WINDOW_ENABLE) && ly >= wy && destx>=wx) {
+                    tileMap = winTileMap
+                    tileBit = 7 - ((destx-wx)%tw) //(7 minus value as bit are index from msb to lsb)
+                    tileLine = self.windowLineCounter % GBConstants.BGTileHeight
+                    tileCol = (destx-wx) / tw
+                    tileRow = self.windowLineCounter / GBConstants.BGTileHeight
+                    effectivex = destx &- 7
+                    lineHasWindow = true
+                }
+                //adjust params for BG drawing
+                else {
+                    //viewport x
+                    let vpx:Byte = (destx &+ scx) // avoid overflow and ensure vertical wrap arround (all bg not only screen)
+                    tileMap = bgTileMap
+                    tileBit = 7 - (vpx % tw) //(7 minus value as bit are index from msb to lsb)
+                    tileLine = vpy % GBConstants.BGTileHeight
+                    tileCol = vpx / tw
+                    tileRow = vpy / GBConstants.BGTileHeight
+                    effectivex = destx
+                }
                 
                 //index of tile in BG, (inline 2d array indexing), x32 -> tilemap are 32x32 square
                 let index:Short = (32 * Short(tileRow)) + Short(tileCol)
                 
                 //get tile index in tile map (value at indexed address in tile map)
                 let tileIndex:Byte = mmu.read(address: self.getAddressAt(index: index,
-                                                                         range: bgTileMap))
+                                                                         range: tileMap))
                 
                 //depending on tileDataFlag, tileindex must be considered as a signed Int8 or a Byte
                 let effectiveTileIndex:Byte = tileDataFlag ? tileIndex : add_byte_i8(val: 128, i8: tileIndex)
@@ -204,9 +236,6 @@ public class PPU: Component, Clockable {
                 //get tile starting address from tile index
                 let tileAddress:Short = self.getAddressAt(index: Short(effectiveTileIndex) * Short(GBConstants.TileLength),
                                                           range: tiledata)
-                
-                //bit in tile to consider, (7 minus value as bit are index from msb to lsb)
-                let tileBit:Byte = 7 - (vpx % tw)
                 
                 //each bg tile is 8x8, encoded on 16 bytes, 2 bytes per line
                 let lineAddr = tileAddress + Short(tileLine * 2)
@@ -218,11 +247,12 @@ public class PPU: Component, Clockable {
                                                       at: IntToByteMask[Int(tileBit)])
                 
                 //draw pixel
-                self.drawPixelAt(x: destx, y: desty, withColor: effectiveColor)
+                self.drawPixelAt(x: effectivex, y: desty, withColor: effectiveColor)
             }
             
-            if(ios.readLCDControlFlag(.WINDOW_ENABLE)) {
-                //TODO draw Win
+            //update line counter
+            if(lineHasWindow){
+                self.windowLineCounter += 1
             }
         }
         else {
@@ -234,7 +264,6 @@ public class PPU: Component, Clockable {
             //TODO draw OBJ
         }
     }
-    
     
     /// from a range (of addresses) return address at index, e.g range=0x8000...0x9000, index=4 -> 0x8004
     private func getAddressAt(index:UInt16,range:ClosedRange<Short>) -> UInt16{
