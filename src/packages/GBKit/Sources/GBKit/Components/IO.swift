@@ -152,6 +152,20 @@ class IOInterface: Component {
         }
     }
     
+    // ease access to WX
+    public var WX:UInt8 {
+        get {
+            return mmu.read(address: IOAddresses.LCD_WX.rawValue)
+        }
+    }
+    
+    // ease access to WY
+    public var WY:UInt8 {
+        get {
+            return mmu.read(address: IOAddresses.LCD_WY.rawValue)
+        }
+    }
+    
     // ease access to LCD_BGP
     public var LCD_BGP:UInt8 {
         get {
