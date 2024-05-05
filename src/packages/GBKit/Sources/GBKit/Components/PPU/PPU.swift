@@ -160,7 +160,7 @@ public class PPU: Component, Clockable {
             //scrol y
             let scy:Byte = ios.SCY
             //window x
-            let wx:Byte = ios.WX
+            let wx:Byte = ios.WX &- 7 //window has a 7 pixels shift
             //window y
             let wy:Byte = ios.WY
             //destination y
@@ -194,8 +194,6 @@ public class PPU: Component, Clockable {
             var tileBit:Byte = 0
             //line in tile to consider
             var tileLine:Byte = 0
-            //dest x is adjust by 7 in case of window
-            var effectivex:Byte = 0
             //line has window ?
             var lineHasWindow = false
             
@@ -208,7 +206,6 @@ public class PPU: Component, Clockable {
                     tileLine = self.windowLineCounter % GBConstants.BGTileHeight
                     tileCol = (destx-wx) / tw
                     tileRow = self.windowLineCounter / GBConstants.BGTileHeight
-                    effectivex = destx &- 7
                     lineHasWindow = true
                 }
                 //adjust params for BG drawing
@@ -220,7 +217,6 @@ public class PPU: Component, Clockable {
                     tileLine = vpy % GBConstants.BGTileHeight
                     tileCol = vpx / tw
                     tileRow = vpy / GBConstants.BGTileHeight
-                    effectivex = destx
                 }
                 
                 //index of tile in BG, (inline 2d array indexing), x32 -> tilemap are 32x32 square
@@ -247,7 +243,7 @@ public class PPU: Component, Clockable {
                                                       at: IntToByteMask[Int(tileBit)])
                 
                 //draw pixel
-                self.drawPixelAt(x: effectivex, y: desty, withColor: effectiveColor)
+                self.drawPixelAt(x: destx, y: desty, withColor: effectiveColor)
             }
             
             //update line counter
