@@ -86,7 +86,7 @@ public class PPU: Component, Clockable {
         // if true stat interrupt will be Flagged (fired)
         var statInterruptTriggered:Bool = false
         
-        if(ly >= 144)
+        if(ly >= GBConstants.ScreenHeight)
         {
             newMode = LCDStatMode.VBLANK
             //trigger stat interrupt if VBlank LCDStatus bit is set
