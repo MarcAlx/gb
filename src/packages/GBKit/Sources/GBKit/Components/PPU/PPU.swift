@@ -36,6 +36,7 @@ public class PPU: Component, Clockable {
     private var nextFrame:Data = PPU.blankFrame
     
     private init() {
+        self.prepareNextFrame()
     }
     
     public func reset() {
@@ -95,8 +96,6 @@ public class PPU: Component, Clockable {
             newMode = LCDStatMode.VBLANK
             //trigger stat interrupt if VBlank LCDStatus bit is set
             statInterruptTriggered = ios.readLCDStatFlag(.VBlankInterruptSource)
-            //frame has ended reset window line counter
-            self.windowLineCounter = 0
         }
         else if(self.lineSync < GBConstants.PIXEL_RENDER_TRIGGER)
         {
@@ -134,6 +133,12 @@ public class PPU: Component, Clockable {
             else if(newMode == .VBLANK){
                 //yes there's two VBlank interrupt sources (STAT and VBLANK)
                 self.interrupts.setInterruptFlagValue(.VBlank,true);
+                //commit frame
+                self.commitFrame()
+            }
+            //entering new frame
+            else if(curMode == .VBLANK && newMode == .OAM_SEARCH){
+                self.prepareNextFrame()
             }
         }
         
@@ -304,19 +309,20 @@ public class PPU: Component, Clockable {
         })
     }
     
-    /// prepare next frame to be drawn
-    public func beginFrame() {
-        //needed to avoid pixel persistance accross frame generation
+    //prepare next frame to be drawn
+    private func prepareNextFrame() {
+        //frame has ended reset window line counter
+        self.windowLineCounter = 0
         
-        //fill frame background with color 0
+        //needed to avoid pixel persistance accross frame generation, fill frame background with color 0
         let bgWinPalette = ColorPalette(paletteData: ios.LCD_BGP, reference: pManager.currentPalette)
         self.nextFrame = Data(stride(from: 0, to: GBConstants.PixelCount, by: 1).flatMap {
             _ in return [bgWinPalette[0].r,bgWinPalette[0].g,bgWinPalette[0].b,255]//R,G,B,A
         })
     }
     
-    /// set frame as ready to use
-    public func commitFrame() {
+    /// set current frame as ready to use
+    private func commitFrame() {
         //self._frameBuffer = self.generateRandomFrameBuffer()
         self._frameBuffer = self.nextFrame
     }

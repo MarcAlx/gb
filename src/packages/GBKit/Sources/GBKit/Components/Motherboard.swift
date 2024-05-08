@@ -51,7 +51,6 @@ class Motherboard: Clockable {
     
     public func update() {
         if(self.isOn && self.hasCartridgeInserted) {
-            self.ppu.beginFrame()
             var tmpCycles = 0
             while(tmpCycles < GBConstants.MCyclesPerFrame){
                 self.cpu.tick(self.cycles, tmpCycles)
@@ -61,8 +60,6 @@ class Motherboard: Clockable {
                 self.tick(self.cycles, tmpCycles)
                 tmpCycles += GBConstants.TCycleLength
             }
-            //frame as been computed
-            self.ppu.commitFrame()
         }
     }
 }
