@@ -75,12 +75,29 @@ public class PaletteManager {
         ColorPalette([Color(0x9B, 0xBC, 0x0F),Color(0x8B, 0xAC, 0x0F),Color(0x30, 0x62, 0x30),Color(0x0F, 0x38, 0x15)])
     ]
     
+    /// shorthand for drawing, palette aware empty frame, made of Color 0 of current frame
+    public private(set) var currentEmptyFrame:Data = Data(stride(from: 0, to: GBConstants.PixelCount, by: 1).flatMap {
+        _ in return [0x00, 0x00, 0x00,255]//R,G,B,A
+    })
+    
     /// current palette
     public private(set) var currentPalette:ColorPalette = StandardColorPalettes.DMG
+    
+    public init() {
+        self.setCurrentPalette(palette: .DMG)//ensure empty frame init
+    }
     
     /// change current palette
     public func setCurrentPalette(palette:PalettesIndexes) {
         self.currentPalette = palettes[palette.rawValue]
+        self.currentEmptyFrame = Data(stride(from: 0, to: GBConstants.PixelCount, by: 1).flatMap {
+            _ in return [
+                self.currentPalette[0].r,
+                self.currentPalette[0].g,
+                self.currentPalette[0].b,
+                255
+            ]//R,G,B,A
+        })
     }
     
     /// set user defined palette
