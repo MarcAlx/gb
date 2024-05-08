@@ -1,5 +1,5 @@
 /// An rgb color, values are stored in an RGB array
-struct Color {
+public struct Color {
     public let values:[Byte]
     
     public subscript(componentIndex:Int) -> Byte {
@@ -19,7 +19,7 @@ struct Color {
 }
 
 /// a color palette, made of three colors
-struct ColorPalette {
+public struct ColorPalette {
     private let values:[Color]
     
     public subscript(colorIndex:Int) -> Color {
@@ -51,7 +51,7 @@ struct ColorPalette {
 }
 
 /// available palette
-enum PalettesIndexes: Int {
+public enum PalettesIndexes: Int {
     ///Game Boy
     case DMG = 0
     
@@ -63,7 +63,7 @@ enum PalettesIndexes: Int {
 }
 
 /// to ease palette referencing and customization
-class PaletteManager {
+public class PaletteManager {
     public static let sharedInstance = PaletteManager()
     
     /// available palette
