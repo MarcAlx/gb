@@ -1,20 +1,21 @@
+import Foundation
+
 /// An rgb color, values are stored in an RGB array
 public struct Color {
-    public let values:[Byte]
     
-    public subscript(componentIndex:Int) -> Byte {
-        get {
-            return self.values[componentIndex]
-        }
-    }
+    /// red component
+    public let r:Byte
     
-    public init(values:[Byte]){
-        assert(values.count == 3, "color must have exactly 3 components")
-        self.values = values
-    }
+    ///green component
+    public let g:Byte
+    
+    ///blue component
+    public let b:Byte
     
     public init(_ r:Byte, _ g:Byte, _ b:Byte){
-        self.init(values: [r,g,b])
+        self.r = r
+        self.g = g
+        self.b = b
     }
 }
 

@@ -285,10 +285,10 @@ public class PPU: Component, Clockable {
         var dest:Int = (((Int(y) * GBConstants.ScreenWidth) + Int(x)) * 4)
         
         //draw color to frame buffer
-        self.nextFrame[dest]   = withColor[0] //r
-        self.nextFrame[dest+1] = withColor[1] //g
-        self.nextFrame[dest+2] = withColor[2] //b
-        self.nextFrame[dest+3] = 0xFF         //a
+        self.nextFrame[dest]   = withColor.r //r
+        self.nextFrame[dest+1] = withColor.g //g
+        self.nextFrame[dest+2] = withColor.b //b
+        self.nextFrame[dest+3] = 0xFF        //a
     }
     
     /// generate a random frame, for debug purpose
@@ -311,7 +311,7 @@ public class PPU: Component, Clockable {
         //fill frame background with color 0
         let bgWinPalette = ColorPalette(paletteData: ios.LCD_BGP, reference: pManager.currentPalette)
         self.nextFrame = Data(stride(from: 0, to: GBConstants.PixelCount, by: 1).flatMap {
-            _ in return [bgWinPalette[0][0],bgWinPalette[0][1],bgWinPalette[0][2],255]//R,G,B,A
+            _ in return [bgWinPalette[0].r,bgWinPalette[0].g,bgWinPalette[0].b,255]//R,G,B,A
         })
     }
     
