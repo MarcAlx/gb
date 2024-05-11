@@ -7,8 +7,6 @@ class MemoryBank:Component {
     /// subscript to ease data access
     public subscript(index:Short) -> Byte {
         get {
-            //var a:[UInt8] = []
-            //a[UInt8()] = 10
             return self._data[Int(index)]
         }
         set {
