@@ -22,6 +22,9 @@ public struct GameBoyConstants {
     
     //Used for extended Obj tile
     public let LargeTileHeight:Byte = 16
+    
+    //window has a 7 pixels shift
+    public let WinXOffset:Byte = 7
 
     // Nb of scanline drawn per frame (144 + 10 VBlank)
     public let ScanlinesPerFrame:Int = 154

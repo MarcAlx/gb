@@ -166,7 +166,7 @@ public class PPU: Component, Clockable {
             //scrol y
             let scy:Byte = ios.SCY
             //window x
-            let wx:Byte = ios.WX &- 7 //window has a 7 pixels shift
+            let wx:Byte = ios.WX &- GBConstants.WinXOffset
             //window y
             let wy:Byte = ios.WY
             //destination y
