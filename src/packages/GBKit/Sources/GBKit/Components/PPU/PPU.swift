@@ -10,9 +10,7 @@ enum LCDStatMode: UInt8 {
 /// Pixel Processing Unit
 public class PPU: Component, Clockable {
     /// white frame, for init and debug purpose
-    private static let blankFrame:Data = Data(stride(from: 0, to: GBConstants.PixelCount, by: 1).flatMap {
-        _ in return [255,255,255,255]//R,G,B,A
-    })
+    private static let blankFrame:Data = Data(repeating: 0xFF, count: GBConstants.PixelCount*4)//color are stored with 4 components rgba
     
     public static let sharedInstance = PPU()
     
