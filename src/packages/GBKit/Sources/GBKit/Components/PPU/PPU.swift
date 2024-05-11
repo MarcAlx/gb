@@ -262,6 +262,9 @@ public class PPU: Component, Clockable {
         
         //OBJ are enabled
         if(ios.readLCDControlFlag(.OBJ_ENABLE)) {
+            //identify obj tile height based on lcdc
+            let th = ios.readLCDControlFlag(.OBJ_SIZE) ? GBConstants.LargeTileHeight : GBConstants.StandardTileHeight
+            
             //TODO draw OBJ
         }
     }

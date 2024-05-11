@@ -17,8 +17,11 @@ public struct GameBoyConstants {
     //length of tile in byte
     public let TileLength:UInt8 = 16
 
-    // BG/Win/Normal obg tile height
+    //BG/Win/Normal obj tile height
     public let StandardTileHeight:Byte = 8
+    
+    //Used for extended Obj tile
+    public let LargeTileHeight:Byte = 16
 
     // Nb of scanline drawn per frame (144 + 10 VBlank)
     public let ScanlinesPerFrame:Int = 154
