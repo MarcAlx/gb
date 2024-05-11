@@ -4,6 +4,13 @@ class MemoryBank:Component {
     private var _data:[Byte]
     private var _name:String
     
+    /// allow data extraction from range
+    public subscript(range:ClosedRange<Int>) -> ArraySlice<Byte> {
+        get {
+            return self._data[range]
+        }
+    }
+    
     /// subscript to ease data access
     public subscript(index:Short) -> Byte {
         get {

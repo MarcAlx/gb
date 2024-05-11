@@ -121,4 +121,9 @@ class MMU:Component {
     public func write(address:Short, val:Short) -> Void {
         self.write(address: address, val: EnhancedShort(val))
     }
+    
+    /// uncontrolled slice read
+    public func directRead(range:ClosedRange<Int>) -> ArraySlice<Byte> {
+        return self.ram[range]
+    }
 }
