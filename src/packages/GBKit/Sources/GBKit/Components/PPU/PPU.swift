@@ -208,9 +208,9 @@ public class PPU: Component, Clockable {
                 if(ios.readLCDControlFlag(.WINDOW_ENABLE) && ly >= wy && destx>=wx) {
                     tileMap = winTileMap
                     tileBit = 7 - ((destx-wx)%tw) //(7 minus value as bits are indexed from msb to lsb)
-                    tileLine = self.windowLineCounter % GBConstants.BGTileHeight
+                    tileLine = self.windowLineCounter % GBConstants.StandardTileHeight
                     tileCol = (destx-wx) / tw
-                    tileRow = self.windowLineCounter / GBConstants.BGTileHeight
+                    tileRow = self.windowLineCounter / GBConstants.StandardTileHeight
                     lineHasWindow = true
                 }
                 //adjust params for BG drawing
@@ -219,9 +219,9 @@ public class PPU: Component, Clockable {
                     let vpx:Byte = (destx &+ scx) // avoid overflow and ensure vertical wrap arround (all bg not only screen)
                     tileMap = bgTileMap
                     tileBit = 7 - (vpx % tw) //(7 minus value as bits are indexed from msb to lsb)
-                    tileLine = vpy % GBConstants.BGTileHeight
+                    tileLine = vpy % GBConstants.StandardTileHeight
                     tileCol = vpx / tw
-                    tileRow = vpy / GBConstants.BGTileHeight
+                    tileRow = vpy / GBConstants.StandardTileHeight
                 }
                 
                 //index of tile in BG, (inline 2d array indexing), x32 -> tilemap are 32x32 square
