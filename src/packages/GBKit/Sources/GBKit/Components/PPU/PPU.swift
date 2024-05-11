@@ -33,6 +33,9 @@ public class PPU: Component, Clockable {
     //next frame to be drawn (currently built by render scanline)
     private var nextFrame:Data = PPU.blankFrame
     
+    //stores bg and win color indexes to ease obj priority application
+    private var bgWinColorIndexes:[[Int]] = []
+    
     private init() {
         self.prepareNextFrame()
     }
@@ -240,13 +243,16 @@ public class PPU: Component, Clockable {
                 let lineAddr = tileAddress + Short(tileLine * 2)
                 
                 //decode color using the two bytes (b1, b2) of the tile line that contains the pixel to draw (at)
-                let effectiveColor = self.decodeColor(palette: bgWinPalette,
+                let (colorIndex, effectiveColor) = self.decodeColor(palette: bgWinPalette,
                                                       b1: self.mmu.read(address: lineAddr),
                                                       b2: self.mmu.read(address: lineAddr+1),
                                                       at: IntToByteMask[Int(tileBit)])
                 
                 //draw pixel
                 self.drawPixelAt(x: destx, y: desty, withColor: effectiveColor)
+                
+                //store pixel type
+                self.bgWinColorIndexes[Int(destx)][Int(desty)] = colorIndex
             }
             
             //update line counter
@@ -274,7 +280,7 @@ public class PPU: Component, Clockable {
     
     /// from two bytes and a ByteMask identifies color to use from palette
     /// following the bit blending rule the GB uses
-    private func decodeColor(palette:ColorPalette, b1:Byte, b2:Byte, at:ByteMask) -> Color {
+    private func decodeColor(palette:ColorPalette, b1:Byte, b2:Byte, at:ByteMask) -> (Int,Color) {
         var color = 0
         if(isBitSet(at, b1)) {
             color += 1
@@ -282,7 +288,7 @@ public class PPU: Component, Clockable {
         if(isBitSet(at, b2)) {
             color += 2
         }
-        return palette[color]
+        return (color,palette[color])
     }
     
     /// draw color at given x,y
@@ -320,6 +326,9 @@ public class PPU: Component, Clockable {
         self.nextFrame = Data(stride(from: 0, to: GBConstants.PixelCount, by: 1).flatMap {
             _ in return [bgWinPalette[0].r,bgWinPalette[0].g,bgWinPalette[0].b,255]//R,G,B,A
         })
+        
+        //fill pixel types with BG_0
+        self.bgWinColorIndexes = Array(repeating: Array(repeating: 0, count: GBConstants.ScreenHeight), count: GBConstants.ScreenWidth)
     }
     
     /// set current frame as ready to use
