@@ -9,10 +9,8 @@ enum LCDStatMode: UInt8 {
 
 /// Pixel Processing Unit
 public class PPU: Component, Clockable {
-    /// empty frame, for reset/init purpose
-    private static let blankFrame:Data = Data(stride(from: 0, to: GBConstants.PixelCount, by: 1).flatMap {
-        _ in return [255,255,255,255]//R,G,B,A
-    })
+    /// white frame, for init and debug purpose
+    private static let blankFrame:Data = Data(repeating: 0xFF, count: GBConstants.PixelCount*4)//color are stored with 4 components rgba
     
     public static let sharedInstance = PPU()
     
@@ -35,7 +33,11 @@ public class PPU: Component, Clockable {
     //next frame to be drawn (currently built by render scanline)
     private var nextFrame:Data = PPU.blankFrame
     
+    //stores bg and win color indexes to ease obj priority application
+    private var bgWinColorIndexes:[[Int]] = []
+    
     private init() {
+        self.prepareNextFrame()
     }
     
     public func reset() {
@@ -43,7 +45,7 @@ public class PPU: Component, Clockable {
         self.frameSync = 0
         self.lineSync = 0
         self.windowLineCounter = 0
-        self._frameBuffer = PPU.blankFrame
+        self._frameBuffer = pManager.currentEmptyFrame
     }
     
     private var _lineSync:Int = 0
@@ -95,8 +97,6 @@ public class PPU: Component, Clockable {
             newMode = LCDStatMode.VBLANK
             //trigger stat interrupt if VBlank LCDStatus bit is set
             statInterruptTriggered = ios.readLCDStatFlag(.VBlankInterruptSource)
-            //frame has ended reset window line counter
-            self.windowLineCounter = 0
         }
         else if(self.lineSync < GBConstants.PIXEL_RENDER_TRIGGER)
         {
@@ -134,6 +134,12 @@ public class PPU: Component, Clockable {
             else if(newMode == .VBLANK){
                 //yes there's two VBlank interrupt sources (STAT and VBLANK)
                 self.interrupts.setInterruptFlagValue(.VBlank,true);
+                //commit frame
+                self.commitFrame()
+            }
+            //entering new frame
+            else if(curMode == .VBLANK && newMode == .OAM_SEARCH){
+                self.prepareNextFrame()
             }
         }
         
@@ -148,9 +154,12 @@ public class PPU: Component, Clockable {
     /// scan LY line then render to frame buffer
     /// rendering by line is needed as game usually update drawing between lines to produce special effects
     private func scanline() -> Void {
-        
+        //current line
         let ly = ios.LY
+        //tile width
         let tw = GBConstants.TileWidth
+        //destination y
+        let desty:Byte = ly
         
         //BG an WINDOW are enabled
         if(ios.readLCDControlFlag(.BG_AND_WINDOW_ENABLE))
@@ -160,17 +169,15 @@ public class PPU: Component, Clockable {
             //scrol y
             let scy:Byte = ios.SCY
             //window x
-            let wx:Byte = ios.WX &- 7 //window has a 7 pixels shift
+            let wx:Byte = ios.WX &- GBConstants.WinXOffset
             //window y
             let wy:Byte = ios.WY
-            //destination y
-            let desty:Byte = ly
             //viewport y
             let vpy:Byte = (ly &+ scy) //avoid overflow and ensure horizontal wrap arround (all bg not only screen)
             //palette for bg and win
             let bgWinPalette = ColorPalette(paletteData: ios.LCD_BGP, reference: pManager.currentPalette)
             
-            //draw BG
+            //draw BG / WIN
             
             //tile map contains which tile to use, tile data is where effective tile are stored
             
@@ -202,10 +209,10 @@ public class PPU: Component, Clockable {
                 //adjust params for window drawing
                 if(ios.readLCDControlFlag(.WINDOW_ENABLE) && ly >= wy && destx>=wx) {
                     tileMap = winTileMap
-                    tileBit = 7 - ((destx-wx)%tw) //(7 minus value as bit are index from msb to lsb)
-                    tileLine = self.windowLineCounter % GBConstants.BGTileHeight
+                    tileBit = 7 - ((destx-wx)%tw) //(7 minus value as bits are indexed from msb to lsb)
+                    tileLine = self.windowLineCounter % GBConstants.StandardTileHeight
                     tileCol = (destx-wx) / tw
-                    tileRow = self.windowLineCounter / GBConstants.BGTileHeight
+                    tileRow = self.windowLineCounter / GBConstants.StandardTileHeight
                     lineHasWindow = true
                 }
                 //adjust params for BG drawing
@@ -213,10 +220,10 @@ public class PPU: Component, Clockable {
                     //viewport x
                     let vpx:Byte = (destx &+ scx) // avoid overflow and ensure vertical wrap arround (all bg not only screen)
                     tileMap = bgTileMap
-                    tileBit = 7 - (vpx % tw) //(7 minus value as bit are index from msb to lsb)
-                    tileLine = vpy % GBConstants.BGTileHeight
+                    tileBit = 7 - (vpx % tw) //(7 minus value as bits are indexed from msb to lsb)
+                    tileLine = vpy % GBConstants.StandardTileHeight
                     tileCol = vpx / tw
-                    tileRow = vpy / GBConstants.BGTileHeight
+                    tileRow = vpy / GBConstants.StandardTileHeight
                 }
                 
                 //index of tile in BG, (inline 2d array indexing), x32 -> tilemap are 32x32 square
@@ -237,13 +244,16 @@ public class PPU: Component, Clockable {
                 let lineAddr = tileAddress + Short(tileLine * 2)
                 
                 //decode color using the two bytes (b1, b2) of the tile line that contains the pixel to draw (at)
-                let effectiveColor = self.decodeColor(palette: bgWinPalette,
+                let (colorIndex, effectiveColor) = self.decodeColor(palette: bgWinPalette,
                                                       b1: self.mmu.read(address: lineAddr),
                                                       b2: self.mmu.read(address: lineAddr+1),
                                                       at: IntToByteMask[Int(tileBit)])
                 
                 //draw pixel
                 self.drawPixelAt(x: destx, y: desty, withColor: effectiveColor)
+                
+                //store pixel type
+                self.bgWinColorIndexes[Int(destx)][Int(desty)] = colorIndex
             }
             
             //update line counter
@@ -257,7 +267,65 @@ public class PPU: Component, Clockable {
         
         //OBJ are enabled
         if(ios.readLCDControlFlag(.OBJ_ENABLE)) {
-            //TODO draw OBJ
+            //read obj size to determine tile size (based on lcdc)
+            let useLargeTile = ios.readLCDControlFlag(.OBJ_SIZE)
+            //identify obj tile height
+            let th = useLargeTile ? GBConstants.LargeTileHeight : GBConstants.StandardTileHeight
+            //tiles to consider for line
+            let tiles = self.listObjTilesByDrawingOrder(line: ly, withHeight: th)
+            //pre-fetch obj palettes
+            let obp0 = ios.LCD_OBP0
+            let obp1 = ios.LCD_OBP1
+            
+            //for each tile (horizontal priority is handled by previous ordering)
+            for tile in tiles {
+                //obj palette considering obj palette flag
+                let objPalette = ColorPalette(paletteData: tile.useObjPalette1 ? obp1 : obp0,
+                                              reference: pManager.currentPalette)
+                
+                //tile line considering y flip flag
+                let tileLine = tile.isYFlipped ? th - (ly - Byte(tile.viewportYPos)) - 1 :  ly - Byte(tile.viewportYPos)
+                
+                //tile index in case of large tile is precedent even number (clear Bit_0 to acheive it)
+                let tileIndex = useLargeTile ? clear(.Bit_0, tile.tileIndex) : tile.tileIndex;
+                
+                //tile address is linear following tile index
+                let tileAddress:Short = self.getAddressAt(index: Short(tileIndex) * Short(GBConstants.TileLength),
+                                                          range: MMUAddressSpaces.OBJ_TILE_DATA_AREA)
+                //each obj tile has 2 bytes per line
+                let lineAddr = tileAddress + Short(tileLine * 2)
+                
+                //effective tile pos considering offset
+                let effectivex:Byte = Byte(tile.viewportXPos)
+                
+                //identify nb bits to draw with overflowing screen width
+                let nbBitsToDraw = min(Byte(GBConstants.ScreenWidth) - effectivex , tw)
+                
+                //loop through tile bits to draw
+                for curBit in 0...(nbBitsToDraw-1)
+                {
+                    //destx is absolute to tile pos
+                    let destx:Byte = effectivex + curBit
+                    
+                    //pixel of tile is not below BG/WIN and above a Color 0 pixel -> draw
+                    if(!tile.isBelowBGWIN || self.bgWinColorIndexes[Int(destx)][Int(desty)] == 0)
+                    {
+                        //tile bit considering x flip flag (condition inversed as msb represents left most pixel)
+                        let tileBit = tile.isXFlipped ? curBit : tw - curBit - 1
+                        
+                        //decode color using the two bytes (b1, b2) of the tile line that contains the pixel to draw (at)
+                        let (colorIndex, effectiveColor) = self.decodeColor(palette: objPalette,
+                                                                            b1: self.mmu.read(address: lineAddr),
+                                                                            b2: self.mmu.read(address: lineAddr+1),
+                                                                            at: IntToByteMask[Int(tileBit)])
+                        //color 0 for a tile means transparent (do not draw)
+                        if(colorIndex != 0){
+                            //draw pixel
+                            self.drawPixelAt(x: destx, y: desty, withColor: effectiveColor)
+                        }
+                    }
+                }
+            }
         }
     }
     
@@ -268,7 +336,7 @@ public class PPU: Component, Clockable {
     
     /// from two bytes and a ByteMask identifies color to use from palette
     /// following the bit blending rule the GB uses
-    private func decodeColor(palette:ColorPalette, b1:Byte, b2:Byte, at:ByteMask) -> Color {
+    private func decodeColor(palette:ColorPalette, b1:Byte, b2:Byte, at:ByteMask) -> (Int,Color) {
         var color = 0
         if(isBitSet(at, b1)) {
             color += 1
@@ -276,7 +344,7 @@ public class PPU: Component, Clockable {
         if(isBitSet(at, b2)) {
             color += 2
         }
-        return palette[color]
+        return (color,palette[color])
     }
     
     /// draw color at given x,y
@@ -285,10 +353,51 @@ public class PPU: Component, Clockable {
         var dest:Int = (((Int(y) * GBConstants.ScreenWidth) + Int(x)) * 4)
         
         //draw color to frame buffer
-        self.nextFrame[dest]   = withColor[0] //r
-        self.nextFrame[dest+1] = withColor[1] //g
-        self.nextFrame[dest+2] = withColor[2] //b
-        self.nextFrame[dest+3] = 0xFF         //a
+        self.nextFrame[dest]   = withColor.r //r
+        self.nextFrame[dest+1] = withColor.g //g
+        self.nextFrame[dest+2] = withColor.b //b
+        self.nextFrame[dest+3] = 0xFF        //a
+    }
+    
+    ///lists obj tiles:
+    /// - on screen for a give line
+    /// - considering a tile height (8 or 16)
+    /// - ordered by drawing priority
+    ///
+    /// n.b as DMG can only displays 10 tiles, this func won't return more than 10 items
+    private func listObjTilesByDrawingOrder(line:Byte,withHeight:Byte) -> [ObjectAttributes] {
+        var res:[ObjectAttributes] = []
+        var curOAMAddress:Short = MMUAddresses.OBJECT_ATTRIBUTE_MEMORY.rawValue
+        //walkthrough OAM, under obj limit per line
+        while(curOAMAddress < MMUAddresses.OBJECT_ATTRIBUTE_MEMORY_END.rawValue && res.count < GBConstants.ObjLimitPerLine){
+            //identify tile range
+            let start = Int(curOAMAddress)
+            let end = Int(curOAMAddress+GBConstants.ObjTileInfoSize)
+            //decode tile
+            let tileInfo = ObjectAttributes(curOAMAddress, Array(self.mmu.directRead(range: start...end)))
+            //check visibility
+            if(tileInfo.isVerticallyVisible(onLine: line, withHeight: withHeight)){
+                res.append(tileInfo)
+            }
+            //move to next tile info
+            curOAMAddress += GBConstants.ObjTileInfoSize
+        }
+        
+        //keep only onscreen tiles (n.b offscreen tiles count in the 10 obj per line limit, so not filtered before)
+        res = res.filter { obj in obj.isHorizontallyVisible() }
+        
+        //sorted by drawing priority
+        return res.sorted {//returns true if $0 should be before $1
+            if($0.xPos == $1.xPos){
+                return $0.OamAddress > $1.OamAddress
+            }
+            else {
+                return $0.xPos > $1.xPos
+            }
+            
+            //n.b the lower the x the later to be drawn (as lower x has more priority)
+            //    otherwise the lower OAM address the later to be drawn (as lower address has more priority)
+        }
     }
     
     /// generate a random frame, for debug purpose
@@ -304,19 +413,23 @@ public class PPU: Component, Clockable {
         })
     }
     
-    /// prepare next frame to be drawn
-    public func beginFrame() {
-        //needed to avoid pixel persistance accross frame generation
+    //prepare next frame to be drawn
+    private func prepareNextFrame() {
+        //frame has ended reset window line counter
+        self.windowLineCounter = 0
         
-        //fill frame background with color 0
+        //needed to avoid pixel persistance accross frame generation, fill frame background with color 0
         let bgWinPalette = ColorPalette(paletteData: ios.LCD_BGP, reference: pManager.currentPalette)
         self.nextFrame = Data(stride(from: 0, to: GBConstants.PixelCount, by: 1).flatMap {
-            _ in return [bgWinPalette[0][0],bgWinPalette[0][1],bgWinPalette[0][2],255]//R,G,B,A
+            _ in return [bgWinPalette[0].r,bgWinPalette[0].g,bgWinPalette[0].b,255]//R,G,B,A
         })
+        
+        //fill pixel types with BG_0
+        self.bgWinColorIndexes = Array(repeating: Array(repeating: 0, count: GBConstants.ScreenHeight), count: GBConstants.ScreenWidth)
     }
     
-    /// set frame as ready to use
-    public func commitFrame() {
+    /// set current frame as ready to use
+    private func commitFrame() {
         //self._frameBuffer = self.generateRandomFrameBuffer()
         self._frameBuffer = self.nextFrame
     }

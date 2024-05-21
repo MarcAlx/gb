@@ -17,8 +17,26 @@ public struct GameBoyConstants {
     //length of tile in byte
     public let TileLength:UInt8 = 16
 
-    // BG tile height
-    public let BGTileHeight:Byte = 8
+    //BG/Win/Normal obj tile height
+    public let StandardTileHeight:Byte = 8
+    
+    //Used for extended Obj tile
+    public let LargeTileHeight:Byte = 16
+    
+    //window has a 7 pixels shift
+    public let WinXOffset:Byte = 7
+    
+    //Obj tiles have an X offset to consider for positionning
+    public let ObjXOffset:Byte = 8
+    
+    //Obj tiles have an Y offset to consider for positioning
+    public let ObjYOffset:Int = 16 // Int to avoid useless casting
+    
+    //number of bytes needed to represent a single tileinfo in OAM
+    public let ObjTileInfoSize:Short = 4 //Short to avoid useless casting
+    
+    //An hardware limite of 10 objects max per line exists
+    public let ObjLimitPerLine:Byte = 10
 
     // Nb of scanline drawn per frame (144 + 10 VBlank)
     public let ScanlinesPerFrame:Int = 154
@@ -433,6 +451,7 @@ public enum MMUAddressSpaces {
     static let BG_WINDOW_TILE_DATA_AREA_1:ClosedRange<Short> = 0x8000...0x8FFF
     static let BG_TILE_MAP_AREA_0:ClosedRange<Short> = 0x9800...0x9BFF
     static let BG_TILE_MAP_AREA_1:ClosedRange<Short> = 0x9C00...0x9FFF
+    static let OBJ_TILE_DATA_AREA:ClosedRange<Short> = 0x8000...0x8FFF
 }
 
 //IO Addresses
