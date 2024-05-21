@@ -173,6 +173,20 @@ class IOInterface: Component {
         }
     }
     
+    // ease access to LCD_OBP0
+    public var LCD_OBP0:UInt8 {
+        get {
+            return mmu.read(address: IOAddresses.LCD_OBP0.rawValue)
+        }
+    }
+    
+    // ease access to LCD_OBP1
+    public var LCD_OBP1:UInt8 {
+        get {
+            return mmu.read(address: IOAddresses.LCD_OBP1.rawValue)
+        }
+    }
+    
     //TODO add getter over motherboard.mmu.ios
     //typical usecase is setting joypad input
 }
