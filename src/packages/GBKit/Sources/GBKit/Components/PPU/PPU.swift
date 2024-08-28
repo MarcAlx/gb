@@ -284,7 +284,8 @@ public class PPU: Component, Clockable {
                                               reference: pManager.currentPalette)
                 
                 //tile line considering y flip flag
-                let tileLine = tile.isYFlipped ? th - (ly - Byte(tile.viewportYPos)) - 1 :  ly - Byte(tile.viewportYPos)
+                let tileLine = Byte(tile.isYFlipped ? Int(th) - (Int(ly) - tile.viewportYPos) - 1
+                                                    : Int(ly) - tile.viewportYPos)
                 
                 //tile index in case of large tile is precedent even number (clear Bit_0 to acheive it)
                 let tileIndex = useLargeTile ? clear(.Bit_0, tile.tileIndex) : tile.tileIndex;
