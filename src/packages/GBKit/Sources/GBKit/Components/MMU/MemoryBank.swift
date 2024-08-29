@@ -9,6 +9,9 @@ class MemoryBank:Component {
         get {
             return self._data[range]
         }
+        set {
+            self._data[range] = newValue
+        }
     }
     
     /// subscript to ease data access

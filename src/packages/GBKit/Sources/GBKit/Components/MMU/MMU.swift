@@ -106,9 +106,27 @@ class MMU:Component {
         return self.ram[address]
     }
     
+    /// uncontroled read short at address (lsb) and address+1 (msb)
+    public func directRead(address:Short) -> Short {
+        let lsb:Byte = self.ram[address]
+        let msb:Byte = self.ram[address+1]
+        return merge(msb, lsb)
+    }
+    
     /// write byte to address without control
     public func directWrite(address:Short, val:Byte) -> Void {
         self.ram[address] = val
+    }
+    
+    /// direct write short to address without control
+    public func directWrite(address:Short, val:EnhancedShort) -> Void {
+        self.ram[address] = val.lsb
+        self.ram[address+1] = val.msb
+    }
+    
+    /// direct write short to address (lsb at address, msb at address+1
+    public func directWrite(address:Short, val:Short) -> Void {
+        self.write(address: address, val: EnhancedShort(val))
     }
     
     /// write short to address (lsb at address, msb at address+1
