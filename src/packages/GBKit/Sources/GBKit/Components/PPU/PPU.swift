@@ -141,10 +141,10 @@ public class PPU: Component, Clockable {
             else if(curMode == .VBLANK && newMode == .OAM_SEARCH){
                 self.prepareNextFrame()
             }
+            
+            //update LCD STATUS -> mode
+            ios.writeLCDStatMode(newMode)
         }
-        
-        //update LCD STATUS -> mode
-        ios.writeLCDStatMode(newMode)
         
         //operate at 4 m cycles speed as it's 1t cycle (minimal)
         self.frameSync = self.frameSync &+ 4
