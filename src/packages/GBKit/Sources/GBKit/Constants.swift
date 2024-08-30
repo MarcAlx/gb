@@ -47,6 +47,9 @@ public struct GameBoyConstants {
 
     // MCycles than occurs each frame
     public let MCyclesPerFrame:Int
+    
+    // DMA transfer duration in M cycles
+    public let DMADuration:Int = 640
 
     // Exact GB frame rate (likely ignored, rounded to 60 by CADisplayLink)
     public let ExactFrameRate:Float
@@ -452,6 +455,12 @@ public enum MMUAddressSpaces {
     static let BG_TILE_MAP_AREA_0:ClosedRange<Short> = 0x9800...0x9BFF
     static let BG_TILE_MAP_AREA_1:ClosedRange<Short> = 0x9C00...0x9FFF
     static let OBJ_TILE_DATA_AREA:ClosedRange<Short> = 0x8000...0x8FFF
+}
+
+/// same as MMUAddressSpaces but with ClosedRange<Int>
+public enum MMUAddressSpacesInt {
+    static let OBJECT_ATTRIBUTE_MEMORY:ClosedRange<Int> = Int(MMUAddresses.OBJECT_ATTRIBUTE_MEMORY.rawValue)...Int(MMUAddresses.OBJECT_ATTRIBUTE_MEMORY_END.rawValue)
+    //add here any other needed range
 }
 
 //IO Addresses

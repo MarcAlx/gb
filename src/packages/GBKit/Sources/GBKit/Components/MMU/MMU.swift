@@ -14,16 +14,38 @@ class MMU:Component, Clockable {
     
     private let ram:MemoryBank = MemoryBank(size: GBConstants.RAMSize,name: "ram")
         
+    /// tick counter for dma period
+    private var dmaCounter: Int = 0
+    
+    private var currentDMATransferRange: ClosedRange<Int> = MMUAddressSpacesInt.OBJECT_ATTRIBUTE_MEMORY
+    
+    /// true if dma transfer is currently in progress
+    public var isDMATransferInProgress: Bool {
+        get {
+            return self.dmaCounter > 0
+        }
+    }
+    
     private init() {
     }
     
     func tick(_ masterCycles: Int, _ frameCycles: Int) {
+        if(isDMATransferInProgress){
+            self.dmaCounter = self.dmaCounter - GBConstants.TCycleLength
+        }
         self.cycles = self.cycles &+ GBConstants.TCycleLength
     }
     
     ///subscript to dispatch address to its corresponding location
     public subscript(address:Short) -> Byte {
         get {
+            //during DMA transfer conflicts occurs if transfer source or dest (always OAM) is accessed while being wrote
+            if(self.isDMATransferInProgress
+            && (self.currentDMATransferRange.contains(Int(address))
+                || MMUAddressSpaces.OBJECT_ATTRIBUTE_MEMORY.contains(address))){
+                return 0xFF
+            }
+            
             switch address {
             case IOAddresses.JOYPAD_INPUT.rawValue:
                 return 0xFF//TODO read joypad
@@ -41,6 +63,12 @@ class MMU:Component, Clockable {
             }
         }
         set {
+            //during DMA transfer conflicts occurs if transfer dest (always OAM) is accessed while being wrote
+            if(self.isDMATransferInProgress
+            && MMUAddressSpaces.OBJECT_ATTRIBUTE_MEMORY.contains(address)) {
+                return
+            }
+            
             switch address {
             //mirror C000-DDFF (which is 0x2000 behind)
             case MMUAddressSpaces.ECHO_RAM:
@@ -62,6 +90,10 @@ class MMU:Component, Clockable {
                 self.ram[address] = (self.ram[address] & 0b1100_1111 /*clear bits 5/4 in ram*/)
                                   | (newValue & 0b0011_0000 /*keep only RW bits of value*/)
                 break
+            //dma transfer start
+            case IOAddresses.LCD_DMA.rawValue:
+                self.startDMATransfer(start: newValue)
+                break;
             //LCD status first three bits are read only
             case IOAddresses.LCD_STATUS.rawValue:
                 self.ram[address] = (self.ram[address] & 0b0000_0111) | (newValue & 0b1111_1000)
@@ -88,6 +120,8 @@ class MMU:Component, Clockable {
     public func reset() {
         self.cycles = 0
         self.currentSwitchableBank = 1
+        self.dmaCounter = 0
+        self.currentDMATransferRange = MMUAddressSpacesInt.OBJECT_ATTRIBUTE_MEMORY
         self.ram.reset()
     }
     
@@ -150,5 +184,15 @@ class MMU:Component, Clockable {
     /// uncontrolled slice read
     public func directRead(range:ClosedRange<Int>) -> ArraySlice<Byte> {
         return self.ram[range]
+    }
+    
+    /// starts DMA transfer from 0xXX00 -> 0xXX9F to 0xFE00 -> 0xFE9F where XX is the provided byte
+    /// XX must be between 0x00 and 0xDF
+    private func startDMATransfer(start:Byte) -> Void {
+        let sourceRadix:Int = Int(start) * 0x100//shift input byte
+        let sourceRange = sourceRadix...(sourceRadix+0x9F)
+        self.ram[MMUAddressSpacesInt.OBJECT_ATTRIBUTE_MEMORY] = self.ram[sourceRange]
+        self.dmaCounter = GBConstants.DMADuration
+        self.currentDMATransferRange = sourceRange
     }
 }
