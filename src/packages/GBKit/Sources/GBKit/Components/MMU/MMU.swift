@@ -1,7 +1,9 @@
 /**
  * Memory Management Unit
  */
-class MMU:Component {
+class MMU:Component, Clockable {
+    var cycles: Int = 0
+    
     public static let sharedInstance = MMU()
     
     /// index of the current switchable bank
@@ -13,6 +15,10 @@ class MMU:Component {
     private let ram:MemoryBank = MemoryBank(size: GBConstants.RAMSize,name: "ram")
         
     private init() {
+    }
+    
+    func tick(_ masterCycles: Int, _ frameCycles: Int) {
+        self.cycles = self.cycles &+ GBConstants.TCycleLength
     }
     
     ///subscript to dispatch address to its corresponding location
@@ -80,6 +86,7 @@ class MMU:Component {
     }
     
     public func reset() {
+        self.cycles = 0
         self.currentSwitchableBank = 1
         self.ram.reset()
     }

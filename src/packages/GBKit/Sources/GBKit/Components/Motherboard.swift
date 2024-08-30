@@ -54,6 +54,7 @@ class Motherboard: Clockable {
             var tmpCycles = 0
             while(tmpCycles < GBConstants.MCyclesPerFrame){
                 self.cpu.tick(self.cycles, tmpCycles)
+                self.mmu.tick(self.cycles, tmpCycles)
                 self.ppu.tick(self.cycles, tmpCycles)
                 ////check interrupts
                 self.cpu.handleInterrupts()
