@@ -46,7 +46,7 @@ class Motherboard: Clockable {
     }
     
     public func tick(_ masterCycles:Int, _ frameCycles:Int) {
-        self.cycles = self.cycles &+ 1
+        self.cycles = self.cycles &+ 4
     }
     
     public func update() {
