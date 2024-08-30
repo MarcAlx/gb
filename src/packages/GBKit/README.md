@@ -137,6 +137,8 @@ This project contains some unit tests, objective is to test each core fonction o
 - https://forums.nesdev.org/viewtopic.php?t=16621
 - https://forums.nesdev.org/viewtopic.php?t=15944
 
+- https://github.com/Gekkio/mooneye-gb/issues/39#issuecomment-265953981
+
 - [How does the Gameboy's memory bank switching work?](https://retrocomputing.stackexchange.com/questions/11732/how-does-the-gameboys-memory-bank-switching-work)
 - [How does Game Boy / Sharp LR35902 HRAM work?](https://retrocomputing.stackexchange.com/a/11943)
 
