@@ -44,12 +44,14 @@ class CPUCore: Component {
         self.interrupts.setInterruptFlagValue(interrupt, false)
         //disable IME
         self.interrupts.IME = false
-        //write PC to stack
-        self.pushToStack(self.registers.PC)
-        //move PC to associated interrupt address
-        self.jumpTo(EnhancedShort(interruptLoc))
+        //handling interupt is: write PC to stack and move PC to associated interrupt address (a call...)
+        self.call(interruptLoc)
         //restore cpu state
         self.state = CPUState.RUNNING
+        //increments cycles
+        self.cycles = self.cycles &+ 20
+        //no documentation seems to explicit this timing of 20,
+        //let's assume it's a call (24 cycles) without having to fetch opcode (4 cycles) so 24-4=20
     }
     
     /// add val to HL, assign flag and return val

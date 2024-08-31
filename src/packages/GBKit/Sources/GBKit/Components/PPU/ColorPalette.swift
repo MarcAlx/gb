@@ -1,25 +1,26 @@
+import Foundation
+
 /// An rgb color, values are stored in an RGB array
-struct Color {
-    public let values:[Byte]
+public struct Color {
     
-    public subscript(componentIndex:Int) -> Byte {
-        get {
-            return self.values[componentIndex]
-        }
-    }
+    /// red component
+    public let r:Byte
     
-    public init(values:[Byte]){
-        assert(values.count == 3, "color must have exactly 3 components")
-        self.values = values
-    }
+    ///green component
+    public let g:Byte
+    
+    ///blue component
+    public let b:Byte
     
     public init(_ r:Byte, _ g:Byte, _ b:Byte){
-        self.init(values: [r,g,b])
+        self.r = r
+        self.g = g
+        self.b = b
     }
 }
 
 /// a color palette, made of three colors
-struct ColorPalette {
+public struct ColorPalette {
     private let values:[Color]
     
     public subscript(colorIndex:Int) -> Color {
@@ -51,7 +52,7 @@ struct ColorPalette {
 }
 
 /// available palette
-enum PalettesIndexes: Int {
+public enum PalettesIndexes: Int {
     ///Game Boy
     case DMG = 0
     
@@ -63,7 +64,7 @@ enum PalettesIndexes: Int {
 }
 
 /// to ease palette referencing and customization
-class PaletteManager {
+public class PaletteManager {
     public static let sharedInstance = PaletteManager()
     
     /// available palette
@@ -74,12 +75,29 @@ class PaletteManager {
         ColorPalette([Color(0x9B, 0xBC, 0x0F),Color(0x8B, 0xAC, 0x0F),Color(0x30, 0x62, 0x30),Color(0x0F, 0x38, 0x15)])
     ]
     
+    /// shorthand for drawing, palette aware empty frame, made of Color 0 of current frame
+    public private(set) var currentEmptyFrame:Data = Data(stride(from: 0, to: GBConstants.PixelCount, by: 1).flatMap {
+        _ in return [0x00, 0x00, 0x00,255]//R,G,B,A
+    })
+    
     /// current palette
     public private(set) var currentPalette:ColorPalette = StandardColorPalettes.DMG
+    
+    public init() {
+        self.setCurrentPalette(palette: .DMG)//ensure empty frame init
+    }
     
     /// change current palette
     public func setCurrentPalette(palette:PalettesIndexes) {
         self.currentPalette = palettes[palette.rawValue]
+        self.currentEmptyFrame = Data(stride(from: 0, to: GBConstants.PixelCount, by: 1).flatMap {
+            _ in return [
+                self.currentPalette[0].r,
+                self.currentPalette[0].g,
+                self.currentPalette[0].b,
+                255
+            ]//R,G,B,A
+        })
     }
     
     /// set user defined palette

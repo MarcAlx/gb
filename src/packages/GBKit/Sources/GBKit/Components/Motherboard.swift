@@ -46,7 +46,7 @@ class Motherboard: Clockable {
     }
     
     public func tick(_ masterCycles:Int, _ frameCycles:Int) {
-        self.cycles = self.cycles &+ 1
+        self.cycles = self.cycles &+ 4
     }
     
     public func update() {
@@ -54,14 +54,13 @@ class Motherboard: Clockable {
             var tmpCycles = 0
             while(tmpCycles < GBConstants.MCyclesPerFrame){
                 self.cpu.tick(self.cycles, tmpCycles)
+                self.mmu.tick(self.cycles, tmpCycles)
                 self.ppu.tick(self.cycles, tmpCycles)
                 ////check interrupts
                 self.cpu.handleInterrupts()
                 self.tick(self.cycles, tmpCycles)
                 tmpCycles += GBConstants.TCycleLength
             }
-            //frame as been computed
-            self.ppu.commitFrame()
         }
     }
 }
