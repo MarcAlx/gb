@@ -43,6 +43,42 @@ public struct GBScene: Scene {
                 // the game screen
                 SpriteView(scene: self.scene,preferredFramesPerSecond: GBUIConstants.PreferredFrameRate).frame(width: GBUIConstants.SceneWidth, height: GBUIConstants.SceneHeight)
                 
+                HStack {
+                    Button("Left", systemImage: "arrowshape.left", action: {})
+                        .labelStyle(.iconOnly)
+                        ._onButtonGesture { pressed in self.gVM.setButtonState(.LEFT, pressed) } perform: {}
+                    
+                    Button("Up", systemImage: "arrowshape.up", action: {})
+                        .labelStyle(.iconOnly)
+                        ._onButtonGesture { pressed in self.gVM.setButtonState(.UP, pressed) } perform: {}
+                    
+                    Button("Right", systemImage: "arrowshape.right", action: {})
+                        .labelStyle(.iconOnly)
+                        ._onButtonGesture { pressed in self.gVM.setButtonState(.RIGHT, pressed) } perform: {}
+                    
+                    Button("Down", systemImage: "arrowshape.down", action: {})
+                        .labelStyle(.iconOnly)
+                        ._onButtonGesture { pressed in self.gVM.setButtonState(.DOWN, pressed) } perform: {}
+                    
+                    Button("A") {}
+                        ._onButtonGesture { pressed in self.gVM.setButtonState(.A, pressed) } perform: {}
+                    
+                    Button("B") {}
+                        ._onButtonGesture { pressed in self.gVM.setButtonState(.B, pressed) } perform: {}
+                    
+                    Button("start") {}
+                        ._onButtonGesture { pressed in self.gVM.setButtonState(.START, pressed) } perform: {}
+                    
+                    Button("select") {}
+                        ._onButtonGesture { pressed in self.gVM.setButtonState(.SELECT, pressed) } perform: {}
+                }
+                
+                HStack {
+                    Text("Pressed buttons: ")
+                    ForEach(self.gVM.pressedButtons.sorted{$0.hashValue < $1.hashValue}, id: \.hashValue){ b in
+                        Text(b.rawValue)
+                    }
+                }
                 //todo use dedicated view for logging
                 List {
                     Section(header: Text("Log")) {
@@ -81,6 +117,7 @@ public struct GBScene: Scene {
             } message: {
                 Text(self.eVM.errorMessage)
             }
+            .padding(15)
         }
     }
 }
