@@ -13,6 +13,7 @@ graph TB;
   CPU[CPU]
   MMU[MMU]
   IO[I/O]
+  JOY[JoyPad]
   R[Registers]
   INT[Interrupts]
   PM[Palette Manager]
@@ -23,6 +24,7 @@ graph TB;
   MB --> MMU;
   MB --> PPU;
   MB --> IO;
+  MB --> JOY;
 
   INT --> MMU;
 
@@ -35,6 +37,8 @@ graph TB;
   PPU --> IO;
 
   IO --> MMU;
+  
+  MMU --> JOY
   
 ```
 
