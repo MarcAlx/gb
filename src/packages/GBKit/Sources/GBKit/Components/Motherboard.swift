@@ -9,6 +9,7 @@ class Motherboard: Clockable {
     private let mmu:MMU = MMU.sharedInstance
     private let ppu:PPU = PPU.sharedInstance
     private let ios:IOInterface = IOInterface.sharedInstance
+    public  let joypad:JoyPadInterface = JoyPadInterface.sharedInstance
     private let interrupts:Interrupts = Interrupts.sharedInstance
     
     public var hasCartridgeInserted:Bool {
@@ -29,6 +30,7 @@ class Motherboard: Clockable {
         self.cpu.reset()
         self.ppu.reset()
         self.ios.reset()
+        self.joypad.reset()
         self.interrupts.reset()
     }
     

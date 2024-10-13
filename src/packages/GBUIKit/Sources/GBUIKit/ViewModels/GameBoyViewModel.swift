@@ -12,6 +12,7 @@ public class GameBoyViewModel:ObservableObject {
     private let gb:GameBoy = GameBoy()
     private var previousTime:Double = Date().timeIntervalSince1970
     @Published public var isOn:Bool = false
+    @Published public var pressedButtons:Set<JoyPadButtons> = Set<JoyPadButtons>()
     
     /*
      * used to act at every frame
@@ -50,6 +51,21 @@ public class GameBoyViewModel:ObservableObject {
         self.displayLink.isPaused = true
         self.gb.turnOff()
         self.isOn = self.gb.isOn
+    }
+    
+    /// set button state (true = pressed, released else)
+    public func setButtonState(_ button: JoyPadButtons, _ state:Bool) {
+        var actualState = self.pressedButtons.contains(button)
+        if(state){
+            self.pressedButtons.insert(button)
+        }
+        else {
+            self.pressedButtons.remove(button)
+        }
+        
+        if(state != actualState){
+            self.gb.setButtonState(button, state)
+        }
     }
     
     ///insert cartridge

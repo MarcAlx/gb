@@ -27,6 +27,11 @@ public class GameBoy {
         self.motherboard.powerOff()
     }
     
+    /// set button state (true = pressed, released else)
+    public func setButtonState(_ button: JoyPadButtons, _ state:Bool) {
+        self.motherboard.joypad.setButtonState(button, state)
+    }
+    
     ///update method should be called every frame
     public func update() {
         self.motherboard.update()
