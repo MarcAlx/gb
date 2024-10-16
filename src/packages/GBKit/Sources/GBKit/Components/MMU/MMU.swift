@@ -6,6 +6,8 @@ class MMU:Component, Clockable {
     
     public static let sharedInstance = MMU()
     
+    private let joy:JoyPadInterface = JoyPadInterface.sharedInstance
+    
     /// index of the current switchable bank
     private var currentSwitchableBank:Int = 1
     
@@ -48,7 +50,19 @@ class MMU:Component, Clockable {
             
             switch address {
             case IOAddresses.JOYPAD_INPUT.rawValue:
-                return 0xFF//TODO read joypad
+                let joy1 = self.ram[address]
+                //buttons
+                if(isBitCleared(.Bit_5, joy1)){
+                    return joy1 & joy.getButtonGroupState(group: .BUTTONS)
+                }
+                //dpad
+                else if(isBitCleared(.Bit_4, joy1)){
+                    return joy1 & joy.getButtonGroupState(group: .DPAD)
+                }
+                else {
+                    //lower nible -> 0xF
+                    return joy1 & ButtonModifiers.ALL_RELEASED.rawValue
+                }
             case IOAddresses.LCD_STATUS.rawValue:
                 return self.ram[address] | 0b1000_0000 //bit 7 is always 1
             //prohibited area, always return 0
