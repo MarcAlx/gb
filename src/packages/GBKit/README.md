@@ -39,6 +39,7 @@ graph TB;
   IO --> MMU;
   
   MMU --> JOY
+  JOY --> INT
   
 ```
 

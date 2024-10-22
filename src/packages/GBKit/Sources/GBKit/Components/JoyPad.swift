@@ -53,6 +53,12 @@ class JoyPadInterface : Component {
     /// Set button state (true -> pressed, released else)
     public func setButtonState(_ button: JoyPadButtons, _ state:Bool) {
         print("\(button) - state \(state)")
+        
+        //button goes from released to pressed -> trigger interrupt
+        if(!buttonState[button]! && state){
+            Interrupts.sharedInstance.setInterruptFlagValue(.Joypad, true);
+        }
+        
         buttonState[button] = state
         //ensure dpad pressed consistency
         if(button.rawValue.starts(with: "dpad")){
