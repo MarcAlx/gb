@@ -108,6 +108,10 @@ class MMU:Component, Clockable {
             case IOAddresses.LCD_DMA.rawValue:
                 self.startDMATransfer(start: newValue)
                 break;
+            //writing to DIV resets it to 0x00
+            case IOAddresses.DIV.rawValue:
+                self.ram[address] = 0;
+                break;
             //LCD status first three bits are read only
             case IOAddresses.LCD_STATUS.rawValue:
                 self.ram[address] = (self.ram[address] & 0b0000_0111) | (newValue & 0b1111_1000)
