@@ -49,32 +49,48 @@ public struct GBScene: Scene {
                 
                 HStack {
                     Button("Left", systemImage: "arrowshape.left", action: {})
+                        .pressAction({
+                            pressed in self.gVM.setButtonState(.LEFT, pressed)
+                        })
                         .labelStyle(.iconOnly)
-                        ._onButtonGesture { pressed in self.gVM.setButtonState(.LEFT, pressed) } perform: {}
                     
                     Button("Up", systemImage: "arrowshape.up", action: {})
+                        .pressAction({
+                            pressed in self.gVM.setButtonState(.UP, pressed)
+                        })
                         .labelStyle(.iconOnly)
-                        ._onButtonGesture { pressed in self.gVM.setButtonState(.UP, pressed) } perform: {}
                     
                     Button("Right", systemImage: "arrowshape.right", action: {})
+                        .pressAction({
+                            pressed in self.gVM.setButtonState(.RIGHT, pressed)
+                        })
                         .labelStyle(.iconOnly)
-                        ._onButtonGesture { pressed in self.gVM.setButtonState(.RIGHT, pressed) } perform: {}
                     
                     Button("Down", systemImage: "arrowshape.down", action: {})
+                        .pressAction({
+                            pressed in self.gVM.setButtonState(.DOWN, pressed)
+                        })
                         .labelStyle(.iconOnly)
-                        ._onButtonGesture { pressed in self.gVM.setButtonState(.DOWN, pressed) } perform: {}
                     
                     Button("A") {}
-                        ._onButtonGesture { pressed in self.gVM.setButtonState(.A, pressed) } perform: {}
+                        .pressAction({
+                            pressed in self.gVM.setButtonState(.A, pressed)
+                        })
                     
                     Button("B") {}
-                        ._onButtonGesture { pressed in self.gVM.setButtonState(.B, pressed) } perform: {}
+                        .pressAction({
+                            pressed in self.gVM.setButtonState(.B, pressed)
+                        })
                     
                     Button("start") {}
-                        ._onButtonGesture { pressed in self.gVM.setButtonState(.START, pressed) } perform: {}
+                        .pressAction({
+                            pressed in self.gVM.setButtonState(.START, pressed)
+                        })
                     
                     Button("select") {}
-                        ._onButtonGesture { pressed in self.gVM.setButtonState(.SELECT, pressed) } perform: {}
+                        .pressAction({
+                            pressed in self.gVM.setButtonState(.SELECT, pressed)
+                        })
                 }
                 
                 HStack {
@@ -211,5 +227,35 @@ public struct GBScene: Scene {
         self.gVM.setButtonState(.DOWN, gamepad.leftThumbstick.down.value > 0.5 || gamepad.dpad.down.isPressed)
         self.gVM.setButtonState(.LEFT, gamepad.leftThumbstick.left.value > 0.5 || gamepad.dpad.left.isPressed)
         self.gVM.setButtonState(.RIGHT, gamepad.leftThumbstick.right.value > 0.5 || gamepad.dpad.right.isPressed)
+    }
+}
+
+//view modifier to fake Pressed and Released behavior via DragGesture
+public struct PressActions: ViewModifier {
+    var onPress: () -> Void
+    var onRelease: () -> Void
+    
+    public func body(content: Content) -> some View {
+        content
+            .simultaneousGesture(
+                DragGesture(minimumDistance: 0)
+                    .onChanged({ _ in
+                        onPress()
+                    })
+                    .onEnded({ _ in
+                        onRelease()
+                    })
+            )
+    }
+}
+
+//view extension
+extension View {
+    public func pressAction(_ action: @escaping ((Bool) -> Void)) -> some View {
+        modifier(PressActions(onPress: {
+            action(true)
+        }, onRelease: {
+            action(false)
+        }))
     }
 }
