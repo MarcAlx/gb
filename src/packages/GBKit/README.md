@@ -17,6 +17,7 @@ graph TB;
   R[Registers]
   INT[Interrupts]
   PM[Palette Manager]
+  TIM[Timer]
 
   GB --> MB;
 
@@ -25,6 +26,10 @@ graph TB;
   MB --> PPU;
   MB --> IO;
   MB --> JOY;
+  MB --> TIM;
+
+  TIM --> MMU;
+  TIM --> INT;
 
   INT --> MMU;
 
