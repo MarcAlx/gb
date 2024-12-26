@@ -37,7 +37,7 @@ class CPUImplementation: CPUCore {
             Instruction(opCode: 0x0D, length: 1, name: "DEC C", duration:4,dec_c),
             Instruction(opCode: 0x0E, length: 2, name: "LD C, 0x%02X", duration:8,ld_c_n),
             Instruction(opCode: 0x0F, length: 1, name: "RRCA", duration:4,rrca),
-            unsupported, // Instruction(opCode: 0x10, length: 1, name: "STOP", duration:4,stop),
+            Instruction(opCode: 0x10, length: 1, name: "STOP", duration:4,stop),
             Instruction(opCode: 0x11, length: 3, name: "LD DE, 0x%04X", duration:12,ld_de_nn),
             Instruction(opCode: 0x12, length: 1, name: "LD (DE), A", duration:8,ld_dep_a),
             Instruction(opCode: 0x13, length: 1, name: "INC DE", duration:4,inc_de),
@@ -568,7 +568,7 @@ class CPUImplementation: CPUCore {
         self.registers.A = rr(self.registers.A, circular: true)
         self.registers.clearFlag(.ZERO)//this rr clears Zero flag
     }
-    func stop() -> Void { /*todo*/ }
+    func stop() -> Void { self.state = CPUState.STOPPED }
     func ld_de_nn(val:EnhancedShort) -> Void { self.registers.DE = val.value }
     func ld_dep_a() -> Void { mmu.write(address: self.registers.DE, val: self.registers.A) }
     func inc_de() -> Void { self.registers.DE = self.inc(self.registers.DE) }

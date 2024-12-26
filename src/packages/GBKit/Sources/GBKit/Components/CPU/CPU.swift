@@ -8,6 +8,8 @@ enum CPUState {
     case PANIC
     //CPU is halted (via HALT 0x76)
     case HALTED
+    //CPU is stopped (via STOP 0x10)
+    case STOPPED
 }
 
 class CPU: CPUImplementation, Clockable {
