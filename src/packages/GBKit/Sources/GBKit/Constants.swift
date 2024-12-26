@@ -62,6 +62,9 @@ public struct GameBoyConstants {
 
     //opcode to lookup for extended instructions
     public let ExtentedInstructionSetOpcode:Byte = 0xCB
+    
+    //Div timer frequency in M cycle
+    public let DivTimerFrequency:Int = 64;
 
     public let NintendoLogo:[Byte] = [
         0xCE, 0xED, 0x66, 0x66, 0xCC, 0x0D, 0x00, 0x0B, 0x03, 0x73, 0x00, 0x83, 0x00, 0x0C, 0x00, 0x0D,
