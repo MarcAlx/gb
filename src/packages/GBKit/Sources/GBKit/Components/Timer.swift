@@ -11,6 +11,7 @@ class TimerInterface : Component, Clockable {
     public static let sharedInstance = TimerInterface()
     
     private let mmu:MMU = MMU.sharedInstance
+    private let interrupts:Interrupts = Interrupts.sharedInstance
     
     ///cycles this clock has elapsed
     var cycles: Int = 0
@@ -36,6 +37,8 @@ class TimerInterface : Component, Clockable {
                 //timer modulo
                 var tma:Byte = self.mmu.read(address: IOAddresses.TMA.rawValue)
                 self.mmu.directWrite(address: IOAddresses.TIMA.rawValue, val: tma)
+                //trigger interrupt
+                self.interrupts.setInterruptFlagValue(.Timer, true)
             }
         }
         

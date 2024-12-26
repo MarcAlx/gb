@@ -29,6 +29,7 @@ graph TB;
   MB --> TIM;
 
   TIM --> MMU;
+  TIM --> INT;
 
   INT --> MMU;
 
