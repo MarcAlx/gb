@@ -86,13 +86,16 @@ public class PaletteManager {
     /// current palette
     public private(set) var currentPalette:ColorPalette = StandardColorPalettes.DMG
     
+    public private(set) var paletteIndex:PalettesIndexes = PalettesIndexes.DMG
+    
     public init() {
         self.setCurrentPalette(palette: .DMG)//ensure empty frame init
     }
     
     /// change current palette
     public func setCurrentPalette(palette:PalettesIndexes) {
-        self.currentPalette = palettes[palette.rawValue]
+        self.paletteIndex = palette
+        self.currentPalette = palettes[self.paletteIndex.rawValue]
         self.currentEmptyFrame = Data(stride(from: 0, to: GBConstants.PixelCount, by: 1).flatMap {
             _ in return [
                 self.currentPalette[0].r,
