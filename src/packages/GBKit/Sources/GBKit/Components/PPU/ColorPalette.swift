@@ -21,11 +21,14 @@ public struct Color {
 
 /// a color palette, made of three colors
 public struct ColorPalette {
-    private let values:[Color]
+    private var values:[Color]
     
     public subscript(colorIndex:Int) -> Color {
         get {
             return self.values[colorIndex]
+        }
+        set {
+            self.values[colorIndex] = newValue
         }
     }
     
