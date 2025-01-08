@@ -19,6 +19,20 @@ public struct PressActions: ViewModifier {
     }
 }
 
+// Our custom view modifier to track rotation and
+// call our action
+struct DeviceRotationViewModifier: ViewModifier {
+    let action: (UIDeviceOrientation) -> Void
+
+    func body(content: Content) -> some View {
+        content
+            .onAppear()
+            .onReceive(NotificationCenter.default.publisher(for: UIDevice.orientationDidChangeNotification)) { _ in
+                action(UIDevice.current.orientation)
+            }
+    }
+}
+
 //view extension
 extension View {
     //to handle press/relase events
@@ -33,5 +47,10 @@ extension View {
     //to hide a view
     public func hidden(_ shouldHide: Bool) -> some View {
             opacity(shouldHide ? 0 : 1)
+    }
+    
+    //to handle device rotation
+    func onRotate(perform action: @escaping (UIDeviceOrientation) -> Void) -> some View {
+        self.modifier(DeviceRotationViewModifier(action: action))
     }
 }

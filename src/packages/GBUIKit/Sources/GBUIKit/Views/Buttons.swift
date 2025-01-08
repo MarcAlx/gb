@@ -1,6 +1,70 @@
 import SwiftUI
 import GBKit
 
+/// button to enter/leave fullscreen
+struct FullScreenButton: View {
+    @ObservedObject private var mVM:MainViewModel
+    
+    public init( mVM:MainViewModel) {
+        self.mVM = mVM
+    }
+    
+    var body: some View {
+        Button {
+            self.mVM.isFullScreen = !self.mVM.isFullScreen
+        } label: {
+            if(!self.mVM.isFullScreen){
+                Label("",systemImage: "arrow.down.left.and.arrow.up.right")
+            }
+            else {
+                Label("Leave full screen",systemImage: "arrow.up.right.and.arrow.down.left")
+            }
+        }
+    }
+}
+
+///button to insert cartridge
+struct InsertButton: View {
+    @ObservedObject private var mVM:MainViewModel
+    @ObservedObject private var gVM:GameBoyViewModel
+    
+    public init(gVM:GameBoyViewModel, mVM:MainViewModel) {
+        self.gVM = gVM
+        self.mVM = mVM
+    }
+    
+    var body: some View {
+        Button {
+            self.mVM.fileImporterPresented = true
+        } label: {
+            Label("insert cartridge",systemImage: "square.and.arrow.down")
+        }.disabled(self.gVM.isOn)
+    }
+}
+
+///button to turn on / off
+struct OnOffSwitch: View {
+    @ObservedObject private var gVM:GameBoyViewModel
+    
+    public init(gVM:GameBoyViewModel) {
+        self.gVM = gVM
+    }
+    
+    var body: some View {
+        Toggle(isOn: self.$gVM.isOn){
+            Label(self.gVM.isOn ? "Turn off" : "Turn on",
+                  systemImage: self.gVM.isOn ? "lightswitch.off" : "lightswitch.on" ).frame(maxWidth: .infinity, alignment: .trailing)
+        }.onChange(of: self.gVM.isOn) { value in
+            if(value)  {
+                self.gVM.turnOn()
+            }
+            else {
+                self.gVM.turnOff()
+            }
+        }
+    }
+}
+
 /// DPad control, works with a GameBoyVIewModel
 struct DPad: View {
     @ObservedObject private var gVM:GameBoyViewModel
