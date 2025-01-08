@@ -101,7 +101,12 @@ public class PaletteManager {
     }
     
     /// set user defined palette
-    public func setCustomPalette(palette:ColorPalette) {
-        self.palettes[self.palettes.count-1] = palette
+    public var customPalette:ColorPalette {
+        get {
+            return self.palettes[self.palettes.count-1]
+        }
+        set {
+            self.palettes[self.palettes.count-1] = newValue
+        }
     }
 }
