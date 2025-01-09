@@ -162,6 +162,12 @@ This project contains some unit tests, objective is to test each core fonction o
 - [How does the Gameboy's memory bank switching work?](https://retrocomputing.stackexchange.com/questions/11732/how-does-the-gameboys-memory-bank-switching-work)
 - [How does Game Boy / Sharp LR35902 HRAM work?](https://retrocomputing.stackexchange.com/a/11943)
 
+
+### Communities
+
+- [/r/EmuDev](https://www.reddit.com/r/EmuDev/)
+- [/r/EmuDev discord](https://discord.com/invite/7nuaqZ2)
+
 ### Paper
 
 - [Emulation of Nintendo Game Boy (DMG-01)](https://github.com/Baekalfen/PyBoy/blob/master/PyBoy.pdf)
@@ -174,6 +180,7 @@ This project contains some unit tests, objective is to test each core fonction o
 ### Quality
 
 - https://github.com/aappleby/GBMicrotest
+- https://github.com/adtennant/GameboyCPUTests
 - [Documenting swift code](https://stackoverflow.com/a/28633899)
 
 ### Documents
