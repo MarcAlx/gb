@@ -5,11 +5,13 @@ import SpriteKit
 struct GameScreen: View {
     //the scene displayed in screen
     private let scene:GameScene
+    @ObservedObject private var mVM:MainViewModel
     
-    public init() {
+    public init(mVM:MainViewModel) {
         self.scene = GameScene()
         self.scene.size = CGSize(width: GBConstants.ScreenWidth, height: GBConstants.ScreenHeight)
         self.scene.isFPSDisplayEnabled = true
+        self.mVM = mVM
     }
     
     var body: some View {
@@ -19,7 +21,7 @@ struct GameScreen: View {
                                                       bottomLeading: 10.0,
                                                       bottomTrailing: 10.0,
                                                       topTrailing: 10.0))
-            .fill(.gray)
+            .fill(self.mVM.screenBackground)
             .aspectRatio(1.0, contentMode: .fit)
             //border
             .overlay(RoundedRectangle(cornerRadius: 10).stroke(.black, lineWidth: 1))

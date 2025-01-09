@@ -29,8 +29,6 @@ struct MainView: View {
     @State private var customPaletteColor2:SwiftUI.Color = PaletteManager.sharedInstance.customPalette[2].toSWiftUIColor()
     @State private var customPaletteColor3:SwiftUI.Color = PaletteManager.sharedInstance.customPalette[3].toSWiftUIColor()
     
-    private let screen:GameScreen = GameScreen()
-    
     public init(gVM:GameBoyViewModel,
                 eVM:ErrorViewModel,
                 lVM:LoggingViewModel) {
@@ -38,6 +36,7 @@ struct MainView: View {
         self.eVM = eVM
         self.lVM = lVM
         self.gVM.errorViewModel = self.eVM
+        self.mVM.screenBackground = paletetteManager.currentPalette[0].toSWiftUIColor()
     }
     
     var body: some View {
@@ -86,7 +85,7 @@ struct MainView: View {
                                     }
                                 }.frame(alignment: .leading)
                             }
-                            GameScreen().frame(maxWidth: .infinity, alignment: .center)//only one screen
+                            GameScreen(mVM: self.mVM).frame(maxWidth: .infinity, alignment: .center)//only one screen
                             if(orientation.isLandscape
                                || ProcessInfo.processInfo.isMacCatalystApp){
                                 HStack{
@@ -141,6 +140,8 @@ struct MainView: View {
                             .pickerStyle(.menu)
                             .onChange(of: currentPaletteIndex) { newValue in
                                 PaletteManager.sharedInstance.setCurrentPalette(palette: newValue)
+                                //adapt screen background
+                                self.mVM.screenBackground = PaletteManager.sharedInstance.currentPalette[0].toSWiftUIColor()
                             }
                         }
                         
@@ -150,6 +151,8 @@ struct MainView: View {
                                 //re-apply custom palette if active in order to see change
                                 if(PaletteManager.sharedInstance.paletteIndex == .CUSTOM){
                                     PaletteManager.sharedInstance.setCurrentPalette(palette: .CUSTOM)
+                                    //adapt screen background
+                                    self.mVM.screenBackground = PaletteManager.sharedInstance.currentPalette[0].toSWiftUIColor()
                                 }
                             }
                             ColorPicker("Color 2", selection: self.$customPaletteColor1, supportsOpacity: false).onChange(of: customPaletteColor1) { newValue in
