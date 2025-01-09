@@ -131,47 +131,47 @@ struct MainView: View {
                 
                 //settings tab
                 VStack {
-                    VStack{
-                        HStack{
-                            Text("Palette: ")
-                            Picker("Palette", selection: $currentPaletteIndex) {
+                    Form {
+                        Section(header: Text("Active palette")) {
+                            Picker("Active", selection: $currentPaletteIndex) {
                                 Text("DMG").tag(PalettesIndexes.DMG)
                                 Text("MGB").tag(PalettesIndexes.MGB)
                                 Text("Custom").tag(PalettesIndexes.CUSTOM)
                             }
-                            .pickerStyle(.segmented)
+                            .pickerStyle(.menu)
                             .onChange(of: currentPaletteIndex) { newValue in
                                 PaletteManager.sharedInstance.setCurrentPalette(palette: newValue)
                             }
                         }
                         
-                        Text("Custom palette")
-                        ColorPicker("Color 1", selection: self.$customPaletteColor0, supportsOpacity: false).onChange(of: customPaletteColor0) { newValue in
-                            PaletteManager.sharedInstance.customPalette[0]=GBKit.Color.fromSWiftUIColor(newValue)
-                            //re-apply custom palette if active in order to see change
-                            if(PaletteManager.sharedInstance.paletteIndex == .CUSTOM){
-                                PaletteManager.sharedInstance.setCurrentPalette(palette: .CUSTOM)
+                        Section(header: Text("Custom palette configuration")){
+                            ColorPicker("Color 1", selection: self.$customPaletteColor0, supportsOpacity: false).onChange(of: customPaletteColor0) { newValue in
+                                PaletteManager.sharedInstance.customPalette[0]=GBKit.Color.fromSWiftUIColor(newValue)
+                                //re-apply custom palette if active in order to see change
+                                if(PaletteManager.sharedInstance.paletteIndex == .CUSTOM){
+                                    PaletteManager.sharedInstance.setCurrentPalette(palette: .CUSTOM)
+                                }
                             }
-                        }
-                        ColorPicker("Color 2", selection: self.$customPaletteColor1, supportsOpacity: false).onChange(of: customPaletteColor1) { newValue in
-                            PaletteManager.sharedInstance.customPalette[1]=GBKit.Color.fromSWiftUIColor(newValue)
-                            //re-apply custom palette if active in order to see change
-                            if(PaletteManager.sharedInstance.paletteIndex == .CUSTOM){
-                                PaletteManager.sharedInstance.setCurrentPalette(palette: .CUSTOM)
+                            ColorPicker("Color 2", selection: self.$customPaletteColor1, supportsOpacity: false).onChange(of: customPaletteColor1) { newValue in
+                                PaletteManager.sharedInstance.customPalette[1]=GBKit.Color.fromSWiftUIColor(newValue)
+                                //re-apply custom palette if active in order to see change
+                                if(PaletteManager.sharedInstance.paletteIndex == .CUSTOM){
+                                    PaletteManager.sharedInstance.setCurrentPalette(palette: .CUSTOM)
+                                }
                             }
-                        }
-                        ColorPicker("Color 3", selection: self.$customPaletteColor2, supportsOpacity: false).onChange(of: customPaletteColor2) { newValue in
-                            PaletteManager.sharedInstance.customPalette[2]=GBKit.Color.fromSWiftUIColor(newValue)
-                            //re-apply custom palette if active in order to see change
-                            if(PaletteManager.sharedInstance.paletteIndex == .CUSTOM){
-                                PaletteManager.sharedInstance.setCurrentPalette(palette: .CUSTOM)
+                            ColorPicker("Color 3", selection: self.$customPaletteColor2, supportsOpacity: false).onChange(of: customPaletteColor2) { newValue in
+                                PaletteManager.sharedInstance.customPalette[2]=GBKit.Color.fromSWiftUIColor(newValue)
+                                //re-apply custom palette if active in order to see change
+                                if(PaletteManager.sharedInstance.paletteIndex == .CUSTOM){
+                                    PaletteManager.sharedInstance.setCurrentPalette(palette: .CUSTOM)
+                                }
                             }
-                        }
-                        ColorPicker("Color 4", selection: self.$customPaletteColor3, supportsOpacity: false).onChange(of: customPaletteColor3) { newValue in
-                            PaletteManager.sharedInstance.customPalette[3]=GBKit.Color.fromSWiftUIColor(newValue)
-                            //re-apply custom palette if active in order to see change
-                            if(PaletteManager.sharedInstance.paletteIndex == .CUSTOM){
-                                PaletteManager.sharedInstance.setCurrentPalette(palette: .CUSTOM)
+                            ColorPicker("Color 4", selection: self.$customPaletteColor3, supportsOpacity: false).onChange(of: customPaletteColor3) { newValue in
+                                PaletteManager.sharedInstance.customPalette[3]=GBKit.Color.fromSWiftUIColor(newValue)
+                                //re-apply custom palette if active in order to see change
+                                if(PaletteManager.sharedInstance.paletteIndex == .CUSTOM){
+                                    PaletteManager.sharedInstance.setCurrentPalette(palette: .CUSTOM)
+                                }
                             }
                         }
                     }
