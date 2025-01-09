@@ -48,6 +48,11 @@ public class PPU: Component, Clockable {
         self._frameBuffer = pManager.currentEmptyFrame
     }
     
+    public func flush(){
+        self.nextFrame = PPU.blankFrame
+        self.commitFrame()
+    }
+    
     private var _lineSync:Int = 0
     //current timing of scanline
     private var lineSync:Int {

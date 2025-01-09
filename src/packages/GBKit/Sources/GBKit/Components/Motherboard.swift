@@ -36,7 +36,7 @@ class Motherboard: Clockable {
         self.interrupts.reset()
     }
     
-    public func powerUp() {
+    public func powerOn() {
         if(self.hasCartridgeInserted) {
             self.reset()
             self.mmu.loadCartridge(cartridge: self.insertedCartridge!)
@@ -47,6 +47,7 @@ class Motherboard: Clockable {
     
     public func powerOff() {
         self.isOn = false
+        self.ppu.flush()//flush to avoid remaining graphics when off
     }
     
     public func tick(_ masterCycles:Int, _ frameCycles:Int) {

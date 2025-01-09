@@ -52,7 +52,7 @@ class JoyPadInterface : Component {
     
     /// Set button state (true -> pressed, released else)
     public func setButtonState(_ button: JoyPadButtons, _ state:Bool) {
-        print("\(button) - state \(state)")
+        //print("\(button) - state \(state)")//for debug purpose
         
         //button goes from released to pressed -> trigger interrupt
         if(!buttonState[button]! && state){

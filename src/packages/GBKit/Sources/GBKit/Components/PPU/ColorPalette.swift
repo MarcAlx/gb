@@ -21,11 +21,14 @@ public struct Color {
 
 /// a color palette, made of three colors
 public struct ColorPalette {
-    private let values:[Color]
+    private var values:[Color]
     
     public subscript(colorIndex:Int) -> Color {
         get {
             return self.values[colorIndex]
+        }
+        set {
+            self.values[colorIndex] = newValue
         }
     }
     
@@ -83,13 +86,16 @@ public class PaletteManager {
     /// current palette
     public private(set) var currentPalette:ColorPalette = StandardColorPalettes.DMG
     
+    public private(set) var paletteIndex:PalettesIndexes = PalettesIndexes.DMG
+    
     public init() {
         self.setCurrentPalette(palette: .DMG)//ensure empty frame init
     }
     
     /// change current palette
     public func setCurrentPalette(palette:PalettesIndexes) {
-        self.currentPalette = palettes[palette.rawValue]
+        self.paletteIndex = palette
+        self.currentPalette = palettes[self.paletteIndex.rawValue]
         self.currentEmptyFrame = Data(stride(from: 0, to: GBConstants.PixelCount, by: 1).flatMap {
             _ in return [
                 self.currentPalette[0].r,
@@ -101,7 +107,12 @@ public class PaletteManager {
     }
     
     /// set user defined palette
-    public func setCustomPalette(palette:ColorPalette) {
-        self.palettes[self.palettes.count-1] = palette
+    public var customPalette:ColorPalette {
+        get {
+            return self.palettes[self.palettes.count-1]
+        }
+        set {
+            self.palettes[self.palettes.count-1] = newValue
+        }
     }
 }
