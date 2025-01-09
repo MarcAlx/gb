@@ -21,6 +21,8 @@ struct GameScreen: View {
                                                       topTrailing: 10.0))
             .fill(.gray)
             .aspectRatio(1.0, contentMode: .fit)
+            //border
+            .overlay(RoundedRectangle(cornerRadius: 10).stroke(.black, lineWidth: 1))
             //game view
             SpriteView(scene: self.scene,preferredFramesPerSecond: GBUIConstants.PreferredFrameRate)
                 .aspectRatio(1.0, contentMode: .fit)
