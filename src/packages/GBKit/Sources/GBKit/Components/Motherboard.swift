@@ -47,6 +47,7 @@ class Motherboard: Clockable {
     
     public func powerOff() {
         self.isOn = false
+        self.ppu.flush()//flush to avoid remaining graphics when off
     }
     
     public func tick(_ masterCycles:Int, _ frameCycles:Int) {
