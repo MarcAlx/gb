@@ -6,6 +6,9 @@ With controller supports and palette customization!
 
 <img src="./screenshots/views/features-showcase.gif" width="200">
 
+**Status** Games that don't need MBC supports or advance CPU tricks work, e.g Tetris, Tennis...
+
+**Work in progress** (still under active development) MBC and Audio coming (ETA: when its done!).
 ## Compatibility
 
 This projects aims at being compatible with the following platforms:
