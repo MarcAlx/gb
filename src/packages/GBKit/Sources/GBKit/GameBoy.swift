@@ -19,7 +19,7 @@ public class GameBoy {
     
     ///turn on system
     public func turnOn() {
-        self.motherboard.powerUp()
+        self.motherboard.powerOn()
     }
     
     ///turn off system

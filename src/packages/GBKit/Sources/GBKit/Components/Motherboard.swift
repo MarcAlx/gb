@@ -36,7 +36,7 @@ class Motherboard: Clockable {
         self.interrupts.reset()
     }
     
-    public func powerUp() {
+    public func powerOn() {
         if(self.hasCartridgeInserted) {
             self.reset()
             self.mmu.loadCartridge(cartridge: self.insertedCartridge!)
