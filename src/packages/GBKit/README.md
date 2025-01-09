@@ -8,6 +8,7 @@ Core package to emulate GameBoy.
 - (Done) PPU
 - (TODO) MBC handling
 - (Next) APU
+- (Next) Move from `XCTest` to new Swift `Testing`
 
 ## Architecture
 
