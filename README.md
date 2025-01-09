@@ -2,7 +2,7 @@
 
 A Game Boy Emulator for iOS / iPadOS / macOS written in Swift.
 
-With controller supports!
+With controller supports and palette customization!
 
 <img src="./screenshots/views/features-showcase.gif" width="200">
 
