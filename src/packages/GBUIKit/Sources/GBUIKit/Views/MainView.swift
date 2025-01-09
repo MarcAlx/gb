@@ -68,7 +68,7 @@ struct MainView: View {
                 //game tab
                 VStack {
                     VStack {
-                        if(orientation.isPortrait || ProcessInfo.processInfo.isMacCatalystApp){
+                        if(orientation.isPortrait || ProcessInfo.processInfo.isMacCatalystApp || UIDevice.current.userInterfaceIdiom == .pad){
                             HStack{
                                 InsertButton(gVM: self.gVM, mVM: self.mVM)
                                 OnOffSwitch(gVM: self.gVM)
