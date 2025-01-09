@@ -186,7 +186,4 @@ class IOInterface: Component {
             return mmu.read(address: IOAddresses.LCD_OBP1.rawValue)
         }
     }
-    
-    //TODO add getter over motherboard.mmu.ios
-    //typical usecase is setting joypad input
 }

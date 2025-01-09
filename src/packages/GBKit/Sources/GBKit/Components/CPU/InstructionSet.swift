@@ -24,7 +24,7 @@ protocol StandardInstructionSet {
     /// loads value into BC
     func ld_bc_nn(val:EnhancedShort) -> Void
     
-    /// todo 
+    /// loads a into address pointed by BC 
     func ld_bcp_a() -> Void
     
     /// increments BC
@@ -66,7 +66,7 @@ protocol StandardInstructionSet {
     /// rotate right A circular
     func rrca() -> Void
     
-    /// todo 
+    /// stop cpu 
     func stop() -> Void
     
     /// loads val into DE 
@@ -156,7 +156,7 @@ protocol StandardInstructionSet {
     /// decrements L, raises N, affects HC and Z 
     func dec_l() -> Void
     
-    /// todo 
+    /// load value into L
     func ld_l_n(val:Byte) -> Void
     
     /// complement register A, (flip all bits)
@@ -669,7 +669,7 @@ protocol StandardInstructionSet {
     /// push PC to stack and jump to NN if C raised
     func jp_c_nn(address:EnhancedShort) -> Void
     
-    /// todo 
+    /// call address nn if C raised
     func call_c_nn(address:EnhancedShort) -> Void
     
     /// subs n + carry to A 
@@ -723,7 +723,7 @@ protocol StandardInstructionSet {
     /// set IME to false (disable interrupts) 
     func di() -> Void
     
-    /// todo 
+    /// push AF 
     func push_af() -> Void
     
     /// or val with A 
@@ -849,52 +849,52 @@ protocol ExtendedInstructionSet{
     /// right rotate A through carry
     func rr_a()
     
-    /// todo 
+    /// shift left arithmetic B 
     func sla_b()
     
-    /// todo 
+    /// shift left arithmetic C
     func sla_c()
     
-    /// todo 
+    /// shift left arithmetic D
     func sla_d()
     
-    /// todo 
+    /// shift left arithmetic E
     func sla_e()
     
-    /// todo 
+    /// shift left arithmetic H
     func sla_h()
     
-    /// todo 
+    /// shift left arithmetic L
     func sla_l()
     
-    /// todo 
+    /// shift left arithmetic value pointed at HL and stores back in HL
     func sla_hlp()
     
-    /// todo 
+    /// shift left arithmetic A 
     func sla_a()
     
-    /// todo 
+    /// shift right arithmetic B
     func sra_b()
     
-    /// todo 
+    /// shift right arithmetic C
     func sra_c()
     
-    /// todo 
+    /// shift right arithmetic D
     func sra_d()
     
-    /// todo 
+    /// shift right arithmetic E
     func sra_e()
     
-    /// todo 
+    /// shift right arithmetic H
     func sra_h()
     
-    /// todo 
+    /// shift right arithmetic L
     func sra_l()
     
-    /// todo 
+    /// shift right arithmetic value pointed at HL and stores back in HL
     func sra_hlp()
     
-    /// todo 
+    /// shift right arithmetic A
     func sra_a()
     
     /// swap msb and lsb in B
@@ -921,28 +921,28 @@ protocol ExtendedInstructionSet{
     /// swap msb and lsb in A
     func swap_a()
     
-    /// todo 
+    /// shift right logical B
     func srl_b()
     
-    /// todo 
+    /// shift right logical C
     func srl_c()
     
-    /// todo 
+    /// shift right logical D
     func srl_d()
     
-    /// todo 
+    /// shift right logical E
     func srl_e()
     
-    /// todo 
+    /// shift right logical H
     func srl_h()
     
-    /// todo 
+    /// shift right logical L
     func srl_l()
     
-    /// todo 
+    /// shift right logical value pointed at HL and stores back in HL
     func srl_hlp()
     
-    /// todo 
+    /// shift right logical A
     func srl_a()
     
     /// test if bit 0 is 0 (res stored in Z) in B
