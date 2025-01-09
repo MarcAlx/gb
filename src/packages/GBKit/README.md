@@ -2,6 +2,13 @@
 
 Core package to emulate GameBoy.
 
+## Miletones
+
+- (Done) CPU
+- (Done) PPU
+- (TODO) MBC handling
+- (Next) APU
+
 ## Architecture
 
 ### Components dependency tree
@@ -134,6 +141,8 @@ This project contains some unit tests, objective is to test each core fonction o
 - [A Look At The Game Boy Bootstrap: Let The Fun Begin!](https://realboyemulator.wordpress.com/2013/01/03/a-look-at-the-game-boy-bootstrap-let-the-fun-begin/)
 - [WTF is the DAA instruction?](https://ehaskins.com/2018-01-30%20Z80%20DAA/)
 - [Demystifying the GameBoy/SM83’s DAA Instruction](https://blog.ollien.com/posts/gb-daa/)
+- [Game Boy Sound Emulation](https://nightshade256.github.io/2021/03/27/gb-sound-emulation.html)
+- [Gameboy sound hardware](https://gbdev.gg8.se/wiki/articles/Gameboy_sound_hardware)
 
 ### forums / threads / questions
 
@@ -142,6 +151,7 @@ This project contains some unit tests, objective is to test each core fonction o
 - https://www.reddit.com/r/EmuDev/comments/utyx2g/looking_for_help_understanding_gameboy_clock/
 - https://www.reddit.com/r/EmuDev/comments/5gkwi5/gb_apu_sound_emulation/
 - https://www.reddit.com/r/Gameboy/comments/a1c8h0/what_happens_when_a_gameboy_screen_is_disabled/
+- https://www.reddit.com/r/EmuDev/comments/5gkwi5/comment/dat3zni
 
 - https://forums.nesdev.org/viewtopic.php?t=9088
 - https://forums.nesdev.org/viewtopic.php?t=16621
