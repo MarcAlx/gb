@@ -8,7 +8,8 @@ With controller supports and palette customization!
 
 **Status** Games that don't need MBC supports or advance CPU tricks work, e.g Tetris, Tennis...
 
-**Work in progress** (still under active development) MBC and Audio coming (ETA: when its done!).
+**Work in progress** (still under active development) MBC and Audio coming (ETA: when its done!). For now limited to GB, GBC support planned.
+
 ## Compatibility
 
 This projects aims at being compatible with the following platforms:
@@ -36,13 +37,17 @@ This project is (for now) a mono repo that holds the following:
 
 1. Finalize GBKit (`./packages/GBKit`) (MBC, APU...)
 
-2. Release GBKit (`./packages/GBKit`) as a standalone Swift Package (with its own git) read to use in any Swift emulator project.
+2. Finalize GBUIKit (`./packages/GBKit`) (Keyboard support for macCatalyst,...)
 
-3. Release GBUIKit (`./packages/GBUIKit`) as a standalone Swift Package (with its own git) read to use in any Swift emulator project.
+3. Release GBKit (`./packages/GBKit`) as a standalone Swift Package (with its own git) read to use in any Swift emulator project.
 
-4. Create another front-end based on [SDL](https://www.libsdl.org) via [SwiftSDL](https://github.com/KevinVitale/SwiftSDL)
+4. Release GBUIKit (`./packages/GBUIKit`) as a standalone Swift Package (with its own git) read to use in any Swift emulator project.
 
-5. Restore supports for [Swift Playgrounds](https://www.apple.com/fr/swift/playgrounds/) implies to reference GBKit and GBUIKit as dependencies.
+5. Add support for GBC
+
+6. Create another front-end based on [SDL](https://www.libsdl.org) via [SwiftSDL](https://github.com/KevinVitale/SwiftSDL)
+
+7. Restore supports for [Swift Playgrounds](https://www.apple.com/fr/swift/playgrounds/) implies to reference GBKit and GBUIKit as dependencies.
 
 ## Screenshots
 
