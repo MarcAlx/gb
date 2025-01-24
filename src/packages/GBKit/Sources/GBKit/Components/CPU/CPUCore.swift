@@ -158,11 +158,17 @@ class CPUCore: Component {
     // deciamal adjust A (BCD)
     internal func _daa() -> Void {
         // basically obtaining DAA consists in :
-        // - adding 0x60 if A overflow  0x99
+        // - adding 0x60 if A overflow 0x99
         // - adding 0x06 if lsb of A greater than 0x09
         // for negative don't check overflow, and substract instead
+        //
         // DAA is more Binary coded Hex than Binary coded decimal,
-        // ex don't think 32(0x20) as 0b0011_0010 but think 32(0x20) -> 0b0001_0000, whereas 0x32(50) is 0b0011_0010
+        //     each char of the hex reprensentation of a number is encoded in a 4bits nibble
+        //
+        // ex don't think 32(0x20) as 0b0011_0010 i.e 3(0b0011) 2(0b0010)
+        //    think       32(0x20) as 0b0001_0000 i.e 2(0b0001) 0(0b0000)
+        //    whereas     50(0x32) is 0b0011_0010 i.e 3(0b0011) 2(0b0010)
+        //    where       20(0x14) is 0b0001_0100 i.e 1(0b0001) 4(0b0100)
         
         var raiseCarry = false
         
