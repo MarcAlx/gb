@@ -9,6 +9,8 @@ public enum CPUFlag: Byte {
 }
 
 class Registers: Component,Describable {
+    private let mmu:MMU
+    
     private var _AF:EnhancedShort = EnhancedShort()
     
     //accumulator
@@ -35,7 +37,8 @@ class Registers: Component,Describable {
     public var SP:Short = 0
     public var PC:Short = 0
     
-    public init(){
+    public init(mmu: MMU){
+        self.mmu = mmu
         self.reset()
     }
     
@@ -97,7 +100,7 @@ class Registers: Component,Describable {
                       self.A,self.F,self.B,self.C,self.D,self.E,self.H,self.L,
                       self.SP,
                       self.PC,
-                      MMU.sharedInstance[Short(self.PC)],MMU.sharedInstance[Short(self.PC+1)],MMU.sharedInstance[Short(self.PC+2)],MMU.sharedInstance[Short(self.PC+3)],
+                      self.mmu[Short(self.PC)],self.mmu[Short(self.PC+1)],self.mmu[Short(self.PC+2)],self.mmu[Short(self.PC+3)],
                       self.isFlagSet(.ZERO),self.isFlagSet(.NEGATIVE),self.isFlagSet(.HALF_CARRY),self.isFlagSet(.CARRY))
     }
 }

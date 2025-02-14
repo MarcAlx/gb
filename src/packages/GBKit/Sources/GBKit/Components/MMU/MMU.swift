@@ -1,216 +1,207 @@
 /**
- * Memory Management Unit
+ * MMU core implementation
  */
-class MMU:Component, Clockable {
-    var cycles: Int = 0
+public class MMU: MMUCore, InterruptsControlInterface, IOInterface {
+    private var masterEnable:Bool = true
     
-    public static let sharedInstance = MMU()
-    
-    private let joy:JoyPadInterface = JoyPadInterface.sharedInstance
-    
-    /// index of the current switchable bank
-    private var currentSwitchableBank:Int = 1
-    
-    /// current cartridge
-    public private(set) var currentCartridge:Cartridge = Cartridge()
-    
-    private let ram:MemoryBank = MemoryBank(size: GBConstants.RAMSize,name: "ram")
+    public override func reset() {
+        super.reset()
         
-    /// tick counter for dma period
-    private var dmaCounter: Int = 0
+        //interrups
+        self.masterEnable = true
+        self.IE = 0x00
+        self.IF = 0xE1
+        
+        //io interface
+        self.fillWithInitialValues()
+    }
     
-    private var currentDMATransferRange: ClosedRange<Int> = MMUAddressSpacesInt.OBJECT_ATTRIBUTE_MEMORY
-    
-    /// true if dma transfer is currently in progress
-    public var isDMATransferInProgress: Bool {
+    public var IME:Bool {
         get {
-            return self.dmaCounter > 0
-        }
-    }
-    
-    private init() {
-    }
-    
-    func tick(_ masterCycles: Int, _ frameCycles: Int) {
-        if(isDMATransferInProgress){
-            self.dmaCounter = self.dmaCounter - GBConstants.TCycleLength
-        }
-        self.cycles = self.cycles &+ GBConstants.TCycleLength
-    }
-    
-    ///subscript to dispatch address to its corresponding location
-    public subscript(address:Short) -> Byte {
-        get {
-            //during DMA transfer conflicts occurs if transfer source or dest (always OAM) is accessed while being wrote
-            if(self.isDMATransferInProgress
-            && (self.currentDMATransferRange.contains(Int(address))
-                || MMUAddressSpaces.OBJECT_ATTRIBUTE_MEMORY.contains(address))){
-                return 0xFF
-            }
-            
-            switch address {
-            case IOAddresses.JOYPAD_INPUT.rawValue:
-                let joy1 = self.ram[address]
-                //buttons
-                if(isBitCleared(.Bit_5, joy1)){
-                    return joy1 & joy.getButtonGroupState(group: .BUTTONS)
-                }
-                //dpad
-                else if(isBitCleared(.Bit_4, joy1)){
-                    return joy1 & joy.getButtonGroupState(group: .DPAD)
-                }
-                else {
-                    //lower nible -> 0xF
-                    return joy1 & ButtonModifiers.ALL_RELEASED.rawValue
-                }
-            case IOAddresses.LCD_STATUS.rawValue:
-                return self.ram[address] | 0b1000_0000 //bit 7 is always 1
-            //prohibited area, always return 0
-            case MMUAddressSpaces.PROHIBITED_AREA:
-                return 0x00
-            //mirror C000-DDFF (which is 0x2000 behind)
-            case MMUAddressSpaces.ECHO_RAM:
-                return self.ram[address-0x2000]
-            //set ram value
-            default:
-                return self.ram[address]
-            }
+            return self.masterEnable
         }
         set {
-            //during DMA transfer conflicts occurs if transfer dest (always OAM) is accessed while being wrote
-            if(self.isDMATransferInProgress
-            && MMUAddressSpaces.OBJECT_ATTRIBUTE_MEMORY.contains(address)) {
-                return
-            }
-            
-            switch address {
-            //mirror C000-DDFF (which is 0x2000 behind)
-            case MMUAddressSpaces.ECHO_RAM:
-                self.ram[address-0x2000] = newValue
-            //prohibited area cannot be set
-            case MMUAddressSpaces.PROHIBITED_AREA:
-                break
-            //bank 0 is read only
-            case MMUAddressSpaces.CARTRIDGE_BANK0:
-                break
-            //switchable bank, switch bank on write
-            case MMUAddressSpaces.CARTRIDGE_SWITCHABLE_BANK:
-                break//TODO bank switch on write
-            //joy pad is not fully W
-            case IOAddresses.JOYPAD_INPUT.rawValue:
-                //programs often write to 0xFF00 to debounce keys, be sure that the readonly part is not erased in this process.
-                
-                //bit 7/6 are not used, 5/4 bits are R/W bits 3->0 are read only
-                self.ram[address] = (self.ram[address] & 0b1100_1111 /*clear bits 5/4 in ram*/)
-                                  | (newValue & 0b0011_0000 /*keep only RW bits of value*/)
-                break
-            //dma transfer start
-            case IOAddresses.LCD_DMA.rawValue:
-                self.startDMATransfer(start: newValue)
-                break;
-            //writing to DIV resets it to 0x00
-            case IOAddresses.DIV.rawValue:
-                self.ram[address] = 0;
-                break;
-            //LCD status first three bits are read only
-            case IOAddresses.LCD_STATUS.rawValue:
-                self.ram[address] = (self.ram[address] & 0b0000_0111) | (newValue & 0b1111_1000)
-                break
-            //LYC is update check LYCeqLY flag
-            case IOAddresses.LCD_LYC.rawValue:
-                IOInterface.sharedInstance.setLCDStatFlag(.LYCeqLY, enabled: newValue == self[IOAddresses.LCD_LY.rawValue])
-                self.ram[address] = newValue
-                break
-            //default to ram
-            default:
-                self.ram[address] = newValue
-            }
+            self.masterEnable = newValue
         }
     }
     
-    /// load cartridge inside MMU, n.b it's not done like that in reality
-    public func loadCartridge(cartridge:Cartridge){
-        self.currentCartridge = cartridge
-        self.ram.load(bank: cartridge.banks[0], at: Int(MMUAddresses.CARTRIDGE_BANK0.rawValue))
-        self.ram.load(bank: cartridge.banks[1], at: Int(MMUAddresses.CARTRIDGE_SWITCHABLE_BANK.rawValue))
+    public var IE:Byte  {
+        get {
+            return self[MMUAddresses.INTERRUPT_ENABLE_REGISTER.rawValue]
+        }
+        set {
+            self[MMUAddresses.INTERRUPT_ENABLE_REGISTER.rawValue] = newValue
+        }
     }
     
-    public func reset() {
-        self.cycles = 0
-        self.currentSwitchableBank = 1
-        self.dmaCounter = 0
-        self.currentDMATransferRange = MMUAddressSpacesInt.OBJECT_ATTRIBUTE_MEMORY
-        self.ram.reset()
+    public var IF:Byte {
+        get {
+            return self[MMUAddresses.INTERRUPT_FLAG_REGISTER.rawValue]
+        }
+        set {
+            self[MMUAddresses.INTERRUPT_FLAG_REGISTER.rawValue] = newValue
+        }
     }
     
-    /// read byte at address
-    public func read(address:Short) -> Byte {
-        return self[address]
+    public func setInterruptEnableValue(_ interrupt:InterruptFlag, _ enable:Bool) {
+        self.IE = enable ? self.IE | interrupt.rawValue
+                         : self.IE & ~interrupt.rawValue;
     }
     
-    /// read short at address (lsb) and address+1 (msb)
-    public func read(address:Short) -> Short {
-        let lsb:Byte = self.read(address: address)
-        let msb:Byte = self.read(address: address+1)
-        return merge(msb, lsb)
+    public func setInterruptFlagValue(_ interrupt:InterruptFlag, _ enable:Bool) {
+        self.IF = enable ? self.IF | interrupt.rawValue
+                         : self.IF & ~interrupt.rawValue;
     }
     
-    /// write byte to address
-    public func write(address:Short, val:Byte) -> Void {
-        self[address] = val
+    public func isInterruptEnabled(_ interrupt:InterruptFlag) -> Bool {
+        return (self.IE & interrupt.rawValue) > 0
     }
     
-    /// read byte at address without control
-    public func directRead(address:Short) -> Byte {
-        return self.ram[address]
+    public func isInterruptFlagged(_ interrupt:InterruptFlag) -> Bool {
+        return (self.IF & interrupt.rawValue) > 0
     }
     
-    /// uncontroled read short at address (lsb) and address+1 (msb)
-    public func directRead(address:Short) -> Short {
-        let lsb:Byte = self.ram[address]
-        let msb:Byte = self.ram[address+1]
-        return merge(msb, lsb)
+    ///
+    /// IOInterface
+    ///
+    
+    
+    public func fillWithInitialValues() {
+        //@see https://gbdev.io/pandocs/Power_Up_Sequence.html (DMG)
+        self.directWrite(address: IOAddresses.JOYPAD_INPUT.rawValue, val: Byte(0xCF))
+        self.directWrite(address: IOAddresses.SERIAL_TRANSFER_SB.rawValue, val: Byte(0x00))
+        self.directWrite(address: IOAddresses.SERIAL_TRANSFER_SC.rawValue, val: Byte(0x7E))
+        self.directWrite(address: IOAddresses.DIV.rawValue, val: Byte(0xAB))
+        self.directWrite(address: IOAddresses.TIMA.rawValue, val: Byte(0x00))
+        self.directWrite(address: IOAddresses.TMA.rawValue, val: Byte(0x00))
+        self.directWrite(address: IOAddresses.TAC.rawValue, val: Byte(0xF8))
+        self.directWrite(address: IOAddresses.AUDIO_NR10.rawValue, val: Byte(0x80))
+        self.directWrite(address: IOAddresses.AUDIO_NR11.rawValue, val: Byte(0xBF))
+        self.directWrite(address: IOAddresses.AUDIO_NR12.rawValue, val: Byte(0xF3))
+        self.directWrite(address: IOAddresses.AUDIO_NR13.rawValue, val: Byte(0xFF))
+        self.directWrite(address: IOAddresses.AUDIO_NR14.rawValue, val: Byte(0xBF))
+        self.directWrite(address: IOAddresses.AUDIO_NR21.rawValue, val: Byte(0x3F))
+        self.directWrite(address: IOAddresses.AUDIO_NR22.rawValue, val: Byte(0x00))
+        self.directWrite(address: IOAddresses.AUDIO_NR23.rawValue, val: Byte(0xFF))
+        self.directWrite(address: IOAddresses.AUDIO_NR24.rawValue, val: Byte(0xBF))
+        self.directWrite(address: IOAddresses.AUDIO_NR30.rawValue, val: Byte(0x7F))
+        self.directWrite(address: IOAddresses.AUDIO_NR31.rawValue, val: Byte(0xFF))
+        self.directWrite(address: IOAddresses.AUDIO_NR32.rawValue, val: Byte(0x9F))
+        self.directWrite(address: IOAddresses.AUDIO_NR33.rawValue, val: Byte(0xFF))
+        self.directWrite(address: IOAddresses.AUDIO_NR34.rawValue, val: Byte(0xBF))
+        self.directWrite(address: IOAddresses.AUDIO_NR41.rawValue, val: Byte(0xFF))
+        self.directWrite(address: IOAddresses.AUDIO_NR42.rawValue, val: Byte(0x00))
+        self.directWrite(address: IOAddresses.AUDIO_NR43.rawValue, val: Byte(0x00))
+        self.directWrite(address: IOAddresses.AUDIO_NR44.rawValue, val: Byte(0xBF))
+        self.directWrite(address: IOAddresses.AUDIO_NR50.rawValue, val: Byte(0x77))
+        self.directWrite(address: IOAddresses.AUDIO_NR51.rawValue, val: Byte(0xF3))
+        self.directWrite(address: IOAddresses.AUDIO_NR52.rawValue, val: Byte(0xF1))
+        self.directWrite(address: IOAddresses.LCD_CONTROL.rawValue, val: Byte(0x91))
+        self.directWrite(address: IOAddresses.LCD_STATUS.rawValue,  val: Byte(0x85))
+        self.directWrite(address: IOAddresses.LCD_SCY.rawValue,     val: Byte(0x00))
+        self.directWrite(address: IOAddresses.LCD_SCX.rawValue,     val: Byte(0x00))
+        self.directWrite(address: IOAddresses.LCD_LY.rawValue,      val: Byte(0x00))
+        self.directWrite(address: IOAddresses.LCD_LYC.rawValue,     val: Byte(0x00))
+        self.directWrite(address: IOAddresses.LCD_DMA.rawValue,     val: Byte(0xFF))
+        self.directWrite(address: IOAddresses.LCD_BGP.rawValue,     val: Byte(0xFC))
+        self.directWrite(address: IOAddresses.LCD_OBP0.rawValue,    val: Byte(0x00))
+        self.directWrite(address: IOAddresses.LCD_OBP1.rawValue,    val: Byte(0x00))
+        self.directWrite(address: IOAddresses.LCD_WX.rawValue,      val: Byte(0x00))
+        self.directWrite(address: IOAddresses.LCD_WY.rawValue,      val: Byte(0x00))
     }
     
-    /// write byte to address without control
-    public func directWrite(address:Short, val:Byte) -> Void {
-        self.ram[address] = val
+    public func readLCDStatFlag(_ flag:LCDStatMask) -> Bool {
+        return (self.directRead(address: IOAddresses.LCD_STATUS.rawValue) & flag.rawValue) > 0
     }
     
-    /// direct write short to address without control
-    public func directWrite(address:Short, val:EnhancedShort) -> Void {
-        self.ram[address] = val.lsb
-        self.ram[address+1] = val.msb
+    public func setLCDStatFlag(_ flag:LCDStatMask, enabled:Bool) {
+        let cur:Byte = self.read(address: IOAddresses.LCD_STATUS.rawValue)
+        let val:Byte = enabled ? cur | flag.rawValue : cur & ~flag.rawValue
+        self.directWrite(address: IOAddresses.LCD_STATUS.rawValue, val: val)
     }
     
-    /// direct write short to address (lsb at address, msb at address+1
-    public func directWrite(address:Short, val:Short) -> Void {
-        self.write(address: address, val: EnhancedShort(val))
+    public func readLCDStatMode() -> LCDStatMode {
+        return LCDStatMode(rawValue: self.directRead(address: IOAddresses.LCD_STATUS.rawValue) & LCDStatMask.Mode.rawValue)!
     }
     
-    /// write short to address (lsb at address, msb at address+1
-    public func write(address:Short, val:EnhancedShort) -> Void {
-        self.write(address: address, val: val.lsb)
-        self.write(address: address+1, val: val.msb)
+    public func writeLCDStatMode(_ mode:LCDStatMode) {
+        let cur:Byte = self.read(address: IOAddresses.LCD_STATUS.rawValue)
+        let val:Byte = (cur & ~LCDStatMask.Mode.rawValue) | mode.rawValue
+        self.directWrite(address: IOAddresses.LCD_STATUS.rawValue, val: val)
     }
     
-    /// write short to address (lsb at address, msb at address+1
-    public func write(address:Short, val:Short) -> Void {
-        self.write(address: address, val: EnhancedShort(val))
+    public func readLCDControlFlag(_ flag:LCDControlMask) -> Bool {
+        let val:Byte = self.read(address: IOAddresses.LCD_CONTROL.rawValue)
+        return ((val) & flag.rawValue) > 0
     }
     
-    /// uncontrolled slice read
-    public func directRead(range:ClosedRange<Int>) -> ArraySlice<Byte> {
-        return self.ram[range]
+    public func setLCDControlFlag(_ flag:LCDControlMask, enabled:Bool) {
+        let cur:Byte = self.read(address: IOAddresses.LCD_CONTROL.rawValue)
+        let val:Byte = enabled ? cur | flag.rawValue : cur & ~flag.rawValue
+        self.write(address: IOAddresses.LCD_CONTROL.rawValue, val: val)
     }
     
-    /// starts DMA transfer from 0xXX00 -> 0xXX9F to 0xFE00 -> 0xFE9F where XX is the provided byte
-    /// XX must be between 0x00 and 0xDF
-    private func startDMATransfer(start:Byte) -> Void {
-        let sourceRadix:Int = Int(start) * 0x100//shift input byte
-        let sourceRange = sourceRadix...(sourceRadix+0x9F)
-        self.ram[MMUAddressSpacesInt.OBJECT_ATTRIBUTE_MEMORY] = self.ram[sourceRange]
-        self.dmaCounter = GBConstants.DMADuration
-        self.currentDMATransferRange = sourceRange
+    public var LYC:UInt8 {
+        get {
+            return self.read(address: IOAddresses.LCD_LYC.rawValue)
+        }
+    }
+    
+    public var LY:UInt8 {
+        get {
+            return self.read(address: IOAddresses.LCD_LY.rawValue)
+        }
+        set {
+            //LY should be between 0 and ScanLinesPerFrame-1
+            self[IOAddresses.LCD_LY.rawValue] = newValue % UInt8(GBConstants.ScanlinesPerFrame)
+        }
+    }
+    
+    public var SCX:UInt8 {
+        get {
+            return self.read(address: IOAddresses.LCD_SCX.rawValue)
+        }
+    }
+    
+    public var SCY:UInt8 {
+        get {
+            return self.read(address: IOAddresses.LCD_SCY.rawValue)
+        }
+    }
+    
+    public var WX:UInt8 {
+        get {
+            return self.read(address: IOAddresses.LCD_WX.rawValue)
+        }
+    }
+    
+    public var WY:UInt8 {
+        get {
+            return self.read(address: IOAddresses.LCD_WY.rawValue)
+        }
+    }
+    
+    public var LCD_BGP:UInt8 {
+        get {
+            return self.read(address: IOAddresses.LCD_BGP.rawValue)
+        }
+    }
+    
+    public var LCD_OBP0:UInt8 {
+        get {
+            return self.read(address: IOAddresses.LCD_OBP0.rawValue)
+        }
+    }
+    
+    public var LCD_OBP1:UInt8 {
+        get {
+            return self.read(address: IOAddresses.LCD_OBP1.rawValue)
+        }
+    }
+    
+    override func onLYCSet(_ newVal: Byte)
+    {
+        //on lyc set check flag
+        self.setLCDStatFlag(.LYCeqLY, enabled: newVal == self[IOAddresses.LCD_LY.rawValue])
     }
 }

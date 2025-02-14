@@ -7,17 +7,20 @@ public let TimerClockModeToFrequency:[Byte] = [
 ]
 
 ///wraps timer logic
-class TimerInterface : Component, Clockable {
-    public static let sharedInstance = TimerInterface()
+public class TimerInterface : Component, Clockable {
+    private let mmu:MMU
+    private let interrupts:InterruptsControlInterface
     
-    private let mmu:MMU = MMU.sharedInstance
-    private let interrupts:Interrupts = Interrupts.sharedInstance
+    public init(mmu: MMU) {
+        self.mmu = mmu
+        self.interrupts = mmu
+    }
     
     ///cycles this clock has elapsed
-    var cycles: Int = 0
+    public private(set) var cycles: Int = 0
     
     /// perform a single tick on a clock, masterCycles and frameCycles  are provided for synchronisation purpose
-    func tick(_ masterCycles:Int, _ frameCycles:Int) -> Void {
+    public func tick(_ masterCycles:Int, _ frameCycles:Int) -> Void {
         //update div
         if(masterCycles % GBConstants.DivTimerFrequency == 0){
             var val:Byte = self.mmu.read(address: IOAddresses.DIV.rawValue) &+ 1

@@ -1,6 +1,6 @@
 import Foundation
 
-enum LCDStatMode: UInt8 {
+public enum LCDStatMode: UInt8 {
     case HBLANK         = 0b0000_0000
     case VBLANK         = 0b0000_0001
     case OAM_SEARCH     = 0b0000_0010
@@ -12,14 +12,12 @@ public class PPU: Component, Clockable {
     /// white frame, for init and debug purpose
     private static let blankFrame:Data = Data(repeating: 0xFF, count: GBConstants.PixelCount*4)//color are stored with 4 components rgba
     
-    public static let sharedInstance = PPU()
+    private let mmu:MMU
+    private let ios:IOInterface
+    private let interrupts:InterruptsControlInterface
+    private let pManager:PaletteManager
     
-    private let mmu:MMU = MMU.sharedInstance
-    private let ios:IOInterface = IOInterface.sharedInstance
-    private let interrupts:Interrupts = Interrupts.sharedInstance
-    private let pManager:PaletteManager = PaletteManager.sharedInstance
-    
-    public private (set) var cycles:Int = 0
+    public private(set) var cycles:Int = 0
     
     private var _frameBuffer:Data = PPU.blankFrame
     /// last commited frame, ready to display
@@ -36,7 +34,11 @@ public class PPU: Component, Clockable {
     //stores bg and win color indexes to ease obj priority application
     private var bgWinColorIndexes:[[Int]] = []
     
-    private init() {
+    init(mmu:MMU, pm:PaletteManager) {
+        self.mmu = mmu
+        self.ios = mmu
+        self.interrupts = mmu
+        self.pManager = pm
         self.prepareNextFrame()
     }
     
@@ -89,7 +91,7 @@ public class PPU: Component, Clockable {
         self.lineSync = self.frameSync % GBConstants.MCyclesPerScanline;
         //set LY
         let ly = UInt8((self.frameSync) / GBConstants.MCyclesPerScanline);
-        ios.LY = ly
+        mmu.LY = ly
         
         //lcd stat mode
         let curMode:LCDStatMode = ios.readLCDStatMode()

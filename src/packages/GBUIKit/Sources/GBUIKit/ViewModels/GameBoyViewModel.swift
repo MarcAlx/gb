@@ -9,7 +9,7 @@ public class GameBoyViewModel:ObservableObject {
     ///error view model to notify errors
     public var errorViewModel:ErrorViewModel?
     
-    private let gb:GameBoy = GameBoy()
+    public let gb:GameBoy = GameBoy()
     private var previousTime:Double = Date().timeIntervalSince1970
     @Published public var isOn:Bool = false
     @Published public var pressedButtons:Set<JoyPadButtons> = Set<JoyPadButtons>()

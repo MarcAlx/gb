@@ -1,17 +1,13 @@
-class Motherboard: Clockable {
-    public static let sharedInstance = Motherboard()
-    
+public class Motherboard: Clockable {
     private(set) public var insertedCartridge:Cartridge? = nil
     public private(set) var cycles:Int = 0
     private(set) public var isOn:Bool = false
     
-    private let cpu:CPU = CPU.sharedInstance
-    private let mmu:MMU = MMU.sharedInstance
-    private let ppu:PPU = PPU.sharedInstance
-    private let timer:TimerInterface = TimerInterface.sharedInstance
-    private let ios:IOInterface = IOInterface.sharedInstance
-    private let interrupts:Interrupts = Interrupts.sharedInstance
-    public  let joypad:JoyPadInterface = JoyPadInterface.sharedInstance
+    public let cpu:CPU
+    public let mmu:MMU
+    public let ppu:PPU
+    public let timer:TimerInterface
+    public let joypad:JoyPadInterface
     
     public var hasCartridgeInserted:Bool {
         get {
@@ -19,7 +15,12 @@ class Motherboard: Clockable {
         }
     }
     
-    private init() {
+    public init() {
+        self.mmu = MMU()
+        self.ppu = PPU(mmu: self.mmu, pm: PaletteManager.sharedInstance)
+        self.cpu = CPU(mmu: self.mmu)
+        self.joypad = JoyPadInterface(mmu: self.mmu)
+        self.timer = TimerInterface(mmu: self.mmu)
     }
     
     public func insert(cartridge:Cartridge) {
@@ -31,9 +32,7 @@ class Motherboard: Clockable {
         self.cpu.reset()
         self.ppu.reset()
         self.timer.reset()
-        self.ios.reset()
         self.joypad.reset()
-        self.interrupts.reset()
     }
     
     public func powerOn() {

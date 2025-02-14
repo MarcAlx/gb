@@ -1,7 +1,5 @@
-import Foundation
-
 // CPU states
-enum CPUState {
+public enum CPUState {
     //CPU is running
     case RUNNING
     //CPU is in panic (error case)
@@ -12,9 +10,7 @@ enum CPUState {
     case STOPPED
 }
 
-class CPU: CPUImplementation, Clockable {
-    public static let sharedInstance = CPU()
-    
+public class CPU: CPUImplementation, Clockable {
     public override func reset() {
         self.cycles = 0
         super.reset()
@@ -24,8 +20,8 @@ class CPU: CPUImplementation, Clockable {
     var standardInstructionSet:[Instruction] = []
     var extendedInstructionSet:[Instruction] = []
     
-    public override init() {
-        super.init()
+    public override init(mmu: MMU) {
+        super.init(mmu: mmu)
         self.standardInstructionSet = self.asStandardInstructions()
         self.extendedInstructionSet = self.asExtentedInstructions()
     }

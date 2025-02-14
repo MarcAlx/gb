@@ -3,6 +3,8 @@ import GBKit
 
 /// the scene that render the framebuffer
 class GameScene: SKScene {
+    private var gVM:GameBoyViewModel = GameBoyViewModel()
+    
     var effectNode : SKEffectNode = SKEffectNode()
     
     /// frame buffer will be drawn in the texture of sprite
@@ -23,6 +25,11 @@ class GameScene: SKScene {
         }
     }
     
+    public func withGVM(gVM: GameBoyViewModel) -> GameScene {
+        self.gVM = gVM
+        return self
+    }
+    
     override func didMove(to view: SKView) {
         //called once, when scene is presented
         self.initNodes()
@@ -31,7 +38,7 @@ class GameScene: SKScene {
     /// called every frame, for framerate see SpriteView initialization
     override func update(_ currentTime: TimeInterval) {
         // update screen with framebuffer
-        self.screen.texture = SKTexture(data: PPU.sharedInstance.frameBuffer,
+        self.screen.texture = SKTexture(data: self.gVM.gb.motherboard.ppu.frameBuffer,
                                         size: CGSize(width: GBConstants.ScreenWidth,
                                                      height: GBConstants.ScreenHeight))
         //to avoid pixel tearing
@@ -43,7 +50,7 @@ class GameScene: SKScene {
     /// init nodes in scene
     private func initNodes() {
         //screen
-        self.screen.texture = SKTexture(data: PPU.sharedInstance.frameBuffer,
+        self.screen.texture = SKTexture(data: self.gVM.gb.motherboard.ppu.frameBuffer,
                                         size: CGSize(width: GBConstants.ScreenWidth,
                                                      height: GBConstants.ScreenHeight))
         self.screen.anchorPoint = CGPoint(x: 0, y: 0)

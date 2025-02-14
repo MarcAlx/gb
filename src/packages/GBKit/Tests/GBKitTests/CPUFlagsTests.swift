@@ -12,7 +12,7 @@ final class CPUFlagsTests: XCTestCase {
     }
 
     func test_raise() throws {
-        let cpu:CPU = CPU()
+        let cpu:CPU = CPU(mmu: MMU())
         cpu.registers.F = 0
         cpu.registers.raiseFlag(.ZERO);
         XCTAssertTrue(cpu.registers.F == 0b1000_0000)
@@ -28,7 +28,7 @@ final class CPUFlagsTests: XCTestCase {
     }
     
     func test_clear() throws {
-        let cpu:CPU = CPU()
+        let cpu:CPU = CPU(mmu: MMU())
         cpu.registers.F = 0b1111_0000
         cpu.registers.clearFlag(.ZERO);
         XCTAssertTrue(cpu.registers.F == 0b0111_0000)
@@ -41,7 +41,7 @@ final class CPUFlagsTests: XCTestCase {
     }
     
     func test_isset() throws {
-        let cpu:CPU = CPU()
+        let cpu:CPU = CPU(mmu: MMU())
         cpu.registers.F = 0b1000_0000
         XCTAssertTrue(cpu.registers.isFlagSet(.ZERO))
         cpu.registers.F = 0b0100_0000
@@ -53,7 +53,7 @@ final class CPUFlagsTests: XCTestCase {
     }
     
     func test_isclear() throws {
-        let cpu:CPU = CPU()
+        let cpu:CPU = CPU(mmu: MMU())
         cpu.registers.F = 0b0000_0000
         XCTAssertTrue(cpu.registers.isFlagCleared(.ZERO))
         XCTAssertTrue(cpu.registers.isFlagCleared(.NEGATIVE))
@@ -62,7 +62,7 @@ final class CPUFlagsTests: XCTestCase {
     }
     
     func test_conditional_set() throws {
-        let cpu:CPU = CPU()
+        let cpu:CPU = CPU(mmu: MMU())
         cpu.registers.F = 0
         for f in [CPUFlag.ZERO, CPUFlag.NEGATIVE, CPUFlag.HALF_CARRY, CPUFlag.CARRY] {
             cpu.registers.conditionalSet(cond: true, flag: f)

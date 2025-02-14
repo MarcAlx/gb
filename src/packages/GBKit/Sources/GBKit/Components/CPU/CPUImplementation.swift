@@ -17,7 +17,7 @@ private func forward(_ one:OneByteInstruction? = nil,
     return emptyVariableLengthInstruction
 }
 
-class CPUImplementation: CPUCore {
+public class CPUImplementation: CPUCore {
     func asStandardInstructions() -> [Instruction] {
         let unsupported:Instruction = Instruction(length: 1, name: "panic", duration:4, self.panic)
         return [
@@ -802,7 +802,7 @@ class CPUImplementation: CPUCore {
     func ld_a_ff00pn(val:Byte) -> Void { self.registers.A = mmu.read(address: 0xFF00 &+ UInt16(val)) }
     func pop_af() -> Void { self.registers.AF = self.popFromStack() }
     func ld_a_ff00pc() -> Void { self.registers.A = mmu.read(address: 0xFF00 &+ UInt16(self.registers.C)) }
-    func di() -> Void { interrupts.IME = false }
+    func di() -> Void { mmu.IME = false }
     func push_af() -> Void { self.pushToStack(self.registers.AF) }
     func or_a_n(val:Byte) -> Void { self.or_a(val) }
     func rst_30h() -> Void { self.call(ReservedMemoryLocationAddresses.RESTART_30.rawValue) }
