@@ -674,9 +674,10 @@ final class CPUInstructionsTests: XCTestCase {
         //0x74
         cpu.registers.HL = 0x0000
         cpu.mmu[0x0000] = 0x6
-        cpu.registers.H = 0xFF
+        cpu.registers.H = 0xC0
+        cpu.registers.L = 0x00
         cpu.ld_hlp_h()
-        XCTAssertTrue(cpu.mmu[0xFF00] == 0xFF)
+        XCTAssertTrue(cpu.mmu[0xC000] == 0xC0)
         
         //0x75
         cpu.registers.HL = MMUAddresses.WORK_RAM.rawValue
