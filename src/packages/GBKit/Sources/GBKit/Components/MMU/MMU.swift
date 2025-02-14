@@ -16,6 +16,8 @@ public class MMU: MMUCore, InterruptsControlInterface, IOInterface {
         self.fillWithInitialValues()
     }
     
+    // mark: InterruptsControlInterface
+    
     public var IME:Bool {
         get {
             return self.masterEnable
@@ -61,10 +63,7 @@ public class MMU: MMUCore, InterruptsControlInterface, IOInterface {
         return (self.IF & interrupt.rawValue) > 0
     }
     
-    ///
-    /// IOInterface
-    ///
-    
+    // mark: IOInterface
     
     public func fillWithInitialValues() {
         //@see https://gbdev.io/pandocs/Power_Up_Sequence.html (DMG)
