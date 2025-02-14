@@ -23,22 +23,22 @@ public class TimerInterface : Component, Clockable {
     public func tick(_ masterCycles:Int, _ frameCycles:Int) -> Void {
         //update div
         if(masterCycles % GBConstants.DivTimerFrequency == 0){
-            var val:Byte = self.mmu.read(address: IOAddresses.DIV.rawValue) &+ 1
+            let val:Byte = self.mmu.read(address: IOAddresses.DIV.rawValue) &+ 1
             self.mmu.directWrite(address: IOAddresses.DIV.rawValue, val: val)
         }
         
         //check if TAC is enable and corresponding frequency to increment TMA
         if(isBitSet(.Bit_2, self.mmu[IOAddresses.TAC.rawValue])
         && masterCycles % Int(TacClockFrequency) == 0){
-            var curTima:Byte = self.mmu.read(address: IOAddresses.TIMA.rawValue)
-            var newTima:Byte = curTima &+ self.TacClockFrequency
+            let curTima:Byte = self.mmu.read(address: IOAddresses.TIMA.rawValue)
+            let newTima:Byte = curTima &+ self.TacClockFrequency
             //newTima is over cur value increments TIMA, otherwise (overflow) resets to the value stored at TMA
             if(curTima<newTima){
                 self.mmu.directWrite(address: IOAddresses.TIMA.rawValue, val: newTima)
             }
             else {
                 //timer modulo
-                var tma:Byte = self.mmu.read(address: IOAddresses.TMA.rawValue)
+                let tma:Byte = self.mmu.read(address: IOAddresses.TMA.rawValue)
                 self.mmu.directWrite(address: IOAddresses.TIMA.rawValue, val: tma)
                 //trigger interrupt
                 self.interrupts.setInterruptFlagValue(.Timer, true)

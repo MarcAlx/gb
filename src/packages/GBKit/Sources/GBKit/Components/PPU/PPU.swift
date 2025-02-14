@@ -358,7 +358,7 @@ public class PPU: Component, Clockable {
     /// draw color at given x,y
     private func drawPixelAt(x:Byte, y:Byte, withColor:Color) {
         //inline 2d array indexy, *4 as each color is indexed with 4 values (rgba)
-        var dest:Int = (((Int(y) * GBConstants.ScreenWidth) + Int(x)) * 4)
+        let dest:Int = (((Int(y) * GBConstants.ScreenWidth) + Int(x)) * 4)
         
         //draw color to frame buffer
         self.nextFrame[dest]   = withColor.r //r
