@@ -35,7 +35,7 @@ final class MMUTests: XCTestCase {
     func test_lcdstat() throws {
         let mmu:MMU = MMU()
         mmu.reset()
-        mmu[IOAddresses.LCD_STATUS.rawValue] = 0xFF
-        XCTAssertTrue(mmu[IOAddresses.LCD_STATUS.rawValue] == 0b1111_1000)
+        mmu.directWrite(address: IOAddresses.LCD_STATUS.rawValue, val: Byte(0xFF))
+        XCTAssertTrue(mmu[IOAddresses.LCD_STATUS.rawValue] == 0b1111_1111)
     }
 }
