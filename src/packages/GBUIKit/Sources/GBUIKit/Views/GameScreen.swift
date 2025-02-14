@@ -7,8 +7,8 @@ struct GameScreen: View {
     private let scene:GameScene
     @ObservedObject private var mVM:MainViewModel
     
-    public init(mVM:MainViewModel) {
-        self.scene = GameScene()
+    public init(mVM:MainViewModel, gVM: GameBoyViewModel) {
+        self.scene = GameScene().withGVM(gVM: gVM)
         self.scene.size = CGSize(width: GBConstants.ScreenWidth, height: GBConstants.ScreenHeight)
         self.scene.isFPSDisplayEnabled = true
         self.mVM = mVM

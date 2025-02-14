@@ -1,6 +1,6 @@
 public class GameBoy {
     ///underlaying motherboard
-    private let motherboard:Motherboard = Motherboard.sharedInstance
+    public let motherboard:Motherboard = Motherboard()
     
     ///true if is turned on
     public var isOn:Bool {

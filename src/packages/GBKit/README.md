@@ -7,6 +7,7 @@ Core package to emulate GameBoy.
 - (Done) CPU
 - (Done) PPU
 - (TODO) MBC handling
+- (TODO) Finish unit tests
 - (Next) APU
 - (Next) Move from `XCTest` to new Swift `Testing`
 - (Later) GBC Support
@@ -17,14 +18,15 @@ Core package to emulate GameBoy.
 
 ```mermaid
 graph TB;
+  graph TB;
   GB[Game Boy]
   MB[MotherBoard]
   CPU[CPU]
   MMU[MMU]
-  IO[I/O]
+  IO[I/O interface]
   JOY[JoyPad]
   R[Registers]
-  INT[Interrupts]
+  INT[Interrupts interface]
   PM[Palette Manager]
   TIM[Timer]
 
@@ -33,28 +35,19 @@ graph TB;
   MB --> CPU;
   MB --> MMU;
   MB --> PPU;
-  MB --> IO;
   MB --> JOY;
   MB --> TIM;
 
+  MMU --> IO;
+  MMU --> INT;
+
+  CPU --> MMU;
+  CPU --> R
+  PPU --> MMU;
+  JOY --> MMU;
   TIM --> MMU;
-  TIM --> INT;
-
-  INT --> MMU;
-
-  CPU --> R;
-  CPU ---> MMU;
 
   PPU --> PM;
-  PPU --> MMU;
-  PPU --> INT;
-  PPU --> IO;
-
-  IO --> MMU;
-  
-  MMU --> JOY
-  JOY --> INT
-  
 ```
 
 ## Quality 

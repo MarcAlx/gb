@@ -1,18 +1,21 @@
 /**
  * The Gameboy CPU
  */
-class CPUCore: Component {
-    internal let mmu:MMU = MMU.sharedInstance
-    internal let interrupts:Interrupts = Interrupts.sharedInstance
+public class CPUCore: Component {
+    internal let mmu:MMU
+    internal let interrupts:InterruptsControlInterface
     internal let registers:Registers
+    
     public internal(set) var state:CPUState = CPUState.RUNNING
     //cycles this cpu has run
     public internal(set) var cycles:Int = 0
     //if true interrupt can't be handled (are skipped)
     internal var interruptsJustEnabled:Bool = false //@see InstrusctionSet.ei
     
-    internal init() {
-        self.registers = Registers()
+    internal init(mmu:MMU) {
+        self.registers = Registers(mmu: mmu)
+        self.interrupts = mmu
+        self.mmu = mmu
     }
     
     public func reset() {
@@ -43,7 +46,7 @@ class CPUCore: Component {
         //disable flag
         self.interrupts.setInterruptFlagValue(interrupt, false)
         //disable IME
-        self.interrupts.IME = false
+        self.mmu.IME = false
         //handling interupt is: write PC to stack and move PC to associated interrupt address (a call...)
         self.call(interruptLoc)
         //restore cpu state
@@ -282,7 +285,7 @@ class CPUCore: Component {
     
     /// enable interupt and skip next op
     internal func e_i(_ skipNextOp:Bool = true) -> Void {
-        interrupts.IME = true
+        mmu.IME = true
         self.interruptsJustEnabled = skipNextOp
     }
     

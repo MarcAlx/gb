@@ -12,7 +12,7 @@ final class CPUInstructionsTests: XCTestCase {
     }
 
     func test_indexation() throws {
-        let cpu:CPU = CPU()
+        let cpu:CPU = CPU(mmu: MMU())
         
         let inst = cpu.asStandardInstructions()
         for i in 0...255 {
@@ -24,7 +24,7 @@ final class CPUInstructionsTests: XCTestCase {
     
     func test_nop() throws {
         //0x00
-        let cpu:CPU = CPU()
+        let cpu:CPU = CPU(mmu: MMU())
         let old = cpu.registers.describe()
         cpu.nop()
         let new = cpu.registers.describe()
@@ -32,7 +32,7 @@ final class CPUInstructionsTests: XCTestCase {
     }
     
     func test_halt() throws {
-        let cpu:CPU = CPU()
+        let cpu:CPU = CPU(mmu: MMU())
         cpu.state = CPUState.RUNNING
         cpu.halt()
         XCTAssertTrue(cpu.state == CPUState.HALTED)
@@ -43,7 +43,7 @@ final class CPUInstructionsTests: XCTestCase {
     }
     
     func test_dec() throws {
-        let cpu:CPU = CPU()
+        let cpu:CPU = CPU(mmu: MMU())
         cpu.registers.F = 0b0000_0000
         
         //0x0B
@@ -125,7 +125,7 @@ final class CPUInstructionsTests: XCTestCase {
     }
     
     func test_flags() throws {
-        let cpu:CPU = CPU()
+        let cpu:CPU = CPU(mmu: MMU())
         cpu.registers.F = 0b1111_0000
         cpu.scf()
         XCTAssertTrue(cpu.registers.isFlagSet(.CARRY))
@@ -149,7 +149,7 @@ final class CPUInstructionsTests: XCTestCase {
     }
     
     func test_inc() throws {
-        let cpu:CPU = CPU()
+        let cpu:CPU = CPU(mmu: MMU())
         
         //0x03
         cpu.registers.BC = 0
@@ -225,7 +225,7 @@ final class CPUInstructionsTests: XCTestCase {
     }
     
     func test_ld() throws {
-        let cpu:CPU = CPU()
+        let cpu:CPU = CPU(mmu: MMU())
         
         //0x01
         cpu.registers.BC = 8
@@ -674,9 +674,10 @@ final class CPUInstructionsTests: XCTestCase {
         //0x74
         cpu.registers.HL = 0x0000
         cpu.mmu[0x0000] = 0x6
-        cpu.registers.H = 0xFF
+        cpu.registers.H = 0xC0
+        cpu.registers.L = 0x00
         cpu.ld_hlp_h()
-        XCTAssertTrue(cpu.mmu[0xFF00] == 0xFF)
+        XCTAssertTrue(cpu.mmu[0xC000] == 0xC0)
         
         //0x75
         cpu.registers.HL = MMUAddresses.WORK_RAM.rawValue
@@ -804,7 +805,7 @@ final class CPUInstructionsTests: XCTestCase {
     }
 
     func test_add() throws {
-        let cpu:CPU = CPU()
+        let cpu:CPU = CPU(mmu: MMU())
         
         //0x80
         cpu.registers.A = 0b0000_1111
@@ -995,7 +996,7 @@ final class CPUInstructionsTests: XCTestCase {
     }
     
     func test_adc() throws {
-        let cpu:CPU = CPU()
+        let cpu:CPU = CPU(mmu: MMU())
         
         //0x80
         cpu.registers.raiseFlag(.CARRY)
@@ -1126,7 +1127,7 @@ final class CPUInstructionsTests: XCTestCase {
     }
     
     func test_sub() throws {
-        let cpu:CPU = CPU()
+        let cpu:CPU = CPU(mmu: MMU())
         
         cpu.registers.A = 0b0001_0000
         cpu.registers.B = 0b0000_0001
@@ -1272,7 +1273,7 @@ final class CPUInstructionsTests: XCTestCase {
     }
     
     func test_sbc() throws {
-        let cpu:CPU = CPU()
+        let cpu:CPU = CPU(mmu: MMU())
         
         cpu.registers.A = 0b0001_0000
         cpu.registers.B = 0b0000_0000
@@ -1442,7 +1443,7 @@ final class CPUInstructionsTests: XCTestCase {
     }
     
     func test_and() throws {
-        let cpu:CPU = CPU()
+        let cpu:CPU = CPU(mmu: MMU())
         
         //0xA0
         cpu.registers.A = 0b0000_0001
@@ -1557,7 +1558,7 @@ final class CPUInstructionsTests: XCTestCase {
     }
     
     func test_xor() throws {
-        let cpu:CPU = CPU()
+        let cpu:CPU = CPU(mmu: MMU())
         
         //0xA8
         cpu.registers.A = 0b0000_1111
@@ -1663,7 +1664,7 @@ final class CPUInstructionsTests: XCTestCase {
     }
     
     func test_cp() throws {
-        let cpu:CPU = CPU()
+        let cpu:CPU = CPU(mmu: MMU())
         
         cpu.registers.A = 0
         cpu.registers.B = 1
@@ -1731,7 +1732,7 @@ final class CPUInstructionsTests: XCTestCase {
     }
     
     func test_or() throws {
-        let cpu:CPU = CPU()
+        let cpu:CPU = CPU(mmu: MMU())
         
         //0xB0
         cpu.registers.A = 0b0000_1111
@@ -1841,7 +1842,7 @@ final class CPUInstructionsTests: XCTestCase {
     }
     
     func test_jp() throws {
-        let cpu:CPU = CPU()
+        let cpu:CPU = CPU(mmu: MMU())
         
         //0xC2
         cpu.registers.PC = 0x0000
@@ -1896,7 +1897,7 @@ final class CPUInstructionsTests: XCTestCase {
     }
     
     func test_jr() throws {
-        let cpu:CPU = CPU()
+        let cpu:CPU = CPU(mmu: MMU())
         
         //0x18
         //positive
@@ -1991,7 +1992,7 @@ final class CPUInstructionsTests: XCTestCase {
     }
     
     func test_call() throws {
-        let cpu:CPU = CPU()
+        let cpu:CPU = CPU(mmu: MMU())
         
         cpu.registers.PC = 0x0000
         cpu.registers.SP = 0x1000
@@ -2044,7 +2045,7 @@ final class CPUInstructionsTests: XCTestCase {
     }
     
     func test_ret() throws {
-        let cpu:CPU = CPU()
+        let cpu:CPU = CPU(mmu: MMU())
         
         cpu.registers.PC = 0x0000
         cpu.registers.SP = 0x1000
@@ -2057,7 +2058,7 @@ final class CPUInstructionsTests: XCTestCase {
         cpu.registers.SP = 0x1000
         cpu.call(0x2000)
         XCTAssertTrue(cpu.registers.PC == 0x2000)
-        cpu.interrupts.IME = false
+        cpu.mmu.IME = false
         cpu.reti()
         XCTAssertTrue(cpu.registers.PC == 0x0000)
         XCTAssertTrue(cpu.interrupts.IME == true)
@@ -2112,7 +2113,7 @@ final class CPUInstructionsTests: XCTestCase {
     }
     
     func test_push() throws {
-        let cpu:CPU = CPU()
+        let cpu:CPU = CPU(mmu: MMU())
         
         //0xC6
         cpu.registers.SP = 0xFFFF
@@ -2140,7 +2141,7 @@ final class CPUInstructionsTests: XCTestCase {
     }
     
     func test_pop() throws {
-        let cpu:CPU = CPU()
+        let cpu:CPU = CPU(mmu: MMU())
         
         //0xC1
         cpu.registers.SP = 0xFFFD
@@ -2176,7 +2177,7 @@ final class CPUInstructionsTests: XCTestCase {
     }
     
     func test_rst() throws {
-        let cpu:CPU = CPU()
+        let cpu:CPU = CPU(mmu: MMU())
         
         //0xC7
         cpu.registers.PC = 0xFFFF
@@ -2220,7 +2221,7 @@ final class CPUInstructionsTests: XCTestCase {
     }
     
     func test_daa() throws {
-        let cpu:CPU = CPU()
+        let cpu:CPU = CPU(mmu: MMU())
         cpu.registers.clearFlags(.CARRY,.HALF_CARRY,.NEGATIVE,.ZERO)
         
         cpu.registers.A = 0
@@ -2249,7 +2250,7 @@ final class CPUInstructionsTests: XCTestCase {
     }
     
     func test_rra() throws {
-        let cpu:CPU = CPU()
+        let cpu:CPU = CPU(mmu: MMU())
         
         cpu.registers.clearFlag(.ZERO)
         cpu.registers.raiseFlag(.HALF_CARRY)
@@ -2277,7 +2278,7 @@ final class CPUInstructionsTests: XCTestCase {
     }
     
     func test_rla() throws {
-        let cpu:CPU = CPU()
+        let cpu:CPU = CPU(mmu: MMU())
         
         cpu.registers.clearFlag(.ZERO)
         cpu.registers.raiseFlag(.HALF_CARRY)
@@ -2305,7 +2306,7 @@ final class CPUInstructionsTests: XCTestCase {
     }
     
     func test_cpl() throws {
-        let cpu:CPU = CPU()
+        let cpu:CPU = CPU(mmu: MMU())
         cpu.registers.A = 0b1010_1010
         cpu.cpl()
         XCTAssertTrue(cpu.registers.A == 0b0101_0101)
@@ -2314,7 +2315,7 @@ final class CPUInstructionsTests: XCTestCase {
     }
     
     func test_interrupt_enable() throws {
-        let cpu:CPU = CPU()
+        let cpu:CPU = CPU(mmu: MMU())
         cpu.ei()
         XCTAssertTrue(cpu.interrupts.IME)
         cpu.di()

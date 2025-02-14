@@ -12,8 +12,7 @@ final class IOSTests: XCTestCase {
     }
     
     func test_lcdstat() throws {
-        let ios:IOInterface = IOInterface.sharedInstance
-        ios.reset()
+        let ios:IOInterface = MMU()
         
         ios.setLCDStatFlag(.HBlankInterruptSource, enabled: true)
         XCTAssertTrue(ios.readLCDStatFlag(.HBlankInterruptSource))
@@ -45,71 +44,71 @@ final class IOSTests: XCTestCase {
     }
     
     func test_lcdcontrol() throws {
-        let ios:IOInterface = IOInterface.sharedInstance
-        ios.reset()
+        let mmu:MMU = MMU()
+        let ios:IOInterface = mmu
         
-        MMU.sharedInstance[IOAddresses.LCD_CONTROL.rawValue] = 0x0
+        mmu[IOAddresses.LCD_CONTROL.rawValue] = 0x0
         ios.setLCDControlFlag(.BG_AND_WINDOW_ENABLE, enabled: true)
         XCTAssertTrue(ios.readLCDControlFlag(.BG_AND_WINDOW_ENABLE))
-        XCTAssertTrue(MMU.sharedInstance[IOAddresses.LCD_CONTROL.rawValue] == 0b0000_0001)
+        XCTAssertTrue(mmu[IOAddresses.LCD_CONTROL.rawValue] == 0b0000_0001)
         ios.setLCDControlFlag(.BG_AND_WINDOW_ENABLE, enabled: false)
         XCTAssertFalse(ios.readLCDControlFlag(.BG_AND_WINDOW_ENABLE))
-        XCTAssertTrue(MMU.sharedInstance[IOAddresses.LCD_CONTROL.rawValue] == 0b0000_0000)
+        XCTAssertTrue(mmu[IOAddresses.LCD_CONTROL.rawValue] == 0b0000_0000)
         
-        MMU.sharedInstance[IOAddresses.LCD_CONTROL.rawValue] = 0x0
+        mmu[IOAddresses.LCD_CONTROL.rawValue] = 0x0
         ios.setLCDControlFlag(.OBJ_ENABLE, enabled: true)
         XCTAssertTrue(ios.readLCDControlFlag(.OBJ_ENABLE))
-        XCTAssertTrue(MMU.sharedInstance[IOAddresses.LCD_CONTROL.rawValue] == 0b0000_0010)
+        XCTAssertTrue(mmu[IOAddresses.LCD_CONTROL.rawValue] == 0b0000_0010)
         ios.setLCDControlFlag(.OBJ_ENABLE, enabled: false)
         XCTAssertFalse(ios.readLCDControlFlag(.OBJ_ENABLE))
-        XCTAssertTrue(MMU.sharedInstance[IOAddresses.LCD_CONTROL.rawValue] == 0b0000_0000)
+        XCTAssertTrue(mmu[IOAddresses.LCD_CONTROL.rawValue] == 0b0000_0000)
         
-        MMU.sharedInstance[IOAddresses.LCD_CONTROL.rawValue] = 0x0
+        mmu[IOAddresses.LCD_CONTROL.rawValue] = 0x0
         ios.setLCDControlFlag(.OBJ_SIZE, enabled: true)
         XCTAssertTrue(ios.readLCDControlFlag(.OBJ_SIZE))
-        XCTAssertTrue(MMU.sharedInstance[IOAddresses.LCD_CONTROL.rawValue] == 0b0000_0100)
+        XCTAssertTrue(mmu[IOAddresses.LCD_CONTROL.rawValue] == 0b0000_0100)
         ios.setLCDControlFlag(.OBJ_SIZE, enabled: false)
         XCTAssertFalse(ios.readLCDControlFlag(.OBJ_SIZE))
-        XCTAssertTrue(MMU.sharedInstance[IOAddresses.LCD_CONTROL.rawValue] == 0b0000_0000)
+        XCTAssertTrue(mmu[IOAddresses.LCD_CONTROL.rawValue] == 0b0000_0000)
         
-        MMU.sharedInstance[IOAddresses.LCD_CONTROL.rawValue] = 0x0
+        mmu[IOAddresses.LCD_CONTROL.rawValue] = 0x0
         ios.setLCDControlFlag(.BG_TILE_MAP_AREA, enabled: true)
         XCTAssertTrue(ios.readLCDControlFlag(.BG_TILE_MAP_AREA))
-        XCTAssertTrue(MMU.sharedInstance[IOAddresses.LCD_CONTROL.rawValue] == 0b0000_1000)
+        XCTAssertTrue(mmu[IOAddresses.LCD_CONTROL.rawValue] == 0b0000_1000)
         ios.setLCDControlFlag(.BG_TILE_MAP_AREA, enabled: false)
         XCTAssertFalse(ios.readLCDControlFlag(.BG_TILE_MAP_AREA))
-        XCTAssertTrue(MMU.sharedInstance[IOAddresses.LCD_CONTROL.rawValue] == 0b0000_0000)
+        XCTAssertTrue(mmu[IOAddresses.LCD_CONTROL.rawValue] == 0b0000_0000)
         
-        MMU.sharedInstance[IOAddresses.LCD_CONTROL.rawValue] = 0x0
+        mmu[IOAddresses.LCD_CONTROL.rawValue] = 0x0
         ios.setLCDControlFlag(.BG_AND_WINDOW_TILE_DATA_AREA, enabled: true)
         XCTAssertTrue(ios.readLCDControlFlag(.BG_AND_WINDOW_TILE_DATA_AREA))
-        XCTAssertTrue(MMU.sharedInstance[IOAddresses.LCD_CONTROL.rawValue] == 0b0001_0000)
+        XCTAssertTrue(mmu[IOAddresses.LCD_CONTROL.rawValue] == 0b0001_0000)
         ios.setLCDControlFlag(.BG_AND_WINDOW_TILE_DATA_AREA, enabled: false)
         XCTAssertFalse(ios.readLCDControlFlag(.BG_AND_WINDOW_TILE_DATA_AREA))
-        XCTAssertTrue(MMU.sharedInstance[IOAddresses.LCD_CONTROL.rawValue] == 0b0000_0000)
+        XCTAssertTrue(mmu[IOAddresses.LCD_CONTROL.rawValue] == 0b0000_0000)
         
-        MMU.sharedInstance[IOAddresses.LCD_CONTROL.rawValue] = 0x0
+        mmu[IOAddresses.LCD_CONTROL.rawValue] = 0x0
         ios.setLCDControlFlag(.WINDOW_ENABLE, enabled: true)
         XCTAssertTrue(ios.readLCDControlFlag(.WINDOW_ENABLE))
-        XCTAssertTrue(MMU.sharedInstance[IOAddresses.LCD_CONTROL.rawValue] == 0b0010_0000)
+        XCTAssertTrue(mmu[IOAddresses.LCD_CONTROL.rawValue] == 0b0010_0000)
         ios.setLCDControlFlag(.WINDOW_ENABLE, enabled: false)
         XCTAssertFalse(ios.readLCDControlFlag(.WINDOW_ENABLE))
-        XCTAssertTrue(MMU.sharedInstance[IOAddresses.LCD_CONTROL.rawValue] == 0b0000_0000)
+        XCTAssertTrue(mmu[IOAddresses.LCD_CONTROL.rawValue] == 0b0000_0000)
         
-        MMU.sharedInstance[IOAddresses.LCD_CONTROL.rawValue] = 0x0
+        mmu[IOAddresses.LCD_CONTROL.rawValue] = 0x0
         ios.setLCDControlFlag(.WINDOW_TILE_AREA, enabled: true)
         XCTAssertTrue(ios.readLCDControlFlag(.WINDOW_TILE_AREA))
-        XCTAssertTrue(MMU.sharedInstance[IOAddresses.LCD_CONTROL.rawValue] == 0b0100_0000)
+        XCTAssertTrue(mmu[IOAddresses.LCD_CONTROL.rawValue] == 0b0100_0000)
         ios.setLCDControlFlag(.WINDOW_TILE_AREA, enabled: false)
         XCTAssertFalse(ios.readLCDControlFlag(.WINDOW_TILE_AREA))
-        XCTAssertTrue(MMU.sharedInstance[IOAddresses.LCD_CONTROL.rawValue] == 0b0000_0000)
+        XCTAssertTrue(mmu[IOAddresses.LCD_CONTROL.rawValue] == 0b0000_0000)
         
-        MMU.sharedInstance[IOAddresses.LCD_CONTROL.rawValue] = 0x0
+        mmu[IOAddresses.LCD_CONTROL.rawValue] = 0x0
         ios.setLCDControlFlag(.LCD_AND_PPU_ENABLE, enabled: true)
         XCTAssertTrue(ios.readLCDControlFlag(.LCD_AND_PPU_ENABLE))
-        XCTAssertTrue(MMU.sharedInstance[IOAddresses.LCD_CONTROL.rawValue] == 0b1000_0000)
+        XCTAssertTrue(mmu[IOAddresses.LCD_CONTROL.rawValue] == 0b1000_0000)
         ios.setLCDControlFlag(.LCD_AND_PPU_ENABLE, enabled: false)
         XCTAssertFalse(ios.readLCDControlFlag(.LCD_AND_PPU_ENABLE))
-        XCTAssertTrue(MMU.sharedInstance[IOAddresses.LCD_CONTROL.rawValue] == 0b0000_0000)
+        XCTAssertTrue(mmu[IOAddresses.LCD_CONTROL.rawValue] == 0b0000_0000)
     }
 }

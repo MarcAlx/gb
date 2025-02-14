@@ -12,7 +12,7 @@ final class CPUExtendedInstructionsTests: XCTestCase {
     }
     
     func test_indexation() throws {
-        let cpu:CPU = CPU()
+        let cpu:CPU = CPU(mmu: MMU())
         
         let inst = cpu.asExtentedInstructions()
         for i in 0...255 {
@@ -21,37 +21,37 @@ final class CPUExtendedInstructionsTests: XCTestCase {
     }
     
     func test_rlc() throws {
-        let cpu:CPU = CPU()
+        let cpu:CPU = CPU(mmu: MMU())
         XCTAssertTrue(false)
     }
     
     func test_rrc() throws {
-        let cpu:CPU = CPU()
+        let cpu:CPU = CPU(mmu: MMU())
         XCTAssertTrue(false)
     }
     
     func test_rl() throws {
-        let cpu:CPU = CPU()
+        let cpu:CPU = CPU(mmu: MMU())
         XCTAssertTrue(false)
     }
     
     func test_rr() throws {
-        let cpu:CPU = CPU()
+        let cpu:CPU = CPU(mmu: MMU())
         XCTAssertTrue(false)
     }
     
     func test_sla() throws {
-        let cpu:CPU = CPU()
+        let cpu:CPU = CPU(mmu: MMU())
         XCTAssertTrue(false)
     }
     
     func test_sra() throws {
-        let cpu:CPU = CPU()
+        let cpu:CPU = CPU(mmu: MMU())
         XCTAssertTrue(false)
     }
     
     func test_swap() throws {
-        let cpu:CPU = CPU()
+        let cpu:CPU = CPU(mmu: MMU())
         
         cpu.registers.B = 0b0000_1111
         cpu.swap_b()
@@ -88,12 +88,12 @@ final class CPUExtendedInstructionsTests: XCTestCase {
     }
     
     func test_srl() throws {
-        let cpu:CPU = CPU()
+        let cpu:CPU = CPU(mmu: MMU())
         XCTAssertTrue(false)
     }
     
     func test_bit() throws {
-        let cpu:CPU = CPU()
+        let cpu:CPU = CPU(mmu: MMU())
         
         cpu.registers.B = 0b1111_1110
         cpu.bit_0_b()
@@ -553,12 +553,12 @@ final class CPUExtendedInstructionsTests: XCTestCase {
     }
     
     func test_res() throws {
-        let cpu:CPU = CPU()
+        let cpu:CPU = CPU(mmu: MMU())
         XCTAssertTrue(false)
     }
     
     func test_set() throws {
-        let cpu:CPU = CPU()
+        let cpu:CPU = CPU(mmu: MMU())
         XCTAssertTrue(false)
     }
 }

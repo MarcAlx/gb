@@ -9,10 +9,11 @@ public class GameBoyViewModel:ObservableObject {
     ///error view model to notify errors
     public var errorViewModel:ErrorViewModel?
     
-    private let gb:GameBoy = GameBoy()
+    public let gb:GameBoy = GameBoy()
     private var previousTime:Double = Date().timeIntervalSince1970
     @Published public var isOn:Bool = false
     @Published public var pressedButtons:Set<JoyPadButtons> = Set<JoyPadButtons>()
+    private var pButtons:Set<JoyPadButtons> = Set<JoyPadButtons>()
     
     /*
      * used to act at every frame
@@ -55,13 +56,15 @@ public class GameBoyViewModel:ObservableObject {
     
     /// set button state (true = pressed, released else)
     public func setButtonState(_ button: JoyPadButtons, _ state:Bool) {
-        var actualState = self.pressedButtons.contains(button)
+        var actualState = self.pButtons.contains(button)
         if(state){
-            self.pressedButtons.insert(button)
+            self.pButtons.insert(button)
         }
         else {
-            self.pressedButtons.remove(button)
+            self.pButtons.remove(button)
         }
+        
+        //n.b do not use pressedButtons to avoid SwiftUI slowdown
         
         if(state != actualState){
             self.gb.setButtonState(button, state)

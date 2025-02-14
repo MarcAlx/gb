@@ -32,8 +32,11 @@ public enum ButtonModifiers: Byte {
 }
 
 /// wraps button logic
-class JoyPadInterface : Component {
-    public static let sharedInstance = JoyPadInterface()
+public class JoyPadInterface : Component {
+    
+    private let ints:InterruptsControlInterface
+    
+    private let mmu:MMU
     
     /// map each button to its pressed state (true -> pressed, released else)
     private var buttonState:[JoyPadButtons:Bool] = [
@@ -47,7 +50,9 @@ class JoyPadInterface : Component {
         JoyPadButtons.RIGHT  : false,
     ]
     
-    private init(){
+    public init(mmu:MMU){
+        self.ints = mmu;
+        self.mmu = mmu
     }
     
     /// Set button state (true -> pressed, released else)
@@ -56,7 +61,7 @@ class JoyPadInterface : Component {
         
         //button goes from released to pressed -> trigger interrupt
         if(!buttonState[button]! && state){
-            Interrupts.sharedInstance.setInterruptFlagValue(.Joypad, true);
+            ints.setInterruptFlagValue(.Joypad, true);
         }
         
         buttonState[button] = state
@@ -64,6 +69,9 @@ class JoyPadInterface : Component {
         if(button.rawValue.starts(with: "dpad")){
             self.checkDPADConsistency()
         }
+        
+        self.mmu.buttonsState = self.getButtonGroupState(group: .BUTTONS)
+        self.mmu.dpadState = self.getButtonGroupState(group: .DPAD)
     }
     
     /// true if button pressed
