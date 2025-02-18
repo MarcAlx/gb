@@ -18,7 +18,6 @@ Core package to emulate GameBoy.
 
 ```mermaid
 graph TB;
-  graph TB;
   GB[Game Boy]
   MB[MotherBoard]
   CPU[CPU]
