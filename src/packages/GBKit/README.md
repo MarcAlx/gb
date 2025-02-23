@@ -14,6 +14,10 @@ Core package to emulate GameBoy.
 
 ## Architecture
 
+![](./doc/architecture.png)
+
+From a game rom, inputs and 60fps timing GBKit produces video frames and audio (upcoming).
+
 ### Components dependency tree
 
 ```mermaid
