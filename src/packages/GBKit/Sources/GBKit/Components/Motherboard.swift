@@ -6,6 +6,7 @@ public class Motherboard: Clockable {
     public let cpu:CPU
     public let mmu:MMU
     public let ppu:PPU
+    public let apu:APU
     public let timer:TimerInterface
     public let joypad:JoyPadInterface
     
@@ -19,6 +20,7 @@ public class Motherboard: Clockable {
         self.mmu = MMU()
         self.ppu = PPU(mmu: self.mmu, pm: PaletteManager.sharedInstance)
         self.cpu = CPU(mmu: self.mmu)
+        self.apu = APU(mmu: self.mmu)
         self.joypad = JoyPadInterface(mmu: self.mmu)
         self.timer = TimerInterface(mmu: self.mmu)
     }
@@ -31,6 +33,7 @@ public class Motherboard: Clockable {
         self.mmu.reset()
         self.cpu.reset()
         self.ppu.reset()
+        self.apu.reset()
         self.timer.reset()
         self.joypad.reset()
     }
@@ -61,6 +64,7 @@ public class Motherboard: Clockable {
                 self.cpu.tick(self.cycles, tmpCycles)
                 self.mmu.tick(self.cycles, tmpCycles)
                 self.ppu.tick(self.cycles, tmpCycles)
+                self.apu.tick(self.cycles, tmpCycles)
                 ////check interrupts
                 self.cpu.handleInterrupts()
                 self.tick(self.cycles, tmpCycles)
