@@ -26,10 +26,7 @@ public enum LCDControlMask: UInt8 {
 
 /// Inputs / Outputs are not really a component, but a set of
 /// this class acts as an ease of access to the various memory location their values are stored
-public protocol IOInterface {
-    /// fill ios with initial values, as bootrom would set it
-    func fillWithInitialValues()
-    
+public protocol IOInterface {    
     /// read LCD stat corresponding flag
     func readLCDStatFlag(_ flag:LCDStatMask) -> Bool
     

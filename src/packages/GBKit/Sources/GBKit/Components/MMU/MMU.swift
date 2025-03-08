@@ -15,7 +15,6 @@ public class MMU: MMUCore, InterruptsControlInterface,
         self.IE = 0x00
         self.IF = 0xE1
         
-        //io interface
         self.fillWithInitialValues()
     }
     
@@ -68,6 +67,7 @@ public class MMU: MMUCore, InterruptsControlInterface,
     
     // mark: IOInterface
     
+    // fill MMU with initial value
     public func fillWithInitialValues() {
         //@see https://gbdev.io/pandocs/Power_Up_Sequence.html (DMG)
         self.directWrite(address: IOAddresses.JOYPAD_INPUT.rawValue, val: Byte(0xCF))
