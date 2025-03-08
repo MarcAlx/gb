@@ -223,7 +223,6 @@ public class MMU: MMUCore, InterruptsControlInterface, IOInterface, TimerInterfa
             return self.read(address: IOAddresses.TIMA.rawValue)
         }
         set {
-            //direct write required here
             self.write(address: IOAddresses.TIMA.rawValue, val: newValue)
         }
     }
