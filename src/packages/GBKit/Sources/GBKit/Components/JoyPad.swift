@@ -32,7 +32,7 @@ public enum ButtonModifiers: Byte {
 }
 
 /// wraps button logic
-public class JoyPadInterface : Component {
+public class JoyPad : Component {
     
     private let ints:InterruptsControlInterface
     
