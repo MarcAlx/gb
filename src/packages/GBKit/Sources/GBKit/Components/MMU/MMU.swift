@@ -1,7 +1,10 @@
 /**
  * MMU core implementation
  */
-public class MMU: MMUCore, InterruptsControlInterface, IOInterface, TimerInterface {
+public class MMU: MMUCore, InterruptsControlInterface,
+                           IOInterface,
+                           TimerInterface,
+                           JoyPadInterface {
     private var masterEnable:Bool = true
     
     public override func reset() {
@@ -230,6 +233,26 @@ public class MMU: MMUCore, InterruptsControlInterface, IOInterface, TimerInterfa
     public var TAC: UInt8 {
         get {
             return self.read(address: IOAddresses.TAC.rawValue)
+        }
+    }
+    
+    // mark: JoypadInterface
+    
+    public var DPAD_STATE: Byte {
+        get {
+            return self.dpadState
+        }
+        set {
+            self.dpadState = newValue
+        }
+    }
+    
+    public var BUTTONS_STATE: Byte {
+        get {
+            return self.buttonsState
+        }
+        set {
+            self.buttonsState = newValue
         }
     }
 }
