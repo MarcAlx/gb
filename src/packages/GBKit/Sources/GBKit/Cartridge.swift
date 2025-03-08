@@ -3,8 +3,8 @@ import Foundation
 public class Cartridge: Describable {
     
     private var source:Data = Data()
-    private var _data:[UInt8] = []
-    var data:[UInt8] {
+    private var _data:[Byte] = []
+    var data:[Byte] {
         get {
             return self._data
         }

@@ -46,29 +46,29 @@ public protocol IOInterface {
     func setLCDControlFlag(_ flag:LCDControlMask, enabled:Bool)
     
     /// ease access to LYC
-    var LYC:UInt8 { get }
+    var LYC:Byte { get }
     
     /// ease access to LY
-    var LY:UInt8 { get set }
+    var LY:Byte { get set }
     
     /// ease access to SCX
-    var SCX:UInt8 { get }
+    var SCX:Byte { get }
     
     /// ease access to SCY
-    var SCY:UInt8 { get }
+    var SCY:Byte { get }
     
     /// ease access to WX
-    var WX:UInt8 { get }
+    var WX:Byte { get }
     
     /// ease access to WY
-    var WY:UInt8 { get }
+    var WY:Byte { get }
     
     /// ease access to LCD_BGP
-    var LCD_BGP:UInt8 { get }
+    var LCD_BGP:Byte { get }
     
     /// ease access to LCD_OBP0
-    var LCD_OBP0:UInt8 { get }
+    var LCD_OBP0:Byte { get }
     
     /// ease access to LCD_OBP1
-    var LCD_OBP1:UInt8 { get }
+    var LCD_OBP1:Byte { get }
 }

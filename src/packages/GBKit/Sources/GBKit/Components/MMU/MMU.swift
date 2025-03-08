@@ -143,13 +143,13 @@ public class MMU: MMUCore, InterruptsControlInterface,
         self.write(address: IOAddresses.LCD_CONTROL.rawValue, val: val)
     }
     
-    public var LYC:UInt8 {
+    public var LYC:Byte {
         get {
             return self.read(address: IOAddresses.LCD_LYC.rawValue)
         }
     }
     
-    public var LY:UInt8 {
+    public var LY:Byte {
         get {
             return self.read(address: IOAddresses.LCD_LY.rawValue)
         }
@@ -159,43 +159,43 @@ public class MMU: MMUCore, InterruptsControlInterface,
         }
     }
     
-    public var SCX:UInt8 {
+    public var SCX:Byte {
         get {
             return self.read(address: IOAddresses.LCD_SCX.rawValue)
         }
     }
     
-    public var SCY:UInt8 {
+    public var SCY:Byte {
         get {
             return self.read(address: IOAddresses.LCD_SCY.rawValue)
         }
     }
     
-    public var WX:UInt8 {
+    public var WX:Byte {
         get {
             return self.read(address: IOAddresses.LCD_WX.rawValue)
         }
     }
     
-    public var WY:UInt8 {
+    public var WY:Byte {
         get {
             return self.read(address: IOAddresses.LCD_WY.rawValue)
         }
     }
     
-    public var LCD_BGP:UInt8 {
+    public var LCD_BGP:Byte {
         get {
             return self.read(address: IOAddresses.LCD_BGP.rawValue)
         }
     }
     
-    public var LCD_OBP0:UInt8 {
+    public var LCD_OBP0:Byte {
         get {
             return self.read(address: IOAddresses.LCD_OBP0.rawValue)
         }
     }
     
-    public var LCD_OBP1:UInt8 {
+    public var LCD_OBP1:Byte {
         get {
             return self.read(address: IOAddresses.LCD_OBP1.rawValue)
         }
@@ -209,19 +209,19 @@ public class MMU: MMUCore, InterruptsControlInterface,
     
     // mark: TimerInterface
     
-    public var DIV: UInt8 {
+    public var DIV: Byte {
         get {
             return self.read(address: IOAddresses.DIV.rawValue)
         }
     }
     
-    public var TMA: UInt8 {
+    public var TMA: Byte {
         get {
             return self.read(address: IOAddresses.TMA.rawValue)
         }
     }
     
-    public var TIMA: UInt8 {
+    public var TIMA: Byte {
         get {
             return self.read(address: IOAddresses.TIMA.rawValue)
         }
@@ -230,7 +230,7 @@ public class MMU: MMUCore, InterruptsControlInterface,
         }
     }
     
-    public var TAC: UInt8 {
+    public var TAC: Byte {
         get {
             return self.read(address: IOAddresses.TAC.rawValue)
         }

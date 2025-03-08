@@ -9,16 +9,16 @@ public let TimerClockModeToFrequency:[Byte] = [
 ///ease timer related access
 public protocol TimerInterface {
     ///ease access to DIV
-    var DIV:UInt8 { get }
+    var DIV:Byte { get }
     
     ///ease access to TMA
-    var TMA:UInt8 { get }
+    var TMA:Byte { get }
     
     ///ease access to TIMA
-    var TIMA:UInt8 { get set }
+    var TIMA:Byte { get set }
     
     ///ease access to DIV
-    var TAC:UInt8 { get }
+    var TAC:Byte { get }
 }
 
 ///wraps timer logic
