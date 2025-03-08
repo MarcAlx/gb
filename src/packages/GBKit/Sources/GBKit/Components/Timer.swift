@@ -7,7 +7,7 @@ public let TimerClockModeToFrequency:[Byte] = [
 ]
 
 ///wraps timer logic
-public class TimerInterface : Component, Clockable {
+public class Timer : Component, Clockable {
     private let mmu:MMU
     private let interrupts:InterruptsControlInterface
     
