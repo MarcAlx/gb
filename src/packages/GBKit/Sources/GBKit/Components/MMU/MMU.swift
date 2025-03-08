@@ -1,7 +1,7 @@
 /**
  * MMU core implementation
  */
-public class MMU: MMUCore, InterruptsControlInterface, IOInterface {
+public class MMU: MMUCore, InterruptsControlInterface, IOInterface, TimerInterface {
     private var masterEnable:Bool = true
     
     public override func reset() {
@@ -202,5 +202,35 @@ public class MMU: MMUCore, InterruptsControlInterface, IOInterface {
     {
         //on lyc set check flag
         self.setLCDStatFlag(.LYCeqLY, enabled: newVal == self[IOAddresses.LCD_LY.rawValue])
+    }
+    
+    // mark: TimerInterface
+    
+    public var DIV: UInt8 {
+        get {
+            return self.read(address: IOAddresses.DIV.rawValue)
+        }
+    }
+    
+    public var TMA: UInt8 {
+        get {
+            return self.read(address: IOAddresses.TMA.rawValue)
+        }
+    }
+    
+    public var TIMA: UInt8 {
+        get {
+            return self.read(address: IOAddresses.TIMA.rawValue)
+        }
+        set {
+            //direct write required here
+            self.write(address: IOAddresses.TIMA.rawValue, val: newValue)
+        }
+    }
+    
+    public var TAC: UInt8 {
+        get {
+            return self.read(address: IOAddresses.TAC.rawValue)
+        }
     }
 }
