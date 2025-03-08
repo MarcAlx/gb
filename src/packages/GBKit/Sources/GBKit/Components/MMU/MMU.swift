@@ -1,7 +1,10 @@
 /**
  * MMU core implementation
  */
-public class MMU: MMUCore, InterruptsControlInterface, IOInterface {
+public class MMU: MMUCore, InterruptsControlInterface,
+                           IOInterface,
+                           TimerInterface,
+                           JoyPadInterface {
     private var masterEnable:Bool = true
     
     public override func reset() {
@@ -12,7 +15,6 @@ public class MMU: MMUCore, InterruptsControlInterface, IOInterface {
         self.IE = 0x00
         self.IF = 0xE1
         
-        //io interface
         self.fillWithInitialValues()
     }
     
@@ -65,6 +67,7 @@ public class MMU: MMUCore, InterruptsControlInterface, IOInterface {
     
     // mark: IOInterface
     
+    // fill MMU with initial value
     public func fillWithInitialValues() {
         //@see https://gbdev.io/pandocs/Power_Up_Sequence.html (DMG)
         self.directWrite(address: IOAddresses.JOYPAD_INPUT.rawValue, val: Byte(0xCF))
@@ -202,5 +205,54 @@ public class MMU: MMUCore, InterruptsControlInterface, IOInterface {
     {
         //on lyc set check flag
         self.setLCDStatFlag(.LYCeqLY, enabled: newVal == self[IOAddresses.LCD_LY.rawValue])
+    }
+    
+    // mark: TimerInterface
+    
+    public var DIV: UInt8 {
+        get {
+            return self.read(address: IOAddresses.DIV.rawValue)
+        }
+    }
+    
+    public var TMA: UInt8 {
+        get {
+            return self.read(address: IOAddresses.TMA.rawValue)
+        }
+    }
+    
+    public var TIMA: UInt8 {
+        get {
+            return self.read(address: IOAddresses.TIMA.rawValue)
+        }
+        set {
+            self.write(address: IOAddresses.TIMA.rawValue, val: newValue)
+        }
+    }
+    
+    public var TAC: UInt8 {
+        get {
+            return self.read(address: IOAddresses.TAC.rawValue)
+        }
+    }
+    
+    // mark: JoypadInterface
+    
+    public var DPAD_STATE: Byte {
+        get {
+            return self.dpadState
+        }
+        set {
+            self.dpadState = newValue
+        }
+    }
+    
+    public var BUTTONS_STATE: Byte {
+        get {
+            return self.buttonsState
+        }
+        set {
+            self.buttonsState = newValue
+        }
     }
 }

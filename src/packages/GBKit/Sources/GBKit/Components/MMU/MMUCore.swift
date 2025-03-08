@@ -25,10 +25,10 @@ public class MMUCore:Component, Clockable {
     }
     
     ///stores current buttons state, should be updated by JoyPad
-    public var buttonsState:Byte = 0
+    var buttonsState:Byte = 0
     
     ///stores current dpad state, should be updated by JoyPad
-    public var dpadState:Byte = 0
+    var dpadState:Byte = 0
 
     public init(){
     }

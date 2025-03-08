@@ -7,8 +7,8 @@ public class Motherboard: Clockable {
     public let mmu:MMU
     public let ppu:PPU
     public let apu:APU
-    public let timer:TimerInterface
-    public let joypad:JoyPadInterface
+    public let timer:Timer
+    public let joypad:JoyPad
     
     public var hasCartridgeInserted:Bool {
         get {
@@ -21,8 +21,8 @@ public class Motherboard: Clockable {
         self.ppu = PPU(mmu: self.mmu, pm: PaletteManager.sharedInstance)
         self.cpu = CPU(mmu: self.mmu)
         self.apu = APU(mmu: self.mmu)
-        self.joypad = JoyPadInterface(mmu: self.mmu)
-        self.timer = TimerInterface(mmu: self.mmu)
+        self.joypad = JoyPad(mmu: self.mmu)
+        self.timer = Timer(mmu: self.mmu)
     }
     
     public func insert(cartridge:Cartridge) {
