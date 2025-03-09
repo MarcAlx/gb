@@ -65,6 +65,12 @@ public struct GameBoyConstants {
     
     //Div timer frequency in M cycle
     public let DivTimerFrequency:Int = 64;
+    
+    //APU frequency, 512hz
+    public let APUFrameSequencerFrequency:Int = 512
+    
+    //length on an APU frame sequencer step
+    public let APUFrameSequencerStepLength:Int
 
     public let NintendoLogo:[Byte] = [
         0xCE, 0xED, 0x66, 0x66, 0xCC, 0x0D, 0x00, 0x0B, 0x03, 0x73, 0x00, 0x83, 0x00, 0x0C, 0x00, 0x0D,
@@ -317,6 +323,7 @@ public struct GameBoyConstants {
         self.FrameDuration = 1/ExactFrameRate
         self.ROMBankSizeInBytes = ROMBankSize * 1024
         self.VBLANK_TRIGGER = ScreenHeight * MCyclesPerScanline //Vblank is triggered after all line has been rendered
+        self.APUFrameSequencerStepLength =  CPUSpeed / APUFrameSequencerFrequency
     }
 }
 
