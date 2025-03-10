@@ -4,28 +4,28 @@ import SpriteKit
 import GBKit
 
 public struct GBScene: Scene {
-      
-    @ObservedObject private var lVM:LoggingViewModel = LoggingViewModel()
-    @ObservedObject private var eVM:ErrorViewModel = ErrorViewModel()
-    @ObservedObject private var gVM:GameBoyViewModel = GameBoyViewModel()
+    @StateObject private var lVM:LoggingViewModel = LoggingViewModel()
+    @StateObject private var eVM:ErrorViewModel = ErrorViewModel()
+    @StateObject private var gVM:GameBoyViewModel = GameBoyViewModel()
+    @StateObject private var mVM:MainViewModel = MainViewModel()
     
     @FocusState private var isFocused: Bool
     
-    public init() {
-        self.gVM.errorViewModel = self.eVM
-        GBLogService.gbLogger = self.lVM
-        GBErrorService.errorReporter = self.eVM
-        self.gVM.errorViewModel = self.eVM
+    public init()
+    {
     }
     
     public var body: some Scene {
         WindowGroup {
             VStack {
-                MainView(gVM: self.gVM,
-                         eVM: self.eVM,
-                         lVM: self.lVM)
+                MainView().environmentObject(self.mVM)
+                          .environmentObject(self.lVM)
+                          .environmentObject(self.gVM)
+                          .environmentObject(self.eVM)
             }
             .onAppear {
+                GBLogService.gbLogger = self.lVM
+                GBErrorService.errorReporter = self.eVM
                 checkForConnectedControllers()
                 setupControllerObservers()
                 isFocused = true

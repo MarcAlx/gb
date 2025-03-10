@@ -7,7 +7,7 @@ import QuartzCore
  */
 public class GameBoyViewModel:ObservableObject {
     ///error view model to notify errors
-    public var errorViewModel:ErrorViewModel?
+    @EnvironmentObject public var errorViewModel:ErrorViewModel
     
     public let gb:GameBoy = GameBoy()
     private var previousTime:Double = Date().timeIntervalSince1970

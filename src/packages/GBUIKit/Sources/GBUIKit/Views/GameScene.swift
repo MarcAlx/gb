@@ -25,8 +25,10 @@ class GameScene: SKScene {
         }
     }
     
-    public func withGVM(gVM: GameBoyViewModel) -> GameScene {
+    public func withSetup(gVM: GameBoyViewModel, size: CGSize, fpsDisplayed: Bool) -> GameScene {
         self.gVM = gVM
+        self.size = size
+        self.isFPSDisplayEnabled = fpsDisplayed
         return self
     }
     
