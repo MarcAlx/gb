@@ -4,7 +4,9 @@
 public class MMU: MMUCore, InterruptsControlInterface,
                            LCDInterface,
                            TimerInterface,
-                           JoyPadInterface {
+                           JoyPadInterface,
+                           AudioInterface {
+    
     private var masterEnable:Bool = true
     
     public override func reset() {
@@ -254,5 +256,17 @@ public class MMU: MMUCore, InterruptsControlInterface,
         set {
             self.buttonsState = newValue
         }
+    }
+    
+    // mark: AudioInterface
+    
+    public func setAudioState(_ enabled: Bool) {
+        let state = enabled ? self[IOAddresses.AUDIO_NR52.rawValue] | ByteMask.Bit_7.rawValue
+                            : self[IOAddresses.AUDIO_NR52.rawValue] & NegativeByteMask.Bit_7.rawValue
+        self.write(address: IOAddresses.AUDIO_NR52.rawValue, val: state)
+    }
+
+    public func isAudioEnabled() -> Bool {
+        return isBitSet(ByteMask.Bit_7, self[IOAddresses.AUDIO_NR52.rawValue])
     }
 }
