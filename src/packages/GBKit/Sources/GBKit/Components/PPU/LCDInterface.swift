@@ -24,9 +24,9 @@ public enum LCDControlMask: UInt8 {
     case BG_AND_WINDOW_ENABLE         = 0b0000_0001
 }
 
-/// Inputs / Outputs are not really a component, but a set of
+/// LCD is not really a component
 /// this class acts as an ease of access to the various memory location their values are stored
-public protocol IOInterface {    
+public protocol LCDInterface {    
     /// read LCD stat corresponding flag
     func readLCDStatFlag(_ flag:LCDStatMask) -> Bool
     

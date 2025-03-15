@@ -2,7 +2,7 @@
  * MMU core implementation
  */
 public class MMU: MMUCore, InterruptsControlInterface,
-                           IOInterface,
+                           LCDInterface,
                            TimerInterface,
                            JoyPadInterface {
     private var masterEnable:Bool = true

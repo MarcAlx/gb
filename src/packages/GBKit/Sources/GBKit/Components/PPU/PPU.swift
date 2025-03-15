@@ -13,7 +13,7 @@ public class PPU: Component, Clockable {
     private static let blankFrame:Data = Data(repeating: 0xFF, count: GBConstants.PixelCount*4)//color are stored with 4 components rgba
     
     private let mmu:MMU
-    private let ios:IOInterface
+    private let ios:LCDInterface
     private let interrupts:InterruptsControlInterface
     private let pManager:PaletteManager
     
