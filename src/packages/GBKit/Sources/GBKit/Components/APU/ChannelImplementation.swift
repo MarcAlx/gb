@@ -1,8 +1,17 @@
-public class AudioChannel {
+public class AudioChannel: Component, Clockable {
     let mmu:MMU
+    
+    public internal(set) var cycles: Int = 0
     
     public init(mmu: MMU) {
         self.mmu = mmu
+    }
+    
+    public func tick(_ masterCycles: Int, _ frameCycles: Int) {
+        self.cycles = self.cycles &+ 4
+    }
+    
+    public func reset() {
     }
 }
 
@@ -16,22 +25,24 @@ public class Sweep: Pulse, SquareWithSweepChannel {
         super.reset()
     }
     
+    override public func getPeriod() -> Int {
+        return Int(self.mmu.CH1_Period)
+    }
+    
     public func tickSweep() {
     }
 }
 
 /// channel 2 is a square channel
 public class Pulse: AudioChannel, SquareChannel {
-    public private(set) var cycles: Int = 0
-    
     private var dutyStep:Int = 0
     
-    public func tick(_ masterCycles: Int, _ frameCycles: Int) {
-        self.cycles = self.cycles &+ 4
+    override public func tick(_ masterCycles: Int, _ frameCycles: Int) {
+        super.tick(masterCycles, frameCycles)
     }
     
-    public func reset() {
-        self.cycles = 0
+    override public func reset() {
+        super.reset()
     }
     
     public func tickLength() {
@@ -43,16 +54,6 @@ public class Pulse: AudioChannel, SquareChannel {
 
 /// channel 3 is a wave channel
 public class Wave: AudioChannel, WaveChannel {
-    public private(set) var cycles: Int = 0
-    
-    public func tick(_ masterCycles: Int, _ frameCycles: Int) {
-        self.cycles = self.cycles &+ 4
-    }
-    
-    public func reset() {
-        self.cycles = 0
-    }
-    
     public func tickLength() {
     }
     
@@ -62,16 +63,6 @@ public class Wave: AudioChannel, WaveChannel {
 
 /// channel 4 is a noise channel
 public class Noise: AudioChannel, NoiseChannel {
-    public private(set) var cycles: Int = 0
-    
-    public func tick(_ masterCycles: Int, _ frameCycles: Int) {
-        self.cycles = self.cycles &+ 4
-    }
-    
-    public func reset() {
-        self.cycles = 0
-    }
-    
     public func tickLength() {
     }
     
