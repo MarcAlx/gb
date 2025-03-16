@@ -1,5 +1,5 @@
 /// common properties of an APU channel
-public protocol APUChannel {
+public protocol APUChannel: Component, Clockable {
 }
 
 /// channel that supports length control

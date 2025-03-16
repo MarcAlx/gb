@@ -1,5 +1,21 @@
-/// channel 1 is a square channel
-public class Channel1: SquareChannel {
+/// channel 1 is same as channel 2 but with sweep
+public class Sweep: Pulse, SquareWithSweepChannel {
+    public func tickSweep() {
+    }
+}
+
+/// channel 2 is a square channel
+public class Pulse: SquareChannel {
+    public var cycles: Int = 0
+    
+    public func tick(_ masterCycles: Int, _ frameCycles: Int) {
+        
+    }
+    
+    public func reset() {
+        
+    }
+    
     public func tickLength() {
     }
     
@@ -7,14 +23,18 @@ public class Channel1: SquareChannel {
     }
 }
 
-/// channel 2 is same as channel 1 but with sweep
-public class Channel2: Channel1, SquareWithSweepChannel {
-    public func tickSweep() {
-    }
-}
-
 /// channel 3 is a wave channel
-public class Channel3: WaveChannel {
+public class Wave: WaveChannel {
+    public var cycles: Int = 0
+    
+    public func tick(_ masterCycles: Int, _ frameCycles: Int) {
+        
+    }
+    
+    public func reset() {
+        
+    }
+    
     public func tickLength() {
     }
     
@@ -23,7 +43,17 @@ public class Channel3: WaveChannel {
 }
 
 /// channel 4 is a noise channel
-public class Channel4: NoiseChannel {
+public class Noise: NoiseChannel {
+    public var cycles: Int = 0
+    
+    public func tick(_ masterCycles: Int, _ frameCycles: Int) {
+        
+    }
+    
+    public func reset() {
+        
+    }
+    
     public func tickLength() {
     }
     

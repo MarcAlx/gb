@@ -15,13 +15,18 @@ public class APU: Component, Clockable {
     
     init(mmu:MMU) {
         self.mmu = mmu
-        self.channel1 = Channel1()
-        self.channel2 = Channel2()
-        self.channel3 = Channel3()
-        self.channel4 = Channel4()
+        self.channel1 = Sweep()
+        self.channel2 = Pulse()
+        self.channel3 = Wave()
+        self.channel4 = Noise()
     }
     
     public func tick(_ masterCycles: Int, _ frameCycles: Int) {
+        self.channel1.tick(masterCycles, frameCycles)
+        self.channel2.tick(masterCycles, frameCycles)
+        self.channel3.tick(masterCycles, frameCycles)
+        self.channel4.tick(masterCycles, frameCycles)
+        
         if(self.frameSequencerCounter >= GBConstants.APUFrameSequencerStepLength){
             self.stepFrameSequencer()
             self.frameSequencerCounter = 0
@@ -81,8 +86,12 @@ public class APU: Component, Clockable {
         self.frameSequencerStep = (self.frameSequencerStep + 1) % 8
     }
     
-    func reset() {
+    public func reset() {
         self.cycles = 0
+        self.channel1.reset()
+        self.channel2.reset()
+        self.channel3.reset()
+        self.channel4.reset()
     }
     
 }

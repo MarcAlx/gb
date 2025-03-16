@@ -75,7 +75,7 @@ public class Motherboard: Clockable {
 }
 
 ///a motherboard component
-protocol Component {
+public protocol Component {
     ///resets this component
     func reset()
 }
