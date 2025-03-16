@@ -8,8 +8,8 @@ public class APU: Component, Clockable {
     
     private var frameSequencerStep:Int = 0
     
-    private let channel1:SquareChannel
-    private let channel2:SquareWithSweepChannel
+    private let channel1:SquareWithSweepChannel
+    private let channel2:SquareChannel
     private let channel3:WaveChannel
     private let channel4:NoiseChannel
     
@@ -48,7 +48,7 @@ public class APU: Component, Clockable {
             self.channel2.tickLength()
             self.channel3.tickLength()
             self.channel4.tickLength()
-            self.channel2.tickSweep()
+            self.channel1.tickSweep()
             break
         case 3:
             break
@@ -65,7 +65,7 @@ public class APU: Component, Clockable {
             self.channel2.tickLength()
             self.channel3.tickLength()
             self.channel4.tickLength()
-            self.channel2.tickSweep()
+            self.channel1.tickSweep()
             break
         case 7:
             self.channel1.tickEnveloppe()
