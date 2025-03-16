@@ -71,6 +71,17 @@ public struct GameBoyConstants {
     
     //length on an APU frame sequencer step
     public let APUFrameSequencerStepLength:Int
+    
+    //value used to determine audio channel frequency
+    public let APUPeriodDivider:Int = 2048
+    
+    //duty patterns indexed to their matching NR11 and NR21 value
+    public let DutyPatterns:[[Byte]] = [
+        [0, 0, 0, 0, 0, 0, 0, 1], //00 -> 12,5%
+        [0, 0, 0, 0, 0, 0, 1, 1], //01 -> 25%
+        [0, 0, 0, 0, 1, 1, 1, 1], //10 -> 50%
+        [1, 1, 1, 1, 1, 1, 0, 0], //11 -> 75%
+    ]
 
     public let NintendoLogo:[Byte] = [
         0xCE, 0xED, 0x66, 0x66, 0xCC, 0x0D, 0x00, 0x0B, 0x03, 0x73, 0x00, 0x83, 0x00, 0x0C, 0x00, 0x0D,
