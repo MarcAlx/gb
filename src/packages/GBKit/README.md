@@ -113,6 +113,10 @@ This project contains some unit tests, objective is to test each core fonction o
 - [PyBoy (python)](https://github.com/Baekalfen/PyBoy)
 - [Mooney gb (rust)](https://github.com/Gekkio/mooneye-gb)
 - [SameBoy (c)](https://github.com/LIJI32/SameBoy)
+- [retroboy (rust)](https://github.com/smparsons/retroboy)
+- [Kokoboy (kotlin)](https://github.com/BluestormDNA/Kocoboy)
+- [GhostBoy (c++)](https://github.com/GhostSonic21/GhostBoy)
+- [AXWGameBoy (go)](https://github.com/ArcticXWolf/AXWGameboy)
 
 ### Worth reading articles
 
@@ -141,6 +145,7 @@ This project contains some unit tests, objective is to test each core fonction o
 - [Demystifying the GameBoy/SM83’s DAA Instruction](https://blog.ollien.com/posts/gb-daa/)
 - [Game Boy Sound Emulation](https://nightshade256.github.io/2021/03/27/gb-sound-emulation.html)
 - [Gameboy sound hardware](https://gbdev.gg8.se/wiki/articles/Gameboy_sound_hardware)
+- [GBSOUND.txt](https://www.devrs.com/gb/files/hosted/GBSOUND.txt)
 
 ### forums / threads / questions
 
@@ -174,6 +179,7 @@ This project contains some unit tests, objective is to test each core fonction o
 
 - [understanding half carry](https://gist.github.com/meganesu/9e228b6b587decc783aa9be34ae27841)
 - [Two's complement](https://en.wikipedia.org/wiki/Two%27s_complement)
+- [A Digital Media Primer for Geeks](https://xiph.org/video/vid1.shtml)
 
 ### Quality
 
