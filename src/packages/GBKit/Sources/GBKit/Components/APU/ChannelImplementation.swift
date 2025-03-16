@@ -1,3 +1,11 @@
+public class AudioChannel {
+    let mmu:MMU
+    
+    public init(mmu: MMU) {
+        self.mmu = mmu
+    }
+}
+
 /// channel 1 is same as channel 2 but with sweep
 public class Sweep: Pulse, SquareWithSweepChannel {
     override public func tick(_ masterCycles: Int, _ frameCycles: Int) {
@@ -13,7 +21,7 @@ public class Sweep: Pulse, SquareWithSweepChannel {
 }
 
 /// channel 2 is a square channel
-public class Pulse: SquareChannel {
+public class Pulse: AudioChannel, SquareChannel {
     public private(set) var cycles: Int = 0
     
     private var dutyStep:Int = 0
@@ -34,7 +42,7 @@ public class Pulse: SquareChannel {
 }
 
 /// channel 3 is a wave channel
-public class Wave: WaveChannel {
+public class Wave: AudioChannel, WaveChannel {
     public private(set) var cycles: Int = 0
     
     public func tick(_ masterCycles: Int, _ frameCycles: Int) {
@@ -53,7 +61,7 @@ public class Wave: WaveChannel {
 }
 
 /// channel 4 is a noise channel
-public class Noise: NoiseChannel {
+public class Noise: AudioChannel, NoiseChannel {
     public private(set) var cycles: Int = 0
     
     public func tick(_ masterCycles: Int, _ frameCycles: Int) {

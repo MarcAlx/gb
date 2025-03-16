@@ -15,10 +15,10 @@ public class APU: Component, Clockable {
     
     init(mmu:MMU) {
         self.mmu = mmu
-        self.channel1 = Sweep()
-        self.channel2 = Pulse()
-        self.channel3 = Wave()
-        self.channel4 = Noise()
+        self.channel1 = Sweep(mmu: self.mmu)
+        self.channel2 = Pulse(mmu: self.mmu)
+        self.channel3 = Wave(mmu: self.mmu)
+        self.channel4 = Noise(mmu: self.mmu)
     }
     
     public func tick(_ masterCycles: Int, _ frameCycles: Int) {
