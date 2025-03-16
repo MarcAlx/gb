@@ -1,5 +1,13 @@
 /// common properties of an APU channel
 public protocol APUChannel: Component, Clockable {
+    /// true if enabled
+    var enabled:Bool { get }
+    
+    ///channel id
+    var id:AudioChannelId { get }
+    
+    /// causes this channel to trigger
+    func trigger()
 }
 
 /// channel that supports length control

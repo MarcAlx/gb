@@ -82,6 +82,30 @@ public struct GameBoyConstants {
         [0, 0, 0, 0, 1, 1, 1, 1], //10 -> 50%
         [1, 1, 1, 1, 1, 1, 0, 0], //11 -> 75%
     ]
+    
+    //length timer duration (on entry for each channel)
+    public let DefaultLengthTimer:[Int] = [
+        64,
+        64,
+        256,//wave channel has longer duration
+        64
+    ]
+    
+    //mask for NRX1 register to extract length
+    public let NRX1_lengthMask:[Byte] = [
+        0b0011_1111,
+        0b0011_1111,
+        0b1111_1111,///channel 3 takes full 8 bits
+        0b0011_1111
+    ]
+    
+    //register to control audio channels (trigger / enable length)
+    public let AudioChannelControlRegisters:[Short] = [
+        IOAddresses.AUDIO_NR14.rawValue,
+        IOAddresses.AUDIO_NR24.rawValue,
+        IOAddresses.AUDIO_NR34.rawValue,
+        IOAddresses.AUDIO_NR44.rawValue
+    ]
 
     public let NintendoLogo:[Byte] = [
         0xCE, 0xED, 0x66, 0x66, 0xCC, 0x0D, 0x00, 0x0B, 0x03, 0x73, 0x00, 0x83, 0x00, 0x0C, 0x00, 0x0D,

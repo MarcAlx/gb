@@ -289,4 +289,30 @@ public class MMU: MMUCore, InterruptsControlInterface,
         //keep 3bits of NR24 and 8bits of NR23
         return val & 0b00000111_11111111
     }
+    
+    public func getLengthTimer(_ channel:AudioChannelId) -> Int {
+        return self.lengthTimers[channel.rawValue]
+    }
+
+    public func resetLengthTimer(_ channel:AudioChannelId) {
+        self.lengthTimers[channel.rawValue] = GBConstants.DefaultLengthTimer[channel.rawValue]
+    }
+    
+    public func decrementLengthTimer(_ channel:AudioChannelId) {
+        self.lengthTimers[channel.rawValue] -= 1
+    }
+    
+    public func isLengthEnabled(_ channel:AudioChannelId) -> Bool {
+        return isBitSet(ByteMask.Bit_6, self[GBConstants.AudioChannelControlRegisters[channel.rawValue]])
+    }
+    
+    public func isTriggered(_ channel:AudioChannelId) -> Bool {
+       return isBitSet(ByteMask.Bit_7, self[GBConstants.AudioChannelControlRegisters[channel.rawValue]])
+    }
+    
+    public func resetTrigger(_ channel:AudioChannelId) {
+        let addr:Short = GBConstants.AudioChannelControlRegisters[channel.rawValue]
+        //clear trigger bit
+        self[addr] = self[addr] & NegativeByteMask.Bit_7.rawValue
+    }
 }
