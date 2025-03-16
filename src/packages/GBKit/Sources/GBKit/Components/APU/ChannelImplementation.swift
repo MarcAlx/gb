@@ -101,7 +101,7 @@ public class Pulse: AudioChannel, SquareChannel {
         if(self.dutyTimer <= 0){
             //duty timer is re-armed by subtracting period divider to period
             self.dutyTimer = (GBConstants.APUPeriodDivider - self.getPeriod())
-            //increment duty step (it wraps arround when overflown
+            //increment duty step (it wraps arround when overflown)
             self.dutyStep = (self.dutyStep + 1) % 8
         }
         super.tick(masterCycles, frameCycles)
