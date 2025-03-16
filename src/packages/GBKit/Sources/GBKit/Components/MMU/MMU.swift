@@ -315,4 +315,11 @@ public class MMU: MMUCore, InterruptsControlInterface,
         //clear trigger bit
         self[addr] = self[addr] & NegativeByteMask.Bit_7.rawValue
     }
+    
+    public func setAudioChannelState(_ channel:AudioChannelId, enabled:Bool) {
+        let actualValue = self[IOAddresses.AUDIO_NR52.rawValue];
+        let newVal:Byte = enabled ? actualValue |  (1 << channel.rawValue) //set concerned bit to 1
+                                  : actualValue & ~(1 << channel.rawValue) //keep every bits but concerned one
+        self[IOAddresses.AUDIO_NR52.rawValue] = newVal
+    }
 }

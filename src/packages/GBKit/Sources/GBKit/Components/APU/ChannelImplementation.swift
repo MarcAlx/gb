@@ -13,7 +13,17 @@ public class AudioChannel: Component,
     
     public internal(set) var cycles: Int = 0
     
-    public internal(set) var enabled:Bool = false
+    private var _enabled:Bool = false
+    public internal(set) var enabled:Bool{
+        get {
+            return self._enabled
+        }
+        set {
+            self._enabled = newValue
+            //notify MMU that channel state has changed
+            self.mmu.setAudioChannelState(self.id, enabled: newValue)
+        }
+    }
     
     public init(mmu: MMU) {
         self.mmu = mmu

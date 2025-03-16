@@ -40,4 +40,7 @@ public protocol AudioInterface {
     
     /// reset trigger for a channel
     func resetTrigger(_ channel:AudioChannelId)
+    
+    ///notify NR52 about channel state
+    func setAudioChannelState(_ channel:AudioChannelId, enabled:Bool)
 }
