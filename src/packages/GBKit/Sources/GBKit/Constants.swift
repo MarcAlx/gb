@@ -106,6 +106,14 @@ public struct GameBoyConstants {
         IOAddresses.AUDIO_NR34.rawValue,
         IOAddresses.AUDIO_NR44.rawValue
     ]
+    
+    //register to control enveloppe
+    public let EnvelopeControlRegisters:[Short] = [
+        IOAddresses.AUDIO_NR12.rawValue,
+        IOAddresses.AUDIO_NR22.rawValue,
+        //no channel 3 is intentionnal, it doesn't support enveloppe
+        IOAddresses.AUDIO_NR34.rawValue,
+    ]
 
     public let NintendoLogo:[Byte] = [
         0xCE, 0xED, 0x66, 0x66, 0xCC, 0x0D, 0x00, 0x0B, 0x03, 0x73, 0x00, 0x83, 0x00, 0x0C, 0x00, 0x0D,

@@ -1,5 +1,7 @@
 /// common properties of an APU channel
 public protocol APUChannel: Component, Clockable {
+    var volume:Byte { get }
+    
     /// true if enabled
     var enabled:Bool { get }
     
@@ -29,17 +31,20 @@ public protocol VolumableChannel {
 }
 
 /// channel that supports enveloppe control
-public protocol EnveloppableChannel {
+public protocol EnvelopableChannel {
+    ///channel id
+    var envelopeId:EnveloppableAudioChannelId { get }
+    
     /// tick volume
     func tickEnveloppe()
 }
 
 /// square1 channel support length and enveloppe control
-public protocol SquareChannel: APUChannel, LengthableChannel, EnveloppableChannel {
+public protocol SquareChannel: APUChannel, LengthableChannel, EnvelopableChannel {
 }
 
 /// square2 channel  support length and enveloppe control along with sweep control
-public protocol SquareWithSweepChannel: APUChannel, LengthableChannel, EnveloppableChannel, SweepableChannel {
+public protocol SquareWithSweepChannel: APUChannel, LengthableChannel, EnvelopableChannel, SweepableChannel {
 }
 
 /// wave channel supports length and volume control
@@ -47,5 +52,5 @@ public protocol WaveChannel: APUChannel, LengthableChannel, VolumableChannel {
 }
 
 /// noise channel supports length and enveloppe control
-public protocol NoiseChannel: APUChannel, LengthableChannel, EnveloppableChannel {
+public protocol NoiseChannel: APUChannel, LengthableChannel, EnvelopableChannel {
 }

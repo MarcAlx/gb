@@ -6,6 +6,13 @@ public enum AudioChannelId:Int {
     case CH4 = 3
 }
 
+///maps each Audio channel that supports enveloppe to an int value, ease further indexing
+public enum EnveloppableAudioChannelId:Int {
+    case CH1 = 0
+    case CH2 = 1
+    case CH4 = 2
+}
+
 /// ease access to audio registers
 public protocol AudioInterface {
     /// enable or disable audio
@@ -43,4 +50,13 @@ public protocol AudioInterface {
     
     ///notify NR52 about channel state
     func setAudioChannelState(_ channel:AudioChannelId, enabled:Bool)
+    
+    ///returns enveloppe direction, 0 -> Descreasing, 1-> Increasing
+    func getEnvelopeDirection(_ channel:EnveloppableAudioChannelId) -> Byte
+    
+    ///returns enveloppe pace, every each enveloppe tick of this value enveloppe is applied
+    func getEnvelopeSweepPace(_ channel:EnveloppableAudioChannelId) -> Byte
+    
+    ///returns enveloppe pace, every each enveloppe tick of this value enveloppe is applied
+    func getEnvelopeInitialVolume(_ channel:EnveloppableAudioChannelId) -> Byte
 }

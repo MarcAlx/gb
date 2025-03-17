@@ -1,3 +1,4 @@
+///a super class for all audio channel
 public class AudioChannel: Component,
                            APUChannel,
                            Clockable,
@@ -24,6 +25,8 @@ public class AudioChannel: Component,
             self.mmu.setAudioChannelState(self.id, enabled: newValue)
         }
     }
+    
+    public internal(set) var volume:Byte = 0
     
     public init(mmu: MMU) {
         self.mmu = mmu
@@ -64,6 +67,54 @@ public class AudioChannel: Component,
     }
 }
 
+///a super class for channel with envelope
+public class AudioChannelWithEnvelope: AudioChannel, EnvelopableChannel{
+    public var envelopeId: EnveloppableAudioChannelId {
+        get {
+            return EnveloppableAudioChannelId.CH1 //override in sublcass
+        }
+    }
+    
+    private var envelopePace:Byte = 0
+    private var envelopeTimer:Byte = 0
+    //if envelope direction is up -> true, else direction down so false
+    private var isEnvelopeDirectionUp:Bool = false
+    
+    override public func trigger() {
+        super.trigger()
+        
+        //init volume with initial value
+        self.volume = self.mmu.getEnvelopeInitialVolume(self.envelopeId)
+        //reset sweep pace
+        self.envelopePace = self.mmu.getEnvelopeSweepPace(self.envelopeId)
+        self.envelopeTimer = self.envelopePace
+        //save enveloppe direction
+        self.isEnvelopeDirectionUp = self.mmu.getEnvelopeDirection(self.envelopeId) == 0
+    }
+    
+    public func tickEnveloppe() {
+        //a pacing of 0 means enveloppe is disabled
+        if(self.envelopePace != 0){
+            //every tick decrease pace
+            if(self.envelopeTimer>0){
+                self.envelopeTimer -= 1
+            }
+            //it's time to apply enveloppe
+            if(self.envelopeTimer == 0){
+                self.envelopeTimer = self.envelopePace //re-arm timer with initial value (n.b needs retrigger to re-read mmu value)
+                
+                //envelope is only applied for a volume between 0x0 and 0xF (15)
+                if(self.volume < 0xF && self.isEnvelopeDirectionUp) {
+                    self.volume += 1
+                }
+                else if(self.volume > 0x0 && !self.isEnvelopeDirectionUp) {
+                    self.volume -= 1
+                }
+            }
+        }
+    }
+}
+
 /// channel 1 is same as channel 2 but with sweep
 public class Sweep: Pulse, SquareWithSweepChannel {
     override public var id: AudioChannelId {
@@ -87,7 +138,7 @@ public class Sweep: Pulse, SquareWithSweepChannel {
 }
 
 /// channel 2 is a square channel
-public class Pulse: AudioChannel, SquareChannel {
+public class Pulse: AudioChannelWithEnvelope, SquareChannel {
     
     override public var id: AudioChannelId {
         AudioChannelId.CH2
@@ -113,9 +164,6 @@ public class Pulse: AudioChannel, SquareChannel {
         self.dutyStep = 0
     }
     
-    public func tickEnveloppe() {
-    }
-    
     /// returns period for this channel
     public func getPeriod() -> Int {
         return Int(self.mmu.CH2_Period)
@@ -133,11 +181,8 @@ public class Wave: AudioChannel, WaveChannel {
 }
 
 /// channel 4 is a noise channel
-public class Noise: AudioChannel, NoiseChannel {
+public class Noise: AudioChannelWithEnvelope, NoiseChannel {
     override public var id: AudioChannelId {
         AudioChannelId.CH4
-    }
-    
-    public func tickEnveloppe() {
     }
 }

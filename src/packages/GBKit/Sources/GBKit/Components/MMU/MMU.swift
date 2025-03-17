@@ -322,4 +322,19 @@ public class MMU: MMUCore, InterruptsControlInterface,
                                   : actualValue & ~(1 << channel.rawValue) //keep every bits but concerned one
         self[IOAddresses.AUDIO_NR52.rawValue] = newVal
     }
+    
+    ///returns enveloppe direction, 0 -> Descreasing, 1-> Increasing
+    public func getEnvelopeDirection(_ channel:EnveloppableAudioChannelId) -> Byte {
+        return (self[GBConstants.EnvelopeControlRegisters[channel.rawValue]] & 0b0000_1000) >> 3;
+    }
+    
+    ///returns enveloppe pace, every each enveloppe tick of this value enveloppe is applied
+    public func getEnvelopeSweepPace(_ channel:EnveloppableAudioChannelId) -> Byte {
+        return self[GBConstants.EnvelopeControlRegisters[channel.rawValue]] & 0b0000_0111;
+    }
+    
+    ///returns enveloppe pace, every each enveloppe tick of this value enveloppe is applied
+    public func getEnvelopeInitialVolume(_ channel:EnveloppableAudioChannelId) -> Byte {
+        return (self[GBConstants.EnvelopeControlRegisters[channel.rawValue]] & 0b1111_0000) >> 4;
+    }
 }
