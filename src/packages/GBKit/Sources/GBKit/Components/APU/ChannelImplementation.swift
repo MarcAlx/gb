@@ -121,16 +121,18 @@ public class Sweep: Pulse, SquareWithSweepChannel {
         AudioChannelId.CH1
     }
     
+    override public var squareId: DutyAudioChannelId{
+        get {
+            return DutyAudioChannelId.CH1
+        }
+    }
+    
     override public func tick(_ masterCycles: Int, _ frameCycles: Int) {
         super.tick(masterCycles, frameCycles)
     }
     
     override public func reset() {
         super.reset()
-    }
-    
-    override public func getPeriod() -> Int {
-        return Int(self.mmu.CH1_Period)
     }
     
     public func tickSweep() {
@@ -144,6 +146,12 @@ public class Pulse: AudioChannelWithEnvelope, SquareChannel {
         AudioChannelId.CH2
     }
     
+    public var squareId: DutyAudioChannelId{
+        get {
+            return DutyAudioChannelId.CH2
+        }
+    }
+    
     private var dutyStep:Int = 0
     private var dutyTimer:Int = 0
     
@@ -151,7 +159,7 @@ public class Pulse: AudioChannelWithEnvelope, SquareChannel {
         self.dutyTimer -= 4
         if(self.dutyTimer <= 0){
             //duty timer is re-armed by subtracting period divider to period
-            self.dutyTimer = (GBConstants.APUPeriodDivider - self.getPeriod())
+            self.dutyTimer = (GBConstants.APUPeriodDivider - Int(self.mmu.getPeriod(self.squareId)))
             //increment duty step (it wraps arround when overflown)
             self.dutyStep = (self.dutyStep + 1) % 8
         }
@@ -162,11 +170,6 @@ public class Pulse: AudioChannelWithEnvelope, SquareChannel {
         super.reset()
         self.dutyTimer = 0
         self.dutyStep = 0
-    }
-    
-    /// returns period for this channel
-    public func getPeriod() -> Int {
-        return Int(self.mmu.CH2_Period)
     }
 }
 

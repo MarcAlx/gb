@@ -114,6 +114,22 @@ public struct GameBoyConstants {
         //no channel 3 is intentionnal, it doesn't support enveloppe
         IOAddresses.AUDIO_NR42.rawValue,
     ]
+    
+    //register to control wave duty
+    public let WaveDutyRegisters:[Short] = [
+        IOAddresses.AUDIO_NR11.rawValue,
+        IOAddresses.AUDIO_NR21.rawValue,
+        //no channel 3 is intentionnal, it doesn't support wave duty
+        //no channel 4 is intentionnal, it doesn't support wave duty
+    ]
+    
+    //register to control period
+    public let PeriodRegisters:[Short] = [
+        IOAddresses.AUDIO_NR13.rawValue,
+        IOAddresses.AUDIO_NR23.rawValue,
+        //no channel 3 is intentionnal, it doesn't support period
+        //no channel 4 is intentionnal, it doesn't support period
+    ]
 
     public let NintendoLogo:[Byte] = [
         0xCE, 0xED, 0x66, 0x66, 0xCC, 0x0D, 0x00, 0x0B, 0x03, 0x73, 0x00, 0x83, 0x00, 0x0C, 0x00, 0x0D,

@@ -13,6 +13,12 @@ public enum EnveloppableAudioChannelId:Int {
     case CH4 = 2
 }
 
+///maps each Audio channel that supports duty to an int value, ease further indexing
+public enum DutyAudioChannelId:Int {
+    case CH1 = 0
+    case CH2 = 1
+}
+
 /// ease access to audio registers
 public protocol AudioInterface {
     /// enable or disable audio
@@ -21,14 +27,11 @@ public protocol AudioInterface {
     /// true if audio is enabled
     func isAudioEnabled() -> Bool
     
-    /// combines 3bits of NR14 and 8bits of NR13 to get CH1 period
-    var CH1_Period:Short { get }
+    /// return duty pattern for an audio channel
+    func getDutyPattern(_ channel:DutyAudioChannelId) -> Byte
     
-    /// returns wave duty pattern
-    var CH1_WaveDuty:Byte { get }
-    
-    /// combines 3bits of NR24 and 8bits of NR23 to get CH2 period
-    var CH2_Period:Short { get }
+    /// return duty period for an audio channel
+    func getPeriod(_ channel:DutyAudioChannelId) -> Short
     
     /// returns actual length timer value for an audio channel
     func getLengthTimer(_ channel:AudioChannelId) -> Int

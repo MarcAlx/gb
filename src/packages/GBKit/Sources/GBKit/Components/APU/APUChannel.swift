@@ -41,6 +41,8 @@ public protocol EnvelopableChannel {
 
 /// square1 channel support length and enveloppe control
 public protocol SquareChannel: APUChannel, LengthableChannel, EnvelopableChannel {
+    ///square id
+    var squareId:DutyAudioChannelId { get }
 }
 
 /// square2 channel  support length and enveloppe control along with sweep control

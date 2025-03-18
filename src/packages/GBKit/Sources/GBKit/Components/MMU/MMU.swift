@@ -270,23 +270,15 @@ public class MMU: MMUCore, InterruptsControlInterface,
         return isBitSet(ByteMask.Bit_7, self[IOAddresses.AUDIO_NR52.rawValue])
     }
     
-    public var CH1_WaveDuty:Byte {
-        //only upper 2 bits of NR11 (then shifted get value 0, 1, 2, 3)
-        return (self[IOAddresses.AUDIO_NR11.rawValue] & 0b1100_0000) >> 6
+    public func getDutyPattern(_ channel:DutyAudioChannelId) -> Byte {
+        //only upper 2 bits of NR{1|2}1 (then shifted get value 0, 1, 2, 3)
+        return (self[GBConstants.WaveDutyRegisters[channel.rawValue]] & 0b1100_0000) >> 6
     }
     
-    public var CH1_Period: Short {
-        //extract 16bits starting from NR13 (thus overlaping NR14)
-        let val:Short = self.read(address: IOAddresses.AUDIO_NR13.rawValue)
-        //keep 3bits of NR14 and 8bits of NR13
-        return val & 0b00000111_11111111
-
-    }
-    
-    public var CH2_Period: Short {
-        //extract 16bits starting from NR23 (thus overlaping NR24)
-        let val:Short = self.read(address: IOAddresses.AUDIO_NR23.rawValue)
-        //keep 3bits of NR24 and 8bits of NR23
+    public func getPeriod(_ channel:DutyAudioChannelId) -> Short {
+        //extract 16bits starting from NR{1|2}3 (thus overlaping NR{1|2}4)
+        let val:Short = self.read(address: GBConstants.PeriodRegisters[channel.rawValue])
+        //keep 3bits of NR24 and 8bits of NR{1|2}3
         return val & 0b00000111_11111111
     }
     
