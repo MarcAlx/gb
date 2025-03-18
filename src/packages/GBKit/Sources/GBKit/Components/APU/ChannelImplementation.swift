@@ -155,6 +155,13 @@ public class Pulse: AudioChannelWithEnvelope, SquareChannel {
     private var dutyStep:Int = 0
     private var dutyTimer:Int = 0
     
+    /// returns channel amplitude according to current wave duty step
+    public var amplitude:Byte {
+        get {
+            GBConstants.DutyPatterns[Int(self.mmu.getDutyPattern(self.squareId))][Int(self.dutyStep)]
+        }
+    }
+    
     override public func tick(_ masterCycles: Int, _ frameCycles: Int) {
         self.dutyTimer -= 4
         if(self.dutyTimer <= 0){
