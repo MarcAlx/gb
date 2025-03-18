@@ -112,7 +112,7 @@ public struct GameBoyConstants {
         IOAddresses.AUDIO_NR12.rawValue,
         IOAddresses.AUDIO_NR22.rawValue,
         //no channel 3 is intentionnal, it doesn't support enveloppe
-        IOAddresses.AUDIO_NR34.rawValue,
+        IOAddresses.AUDIO_NR42.rawValue,
     ]
 
     public let NintendoLogo:[Byte] = [
