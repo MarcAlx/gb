@@ -282,6 +282,10 @@ public class MMU: MMUCore, InterruptsControlInterface,
         return val & 0b00000111_11111111
     }
     
+    public func setPeriod(_ channel: DutyAudioChannelId, _ val:Short) {
+        self.write(address: GBConstants.PeriodRegisters[channel.rawValue], val: val)
+    }
+    
     public func getLengthTimer(_ channel:AudioChannelId) -> Int {
         return self.lengthTimers[channel.rawValue]
     }
@@ -328,5 +332,17 @@ public class MMU: MMUCore, InterruptsControlInterface,
     ///returns enveloppe pace, every each enveloppe tick of this value enveloppe is applied
     public func getEnvelopeInitialVolume(_ channel:EnveloppableAudioChannelId) -> Byte {
         return (self[GBConstants.EnvelopeControlRegisters[channel.rawValue]] & 0b1111_0000) >> 4;
+    }
+    
+    public func getSweepPace() -> Byte {
+        return (self[IOAddresses.AUDIO_NR10.rawValue] & 0b0111_0000) >> 4
+    }
+    
+    public func getSweepDirection() -> Byte {
+        return (self[IOAddresses.AUDIO_NR10.rawValue] & 0b0000_1000) >> 3
+    }
+    
+    public func getSweepStep() -> Byte {
+        return (self[IOAddresses.AUDIO_NR10.rawValue] & 0b0000_0111)
     }
 }

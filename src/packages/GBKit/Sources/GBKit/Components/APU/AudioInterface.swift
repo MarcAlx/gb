@@ -33,6 +33,9 @@ public protocol AudioInterface {
     /// return duty period for an audio channel
     func getPeriod(_ channel:DutyAudioChannelId) -> Short
     
+    /// write duty period for an audio channel
+    func setPeriod(_ channel:DutyAudioChannelId, _ val:Short)
+    
     /// returns actual length timer value for an audio channel
     func getLengthTimer(_ channel:AudioChannelId) -> Int
 
@@ -62,4 +65,13 @@ public protocol AudioInterface {
     
     ///returns enveloppe pace, every each enveloppe tick of this value enveloppe is applied
     func getEnvelopeInitialVolume(_ channel:EnveloppableAudioChannelId) -> Byte
+    
+    ///return sweep pace (nb of iteration before sweep is applied)
+    func getSweepPace() -> Byte
+    
+    ///return sweep direction, 0 -> Descreasing, 1-> Increasing
+    func getSweepDirection() -> Byte
+    
+    ///get sweep step
+    func getSweepStep() -> Byte
 }

@@ -1,3 +1,5 @@
+import Foundation
+
 ///a super class for all audio channel
 public class AudioChannel: Component,
                            APUChannel,
@@ -127,6 +129,19 @@ public class Sweep: Pulse, SquareWithSweepChannel {
         }
     }
     
+    //period is saved on trigger to avoid taking into account in between period writes
+    private var sweepShadowPeriod:Short = 0
+    //sweep has its own timer
+    private var sweepTimer:Byte = 0
+    //initial timer value to reload the timer with
+    private var sweepPace:Byte = 0
+    //true if sweep is incremental
+    private var isSweepDirectionUp:Bool = false
+    //value used for sweep computation, see computePeriod()
+    private var sweepStep:Byte = 0
+    //if true sweep will be computed and applied
+    private var sweepEnabled:Bool = false
+    
     override public func tick(_ masterCycles: Int, _ frameCycles: Int) {
         super.tick(masterCycles, frameCycles)
     }
@@ -135,7 +150,70 @@ public class Sweep: Pulse, SquareWithSweepChannel {
         super.reset()
     }
     
+    override public func trigger() {
+        super.trigger()
+        self.sweepShadowPeriod = self.mmu.getPeriod(self.squareId)
+        self.sweepPace  = self.mmu.getSweepPace()
+        self.loadSweepTimer()
+        self.isSweepDirectionUp  = self.mmu.getSweepDirection() != 0
+        self.sweepStep  = self.mmu.getSweepStep()
+        self.sweepEnabled = self.sweepPace > 0 || self.sweepStep > 0
+        //on trigger an OOB check is performed
+        if(self.sweepStep > 0){
+            self.checkNextOutOfBounds()
+        }
+    }
+    
+    /// ensure sweeptimer is loaded with 8 in case of pace being 0
+    private func loadSweepTimer() {
+        self.sweepTimer = self.sweepPace == 0 ? 8 : self.sweepPace
+    }
+    
     public func tickSweep() {
+        if(self.sweepTimer>0){
+            self.sweepTimer -= 1
+        }
+        //apply sweep when timer is 0
+        if(self.sweepTimer==0){
+            //reload timer
+            self.loadSweepTimer()
+            //timer runs even is sweep is disabled
+            if(self.sweepEnabled){
+                //compute new perdiod
+                let res = self.computePeriod()
+                //apply if not OOB
+                if(!res.outOfBounds){
+                    self.mmu.setPeriod(self.squareId, res.newPeriod)
+                    self.sweepShadowPeriod = res.newPeriod
+                    //on apply check next OOB
+                    self.checkNextOutOfBounds()
+                }
+                else {
+                    self.enabled = false
+                }
+            }
+        }
+    }
+    
+    /// computes new period using the following formula:
+    ///    NewPeriod = currentPeriod ± (currentPeriod / 2^sweepStep)
+    ///    n.b ± depends on isSweepDirectionUp
+    ///    returns new period in res, along with indication if this value is out of bounds (11bit overflow (of NR13/NR14) or form an underflow)
+    private func computePeriod() -> (newPeriod:Short, outOfBounds:Bool) {
+        //sweep formula is: NewPeriod = currentPeriod ± (currentPeriod / 2^sweepStep)
+        //n.b ± depends on isSweepDirectionUp
+        let currentPeriod = self.sweepShadowPeriod
+        let deltaPeriod = (currentPeriod / Short(pow(2.0, Double(self.sweepStep))))
+        let newPeriod = self.isSweepDirectionUp ? currentPeriod + deltaPeriod
+                                                : currentPeriod &- deltaPeriod
+        return (newPeriod: newPeriod,
+                outOfBounds: newPeriod >= 0x7FF || newPeriod >= currentPeriod)
+    }
+    
+    /// checks if next period computation would produce overflow/underflow if so disable channels
+    /// mainly for anticiaption
+    private func checkNextOutOfBounds() {
+        self.enabled = !self.computePeriod().outOfBounds
     }
 }
 
