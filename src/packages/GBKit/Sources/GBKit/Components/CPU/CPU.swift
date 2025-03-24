@@ -116,7 +116,7 @@ public class CPU: CPUImplementation, Clockable {
                 self.handleInterrupt(.LCDStat, ReservedMemoryLocationAddresses.INTERRUPT_LCD_STAT.rawValue)
             }
             if(self.interrupts.isInterruptEnabled(.Timer) && self.interrupts.isInterruptFlagged(.Timer)){
-                self.handleInterrupt(.Timer, ReservedMemoryLocationAddresses.INTERRUPT_JOYPAD.rawValue)
+                self.handleInterrupt(.Timer, ReservedMemoryLocationAddresses.INTERRUPT_TIMER.rawValue)
             }
             if(self.interrupts.isInterruptEnabled(.Serial) && self.interrupts.isInterruptFlagged(.Serial)){
                 self.handleInterrupt(.Serial, ReservedMemoryLocationAddresses.INTERRUPT_SERIAL.rawValue)
