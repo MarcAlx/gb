@@ -29,6 +29,12 @@ public protocol VolumableChannel {
     //volume is not something ticked, this protocol is mainly there for typing
 }
 
+/// channel that supports period
+public protocol PeriodicChannel {
+    ///channel id
+    var periodId:ChannelWithPeriodId { get }
+}
+
 /// channel that supports enveloppe control
 public protocol EnvelopableChannel {
     ///channel id
@@ -39,17 +45,17 @@ public protocol EnvelopableChannel {
 }
 
 /// square1 channel support length and enveloppe control
-public protocol SquareChannel: APUChannel, LengthableChannel, EnvelopableChannel {
+public protocol SquareChannel: APUChannel, PeriodicChannel, LengthableChannel, EnvelopableChannel {
     ///square id
     var squareId:DutyAudioChannelId { get }
 }
 
 /// square2 channel  support length and enveloppe control along with sweep control
-public protocol SquareWithSweepChannel: APUChannel, LengthableChannel, EnvelopableChannel, SweepableChannel {
+public protocol SquareWithSweepChannel: APUChannel, PeriodicChannel, LengthableChannel, EnvelopableChannel, SweepableChannel {
 }
 
 /// wave channel supports length and volume control
-public protocol WaveChannel: APUChannel, LengthableChannel, VolumableChannel {
+public protocol WaveChannel: APUChannel, PeriodicChannel, LengthableChannel, VolumableChannel {
 }
 
 /// noise channel supports length and enveloppe control

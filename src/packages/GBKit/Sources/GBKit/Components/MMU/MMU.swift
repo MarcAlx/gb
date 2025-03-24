@@ -275,10 +275,10 @@ public class MMU: MMUCore, InterruptsControlInterface,
         return (self[GBConstants.WaveDutyRegisters[channel.rawValue]] & 0b1100_0000) >> 6
     }
     
-    public func getPeriod(_ channel:DutyAudioChannelId) -> Short {
-        //extract 16bits starting from NR{1|2}3 (thus overlaping NR{1|2}4)
+    public func getPeriod(_ channel:ChannelWithPeriodId) -> Short {
+        //extract 16bits starting from NR{1|2|3}3 (thus overlaping NR{1|2|3}4)
         let val:Short = self.read(address: GBConstants.PeriodRegisters[channel.rawValue])
-        //keep 3bits of NR24 and 8bits of NR{1|2}3
+        //keep 3bits of NR{1|2|3}4 and 8bits of NR{1|2|3}3
         return val & 0b00000111_11111111
     }
     

@@ -13,6 +13,13 @@ public enum EnveloppableAudioChannelId:Int {
     case CH4 = 2
 }
 
+///maps each Audio channel that supports period
+public enum ChannelWithPeriodId:Int {
+    case CH1 = 0
+    case CH2 = 1
+    case CH3 = 2
+}
+
 ///maps each Audio channel that supports duty to an int value, ease further indexing
 public enum DutyAudioChannelId:Int {
     case CH1 = 0
@@ -30,8 +37,8 @@ public protocol AudioInterface {
     /// return duty pattern for an audio channel
     func getDutyPattern(_ channel:DutyAudioChannelId) -> Byte
     
-    /// return duty period for an audio channel
-    func getPeriod(_ channel:DutyAudioChannelId) -> Short
+    /// return period for an audio channel
+    func getPeriod(_ channel:ChannelWithPeriodId) -> Short
     
     /// write duty period for an audio channel
     func setPeriod(_ channel:DutyAudioChannelId, _ val:Short)

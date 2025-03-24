@@ -127,7 +127,7 @@ public struct GameBoyConstants {
     public let PeriodRegisters:[Short] = [
         IOAddresses.AUDIO_NR13.rawValue,
         IOAddresses.AUDIO_NR23.rawValue,
-        //no channel 3 is intentionnal, it doesn't support period
+        IOAddresses.AUDIO_NR33.rawValue,
         //no channel 4 is intentionnal, it doesn't support period
     ]
 

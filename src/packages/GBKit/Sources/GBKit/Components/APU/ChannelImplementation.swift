@@ -129,6 +129,12 @@ public class Sweep: Pulse, SquareWithSweepChannel {
         }
     }
     
+    override public var periodId: ChannelWithPeriodId{
+        get {
+            return ChannelWithPeriodId.CH1 //override in sublcass
+        }
+    }
+    
     //period is saved on trigger to avoid taking into account in between period writes
     private var sweepShadowPeriod:Short = 0
     //sweep has its own timer
@@ -152,7 +158,7 @@ public class Sweep: Pulse, SquareWithSweepChannel {
     
     override public func trigger() {
         super.trigger()
-        self.sweepShadowPeriod = self.mmu.getPeriod(self.squareId)
+        self.sweepShadowPeriod = self.mmu.getPeriod(self.periodId)
         self.sweepPace  = self.mmu.getSweepPace()
         self.loadSweepTimer()
         self.isSweepDirectionUp  = self.mmu.getSweepDirection() != 0
@@ -224,6 +230,12 @@ public class Pulse: AudioChannelWithEnvelope, SquareChannel {
         AudioChannelId.CH2
     }
     
+    public var periodId: ChannelWithPeriodId {
+        get {
+            return ChannelWithPeriodId.CH2
+        }
+    }
+    
     public var squareId: DutyAudioChannelId{
         get {
             return DutyAudioChannelId.CH2
@@ -244,7 +256,7 @@ public class Pulse: AudioChannelWithEnvelope, SquareChannel {
         self.dutyTimer -= 4
         if(self.dutyTimer <= 0){
             //duty timer is re-armed by subtracting period divider to period
-            self.dutyTimer = (GBConstants.APUPeriodDivider - Int(self.mmu.getPeriod(self.squareId)))
+            self.dutyTimer = (GBConstants.APUPeriodDivider - Int(self.mmu.getPeriod(self.periodId)))
             //increment duty step (it wraps arround when overflown)
             self.dutyStep = (self.dutyStep + 1) % 8
         }
@@ -264,7 +276,12 @@ public class Wave: AudioChannel, WaveChannel {
         AudioChannelId.CH3
     }
     
-    public func tickVolume() {
+    public var periodId: ChannelWithPeriodId{
+        get {
+            return ChannelWithPeriodId.CH3
+        }
+    }
+    
     }
 }
 
