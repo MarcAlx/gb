@@ -75,7 +75,6 @@ public class APU: Component, Clockable {
         case 7:
             self.channel1.tickEnveloppe()
             self.channel2.tickEnveloppe()
-            self.channel3.tickVolume()
             self.channel4.tickEnveloppe()
             break
         default:

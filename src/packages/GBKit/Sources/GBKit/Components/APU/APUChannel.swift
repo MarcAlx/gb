@@ -26,8 +26,7 @@ public protocol SweepableChannel {
 
 /// channel that supports volume control
 public protocol VolumableChannel {
-    /// tick volume
-    func tickVolume()
+    //volume is not something ticked, this protocol is mainly there for typing
 }
 
 /// channel that supports enveloppe control
