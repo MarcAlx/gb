@@ -117,6 +117,7 @@ This project contains some unit tests, objective is to test each core fonction o
 - [Kokoboy (kotlin)](https://github.com/BluestormDNA/Kocoboy)
 - [GhostBoy (c++)](https://github.com/GhostSonic21/GhostBoy)
 - [AXWGameBoy (go)](https://github.com/ArcticXWolf/AXWGameboy)
+- [Argentum (rust)](https://github.com/NightShade256/Argentum)
 
 ### Worth reading articles
 
@@ -146,6 +147,7 @@ This project contains some unit tests, objective is to test each core fonction o
 - [Game Boy Sound Emulation](https://nightshade256.github.io/2021/03/27/gb-sound-emulation.html)
 - [Gameboy sound hardware](https://gbdev.gg8.se/wiki/articles/Gameboy_sound_hardware)
 - [GBSOUND.txt](https://www.devrs.com/gb/files/hosted/GBSOUND.txt)
+- [Nitty Gritty Gameboy Cycle Timing.txt](http://blog.kevtris.org/blogfiles/Nitty%20Gritty%20Gameboy%20VRAM%20Timing.txt)
 
 ### forums / threads / questions
 
