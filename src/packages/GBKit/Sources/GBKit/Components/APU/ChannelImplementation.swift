@@ -253,10 +253,14 @@ public class Pulse: AudioChannelWithEnvelope, SquareChannel {
     }
     
     override public func tick(_ masterCycles: Int, _ frameCycles: Int) {
-        self.dutyTimer -= 4
+        if(self.dutyTimer > 0){
+            self.dutyTimer -= 1
+        }
         if(self.dutyTimer <= 0){
             //duty timer is re-armed by subtracting period divider to period
-            self.dutyTimer = (GBConstants.APUPeriodDivider - Int(self.mmu.getPeriod(self.periodId)))
+            self.dutyTimer = (GBConstants.APUPeriodDivider - Int(self.mmu.getPeriod(self.periodId))) * GBConstants.EnveloppeAbsoluteSpeedDivider
+            //n.b multiplited by Absoulute divider as APU is ticked every 1t (normal speed) as its faster than how it should run (APU is slower than CPU) so multiply
+            
             //increment duty step (it wraps arround when overflown)
             self.dutyStep = (self.dutyStep + 1) % 8
         }
