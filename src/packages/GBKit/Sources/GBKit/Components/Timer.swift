@@ -59,7 +59,7 @@ public class Timer : Component, Clockable {
             }
         }
         
-        self.cycles = self.cycles &+ GBConstants.TCycleLength
+        self.cycles = self.cycles &+ GBConstants.MCycleLength
     }
     
     //Tac clock frequency in M-cycles as expressed by Tac mode

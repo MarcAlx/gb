@@ -4,8 +4,8 @@ public struct GameBoyConstants {
     // CPU speed in hertz
     public let CPUSpeed:Int = 4_194_304
 
-    // length of a T cycle in M cycle
-    public let TCycleLength:Int = 4
+    // length of an M cycle in T cycle, 1 M cycle = 4 T cycles
+    public let MCycleLength:Int = 4
 
     public let ScreenWidth:Int = 160
     public let ScreenHeight:Int = 144
@@ -48,7 +48,7 @@ public struct GameBoyConstants {
     // MCycles than occurs each frame
     public let MCyclesPerFrame:Int
     
-    // DMA transfer duration in M cycles
+    // DMA transfer duration in T cycles
     public let DMADuration:Int = 640
 
     // Exact GB frame rate (likely ignored, rounded to 60 by CADisplayLink)
@@ -63,7 +63,7 @@ public struct GameBoyConstants {
     //opcode to lookup for extended instructions
     public let ExtentedInstructionSetOpcode:Byte = 0xCB
     
-    //Div timer frequency in M cycle
+    //Div timer frequency in T cycle
     public let DivTimerFrequency:Int = 64;
     
     //APU frequency, 512hz
@@ -599,7 +599,7 @@ public enum StandardColorPalettes {
     static let MGB = ColorPalette([Color(0xFF, 0xFF, 0xFF),Color(0xA9, 0xA9, 0xA9),Color(0x54, 0x54, 0x54),Color(0x00, 0x00, 0x00)])
 }
 
-/// PPU Timings of each mode (in M cycles)
+/// PPU Timings of each mode (in T cycles)
 enum PPUTimings:Int {
     case OAM_SEARCH_LENGTH = 80
     case PIXEL_RENDER_LENGTH = 172

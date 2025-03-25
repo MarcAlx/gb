@@ -38,9 +38,9 @@ public class MMUCore:Component, Clockable {
     
     public func tick(_ masterCycles: Int, _ frameCycles: Int) {
         if(isDMATransferInProgress){
-            self.dmaCounter = self.dmaCounter - GBConstants.TCycleLength
+            self.dmaCounter = self.dmaCounter - GBConstants.MCycleLength
         }
-        self.cycles = self.cycles &+ GBConstants.TCycleLength
+        self.cycles = self.cycles &+ GBConstants.MCycleLength
     }
     
     ///subscript to dispatch address to its corresponding location

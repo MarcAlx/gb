@@ -42,7 +42,7 @@ public class AudioChannel: Component,
             //reset mmu value
             self.mmu.resetTrigger(self.id)
         }
-        self.cycles = self.cycles &+ 4
+        self.cycles = self.cycles &+ GBConstants.MCycleLength
     }
         
     public func trigger() {

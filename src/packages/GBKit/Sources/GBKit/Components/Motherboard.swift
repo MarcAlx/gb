@@ -53,7 +53,7 @@ public class Motherboard: Clockable {
     }
     
     public func tick(_ masterCycles:Int, _ frameCycles:Int) {
-        self.cycles = self.cycles &+ 4
+        self.cycles = self.cycles &+ GBConstants.MCycleLength
     }
     
     public func update() {
@@ -68,7 +68,7 @@ public class Motherboard: Clockable {
                 ////check interrupts
                 self.cpu.handleInterrupts()
                 self.tick(self.cycles, tmpCycles)
-                tmpCycles += GBConstants.TCycleLength
+                tmpCycles += GBConstants.MCycleLength
             }
         }
     }

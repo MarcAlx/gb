@@ -32,10 +32,10 @@ public class APU: Component, Clockable {
             self.frameSequencerCounter = 0
         }
         else {
-            self.frameSequencerCounter = self.frameSequencerCounter &+ 4
+            self.frameSequencerCounter = self.frameSequencerCounter &+ GBConstants.MCycleLength
         }
         
-        self.cycles = self.cycles &+ 4
+        self.cycles = self.cycles &+ GBConstants.MCycleLength
     }
     
     private func stepFrameSequencer(){

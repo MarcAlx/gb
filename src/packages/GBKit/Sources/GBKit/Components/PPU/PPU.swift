@@ -153,9 +153,9 @@ public class PPU: Component, Clockable {
             ios.writeLCDStatMode(newMode)
         }
         
-        //operate at 4 m cycles speed as it's 1t cycle (minimal)
-        self.frameSync = self.frameSync &+ 4
-        self.cycles = self.cycles &+ 4
+        //operate at 4 t cycles speed as it's 1m cycle (minimal)
+        self.frameSync = self.frameSync &+ GBConstants.MCycleLength
+        self.cycles = self.cycles &+ GBConstants.MCycleLength
     }
     
     /// scan LY line then render to frame buffer
