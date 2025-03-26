@@ -248,7 +248,10 @@ public class Pulse: AudioChannelWithEnvelope, SquareChannel {
     /// returns channel amplitude according to current wave duty step
     public var amplitude:Byte {
         get {
-            GBConstants.DutyPatterns[Int(self.mmu.getDutyPattern(self.squareId))][Int(self.dutyStep)]
+            if(self.enabled){
+                return GBConstants.DutyPatterns[Int(self.mmu.getDutyPattern(self.squareId))][Int(self.dutyStep)]
+            }
+            return 0
         }
     }
     
