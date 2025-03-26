@@ -81,4 +81,7 @@ public protocol AudioInterface {
     
     ///get sweep step
     func getSweepStep() -> Byte
+    
+    ///returns wave output level
+    func getWaveOutputLevel() -> Byte
 }

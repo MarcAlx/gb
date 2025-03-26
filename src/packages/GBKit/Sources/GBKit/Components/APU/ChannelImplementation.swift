@@ -286,6 +286,57 @@ public class Wave: AudioChannel, WaveChannel {
         }
     }
     
+    //current sample read in wave
+    private var position:Short = 0
+    //nibble read, upper: true, false else
+    private var isUpperNibbleRead:Bool = true
+    //initial wave timer value to avoid update before trigger
+    private var initialWaveTimer:Int = 0
+    //timer at which wave is updated
+    private var waveTimer:Int = 0
+    
+    override public func trigger() {
+        super.trigger()
+        self.position = 0
+        self.isUpperNibbleRead = true //read upper nibble first
+        self.initialWaveTimer = GBConstants.APUPeriodDivider - Int(self.mmu.getPeriod(self.periodId)) * GBConstants.APUSpeedDivider /*wave runs at APU speed*/
+        self.waveTimer = self.initialWaveTimer
+    }
+    
+    override public func tick(_ masterCycles: Int, _ frameCycles: Int) {
+        if(self.enabled){
+            if(self.waveTimer > 0){
+                self.waveTimer -= 1
+            }
+            
+            if(self.waveTimer <= 0){
+                //reload wave timer
+                self.waveTimer = self.initialWaveTimer
+                //update nibble read
+                self.isUpperNibbleRead = !self.isUpperNibbleRead
+                //increment position if nibble has been switched from low to high
+                if(self.isUpperNibbleRead){
+                    self.position += 1
+                }
+            }
+        }
+    }
+    
+    /// returns channel amplitude according to current wave pattern
+    public var amplitude:Byte {
+        get {
+            if(self.enabled){
+                let sample:Byte = self.mmu[MMUAddressSpaces.WAVE_RAM.lowerBound+self.position]
+                //if upper nibble is read erase by shift lower nibble, else erase by & upper nibble
+                let sampleValue:Byte = self.isUpperNibbleRead ? sample >> 4
+                                                              : sample & 0b0000_1111
+                //apply volume shift
+                return sampleValue >> GBConstants.WaveShiftValue[Int(self.mmu.getWaveOutputLevel())]
+            }
+            else {
+                return 0
+            }
+        }
     }
 }
 

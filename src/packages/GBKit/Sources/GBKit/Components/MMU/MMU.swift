@@ -345,4 +345,8 @@ public class MMU: MMUCore, InterruptsControlInterface,
     public func getSweepStep() -> Byte {
         return (self[IOAddresses.AUDIO_NR10.rawValue] & 0b0000_0111)
     }
+    
+    public func getWaveOutputLevel() -> Byte {
+        return (self[IOAddresses.AUDIO_NR32.rawValue] & 0b0110_0000) >> 5
+    }
 }

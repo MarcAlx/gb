@@ -108,6 +108,14 @@ public struct GameBoyConstants {
         0b0011_1111
     ]
     
+    //helps in converting wave 4bits value to effective value
+    public let WaveShiftValue:[Int] = [
+        4, // 4bits shifted by 4 means 0
+        0, // 4bits shifted by 0 means "keep value"
+        1, // 4bits shifted by 1 means "divide by 2" (keep 50%)
+        2  // 4bits shifted by 2 means "divide by 2 then by 2" (keep 25%)
+    ]
+    
     //register to control audio channels (trigger / enable length)
     public let AudioChannelControlRegisters:[Short] = [
         IOAddresses.AUDIO_NR14.rawValue,
@@ -506,6 +514,8 @@ enum MMUAddresses:Short {
     case PROHIBITED_AREA               = 0xFEA0
     case PROHIBITED_AREA_END           = 0xFEFF
     case IO_REGISTERS                  = 0xFF00
+    case WAVE_RAM                      = 0xFF30 // inside IO registers
+    case WAVE_RAM_END                  = 0xFF3F // inside IO registers
     case IO_REGISTERS_END              = 0xFF7F
     case HIGH_RAM                      = 0xFF80
     case HIGH_RAM_END                  = 0xFFFE
@@ -526,6 +536,7 @@ public enum MMUAddressSpaces {
     static let PROHIBITED_AREA = MMUAddresses.PROHIBITED_AREA.rawValue...MMUAddresses.PROHIBITED_AREA_END.rawValue
     static let OBJECT_ATTRIBUTE_MEMORY:ClosedRange<Short> = MMUAddresses.OBJECT_ATTRIBUTE_MEMORY.rawValue...MMUAddresses.OBJECT_ATTRIBUTE_MEMORY_END.rawValue
     static let IO_REGISTERS = MMUAddresses.IO_REGISTERS.rawValue...MMUAddresses.IO_REGISTERS_END.rawValue
+    static let WAVE_RAM = MMUAddresses.WAVE_RAM.rawValue...MMUAddresses.WAVE_RAM_END.rawValue
     static let HIGH_RAM:ClosedRange<Short> = MMUAddresses.HIGH_RAM.rawValue...MMUAddresses.HIGH_RAM_END.rawValue
     static let WINDOW_TILE_MAP_AREA_0:ClosedRange<Short> = 0x9800...0x9BFF
     static let WINDOW_TILE_MAP_AREA_1:ClosedRange<Short> = 0x9C00...0x9FFF
