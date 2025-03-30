@@ -1,6 +1,10 @@
 /// common properties of an APU channel
 public protocol APUChannel: Component, Clockable {
+    /// channel volume
     var volume:Byte { get }
+    
+    /// can be seen as channel value
+    var amplitude:Byte { get }
     
     /// true if enabled
     var enabled:Bool { get }

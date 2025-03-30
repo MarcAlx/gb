@@ -30,6 +30,12 @@ public class AudioChannel: Component,
     
     public internal(set) var volume:Byte = 0
     
+    public var amplitude:Byte {
+        get {
+            return 0 // override in subclass
+        }
+    }
+    
     public init(mmu: MMU) {
         self.mmu = mmu
     }
@@ -246,7 +252,7 @@ public class Pulse: AudioChannelWithEnvelope, SquareChannel {
     private var dutyTimer:Int = 0
     
     /// returns channel amplitude according to current wave duty step
-    public var amplitude:Byte {
+    public override var amplitude:Byte {
         get {
             if(self.enabled){
                 return GBConstants.DutyPatterns[Int(self.mmu.getDutyPattern(self.squareId))][Int(self.dutyStep)]
@@ -326,7 +332,7 @@ public class Wave: AudioChannel, WaveChannel {
     }
     
     /// returns channel amplitude according to current wave pattern
-    public var amplitude:Byte {
+    public override var amplitude:Byte {
         get {
             if(self.enabled){
                 let sample:Byte = self.mmu[MMUAddressSpaces.WAVE_RAM.lowerBound+self.position]
@@ -384,7 +390,7 @@ public class Noise: AudioChannelWithEnvelope, NoiseChannel {
     }
     
     /// returns channel amplitude
-    public var amplitude:Byte {
+    public override var amplitude:Byte {
         get {
             if(self.enabled){
                 return ~(Byte(self.LSFR & 0xFF) & 0b1)//amplitude is equal to inverse of first bit
