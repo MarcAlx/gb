@@ -28,8 +28,6 @@ public class AudioChannel: Component,
         }
     }
     
-    public internal(set) var volume:Byte = 0
-    
     public var amplitude:Byte {
         get {
             return 0 // override in subclass
@@ -77,6 +75,9 @@ public class AudioChannel: Component,
 
 ///a super class for channel with envelope
 public class AudioChannelWithEnvelope: AudioChannel, EnvelopableChannel{
+    //channel volume, only for envelope one, (n.b wave channel has its own volume behavior)
+    public internal(set) var volume:Byte = 0
+    
     public var envelopeId: EnveloppableAudioChannelId {
         get {
             return EnveloppableAudioChannelId.CH1 //override in sublcass
@@ -255,7 +256,9 @@ public class Pulse: AudioChannelWithEnvelope, SquareChannel {
     public override var amplitude:Byte {
         get {
             if(self.enabled){
+                //amplitude is equal to DutyPattern value (0 or 1) multiplied by volume (byte value)
                 return GBConstants.DutyPatterns[Int(self.mmu.getDutyPattern(self.squareId))][Int(self.dutyStep)]
+                     * self.volume
             }
             return 0
         }
@@ -339,7 +342,7 @@ public class Wave: AudioChannel, WaveChannel {
                 //if upper nibble is read erase by shift lower nibble, else erase by & upper nibble
                 let sampleValue:Byte = self.isUpperNibbleRead ? sample >> 4
                                                               : sample & 0b0000_1111
-                //apply volume shift
+                //apply volume shift (wave channel has no individual volume control as others)
                 return sampleValue >> GBConstants.WaveShiftValue[Int(self.mmu.getWaveOutputLevel())]
             }
             else {
@@ -393,7 +396,9 @@ public class Noise: AudioChannelWithEnvelope, NoiseChannel {
     public override var amplitude:Byte {
         get {
             if(self.enabled){
-                return ~(Byte(self.LSFR & 0xFF) & 0b1)//amplitude is equal to inverse of first bit
+                //amplitude is equal to LFSR bit 1 value (0 or 1) multiplied by volume (byte value)
+                return ~(Byte(self.LSFR & 0xFF) & 0b0000_0001)//value is equal to inverse of first bit
+                     * self.volume
             }
             else {
                 return 0
