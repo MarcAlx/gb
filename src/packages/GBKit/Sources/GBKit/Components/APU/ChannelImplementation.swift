@@ -345,7 +345,53 @@ public class Wave: AudioChannel, WaveChannel {
 
 /// channel 4 is a noise channel
 public class Noise: AudioChannelWithEnvelope, NoiseChannel {
+    
+    //timer at which noise is updated
+    private var noiseTimer:Int = 0
+    
+    /// linear feedback shift register used to produce noise
+    private var LSFR:Short = 0
+    
     override public var id: AudioChannelId {
         AudioChannelId.CH4
+    }
+    override public func trigger() {
+        super.trigger()
+        //on trigger re-inits to all 1 bits for its 15bits width
+        self.LSFR = 0b0111_1111_1111_1111
+    }
+    
+    override public func tick(_ masterCycles: Int, _ frameCycles: Int) {
+        if(self.enabled){
+            if(self.noiseTimer > 0){
+                self.noiseTimer -= 1
+            }
+            
+            if(self.noiseTimer <= 0){
+                //reload noise timer
+                self.noiseTimer = self.mmu.getNoiseClockDivisor() * Int(pow(2.0, Double(self.mmu.getNoiseClockShift())))
+                //compute LFSR bit to apply to bit 15 of LSFR (and bit 7 if short mode)
+                let xor:Short = (self.LSFR & 0b10 >> 1) ^ self.LSFR & 0b01
+                //shift LFSR right then store xor at 15bit position
+                self.LSFR = self.LSFR >> 1 & (xor << 14)
+                //in case of short width store it at bit 7 too
+                if(self.mmu.hasNoiseShortWidth()){
+                    self.LSFR = (self.LSFR & 0b1111_1111_1011_1111) //clear bit 7 in lfsr
+                              | self.LSFR & xor << 6                //store bit 7 at bit 7
+                }
+            }
+        }
+    }
+    
+    /// returns channel amplitude
+    public var amplitude:Byte {
+        get {
+            if(self.enabled){
+                return ~(Byte(self.LSFR & 0xFF) & 0b1)//amplitude is equal to inverse of first bit
+            }
+            else {
+                return 0
+            }
+        }
     }
 }

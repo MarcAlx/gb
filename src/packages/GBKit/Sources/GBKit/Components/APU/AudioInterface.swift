@@ -84,4 +84,13 @@ public protocol AudioInterface {
     
     ///returns wave output level
     func getWaveOutputLevel() -> Byte
+    
+    ///returns noise clock shift
+    func getNoiseClockShift() -> Byte
+    
+    /// returns Linear feedback shift register width for noise channel
+    func hasNoiseShortWidth() -> Bool
+    
+    /// returns noise clock divider
+    func getNoiseClockDivisor() -> Int
 }

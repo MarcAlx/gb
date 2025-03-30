@@ -349,4 +349,18 @@ public class MMU: MMUCore, InterruptsControlInterface,
     public func getWaveOutputLevel() -> Byte {
         return (self[IOAddresses.AUDIO_NR32.rawValue] & 0b0110_0000) >> 5
     }
+    
+    public func getNoiseClockShift() -> Byte {
+        return (self[IOAddresses.AUDIO_NR43.rawValue] & 0b1111_0000) >> 4
+    }
+    
+    public func hasNoiseShortWidth() -> Bool {
+        //if bit 3 of NR43 is set then noise has short width
+        return (self[IOAddresses.AUDIO_NR43.rawValue] & 0b0000_1000 >> 3) > 0
+    }
+    
+    public func getNoiseClockDivisor() -> Int {
+        let divisorCode:Int = (Int(self[IOAddresses.AUDIO_NR43.rawValue]) & 0b0000_0111)
+        return GBConstants.APUNoiseDivisor[divisorCode]
+    }
 }

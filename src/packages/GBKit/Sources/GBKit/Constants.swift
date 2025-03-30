@@ -116,6 +116,18 @@ public struct GameBoyConstants {
         2  // 4bits shifted by 2 means "divide by 2 then by 2" (keep 25%)
     ]
     
+    //value used to convert Noise divisor code to noise effective divisor
+    public let APUNoiseDivisor:[Int] = [
+        8,
+        16,
+        32,
+        48,
+        64,
+        80,
+        96,
+        112
+    ]
+    
     //register to control audio channels (trigger / enable length)
     public let AudioChannelControlRegisters:[Short] = [
         IOAddresses.AUDIO_NR14.rawValue,
