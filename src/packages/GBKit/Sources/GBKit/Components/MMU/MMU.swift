@@ -363,4 +363,35 @@ public class MMU: MMUCore, InterruptsControlInterface,
         let divisorCode:Int = (Int(self[IOAddresses.AUDIO_NR43.rawValue]) & 0b0000_0111)
         return GBConstants.APUNoiseDivisor[divisorCode]
     }
+    
+    public func getAPUChannelPanning() -> (CH4_L:Bool,
+                                           CH3_L:Bool,
+                                           CH2_L:Bool,
+                                           CH1_L:Bool,
+                                           CH4_R:Bool,
+                                           CH3_R:Bool,
+                                           CH2_R:Bool,
+                                           CH1_R:Bool) {
+        var panning = self[IOAddresses.AUDIO_NR51.rawValue];
+        return (CH4_L: panning & 0b1000_0000 > 0,
+                CH3_L: panning & 0b0100_0000 > 0,
+                CH2_L: panning & 0b0010_0000 > 0,
+                CH1_L: panning & 0b0001_0000 > 0,
+                CH4_R: panning & 0b0000_1000 > 0,
+                CH3_R: panning & 0b0000_0100 > 0,
+                CH2_R: panning & 0b0000_0010 > 0,
+                CH1_R: panning & 0b0000_0001 > 0)
+    }
+    
+    public func getMasterVolume() -> (L:Byte, R:Byte) {
+        var master = self[IOAddresses.AUDIO_NR50.rawValue];
+        return (L:(master & 0b0111_0000) >> 4,
+                R:(master & 0b0000_0111))
+    }
+    
+    public func getVINPanning() -> (L:Bool, R:Bool) {
+        var master = self[IOAddresses.AUDIO_NR50.rawValue];
+        return (L:(master & 0b1000_0000) > 0,
+                R:(master & 0b0000_1000) > 0)
+    }
 }

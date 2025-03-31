@@ -85,6 +85,57 @@ public class APU: Component, Clockable {
         self.frameSequencerStep = (self.frameSequencerStep + 1) % 8
     }
     
+    /// return L and R sample by mixing each channel amplitude
+    func sample() -> (L:Int, R:Int) {
+        let panning = self.mmu.getAPUChannelPanning()
+        let volume  = self.mmu.getMasterVolume()
+        //todo handle VIN (audio comming from cartridge)
+        
+        //sample to build
+        var leftSample:Int  = 0;
+        var rightSample:Int = 0;
+        
+        //apply panning
+        
+        //CH1
+        if(panning.CH1_L){
+            leftSample += Int(self.channel1.amplitude)
+        }
+        if(panning.CH1_R){
+            rightSample += Int(self.channel1.amplitude)
+        }
+        
+        //CH2
+        if(panning.CH2_L){
+            leftSample += Int(self.channel2.amplitude)
+        }
+        if(panning.CH2_R){
+            rightSample += Int(self.channel2.amplitude)
+        }
+        
+        //CH3
+        if(panning.CH3_L){
+            leftSample += Int(self.channel3.amplitude)
+        }
+        if(panning.CH3_R){
+            rightSample += Int(self.channel3.amplitude)
+        }
+        
+        //CH4
+        if(panning.CH4_L){
+            leftSample += Int(self.channel4.amplitude)
+        }
+        if(panning.CH4_R){
+            rightSample += Int(self.channel4.amplitude)
+        }
+        
+        //return sample by applying master volume
+        // divide each sample             by 4, as we have summed up all 4 channel amplitudes
+        // divide volume multiplied value by 7, as volume is stored on 3 bits (max value = 0b111 -> 7)
+        return (L: ((leftSample  / 4) * Int(volume.L)) / 7,
+                R: ((rightSample / 4) * Int(volume.R)) / 7)
+    }
+    
     public func reset() {
         self.cycles = 0
         self.channel1.reset()

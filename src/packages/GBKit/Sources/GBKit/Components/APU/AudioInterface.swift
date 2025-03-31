@@ -93,4 +93,20 @@ public protocol AudioInterface {
     
     /// returns noise clock divider
     func getNoiseClockDivisor() -> Int
+    
+    /// returns information about each channel L/R audio panning, if true the corresponding channel componnent L/R is enabled (it's hard panning on/off no seamless transition here)
+    func getAPUChannelPanning() -> (CH4_L:Bool,
+                                    CH3_L:Bool,
+                                    CH2_L:Bool,
+                                    CH1_L:Bool,
+                                    CH4_R:Bool,
+                                    CH3_R:Bool,
+                                    CH2_R:Bool,
+                                    CH1_R:Bool)/*n.b order is mismatched to match corresponding bit i register, mismatch in swift's tuple order is deprecated*/
+ 
+    /// returns master volume (for L and R)
+    func getMasterVolume() -> (L:Byte, R:Byte)
+    
+    /// returns VIN panning
+    func getVINPanning() -> (L:Bool, R:Bool)
 }
