@@ -9,11 +9,14 @@ public class GameBoyViewModel:ObservableObject {
     ///error view model to notify errors
     @EnvironmentObject public var errorViewModel:ErrorViewModel
     
-    public let gb:GameBoy = GameBoy()
+    public let gb:GameBoy
     private var previousTime:Double = Date().timeIntervalSince1970
     @Published public var isOn:Bool = false
     @Published public var pressedButtons:Set<JoyPadButtons> = Set<JoyPadButtons>()
     private var pButtons:Set<JoyPadButtons> = Set<JoyPadButtons>()
+    
+    /// for audio playback
+    private let audioManager:AudioManager
     
     /*
      * used to act at every frame
@@ -26,7 +29,12 @@ public class GameBoyViewModel:ObservableObject {
     private let workQueue:DispatchQueue
     
     public init() {
+        let gb = GameBoy();
+        self.gb = gb
         self.workQueue = DispatchQueue(label: "gb serial queue", qos:.userInitiated)
+        //init audio playback
+        self.audioManager = AudioManager(frequency: 48_000 /*48KHz*/, gb: gb)
+        //init video rendering
         self.initDisplayLink()
     }
     

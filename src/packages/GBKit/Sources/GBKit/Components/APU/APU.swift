@@ -34,11 +34,11 @@ public struct APUConfiguration {
                 bufferSize: Int,
                 normalizationMethod:
                 AudioSampleNormalization,
-                playback: @escaping PlayCallback) {
+                playback: PlayCallback?) {
         self.sampleRate = sampleRate
         self.bufferSize = bufferSize
         self.normalizationMethod = normalizationMethod
-        self.playback = playback
+        self.playback = playback!
     }
     
     ///default configuration, mainly for init purpose
@@ -72,6 +72,8 @@ public class APU: Component, Clockable {
     private var _configuration:APUConfiguration = APUConfiguration.DEFAULT
     public var configuration:APUConfiguration {
         set {
+            //set value
+            self._configuration = newValue
             //on configuration set update silent buffer with proper size
             self.SILENT_BUFFER = Array(0 ..< newValue.bufferSize ).map { _ in (L: 0.0, R: 0.0) }
             //reset audio buffer
