@@ -30,6 +30,17 @@ public struct APUConfiguration {
     ///Callback tha will be called once buffer size has been riched
     public let playback:PlayCallback
     
+    public init(sampleRate: Int,
+                bufferSize: Int,
+                normalizationMethod:
+                AudioSampleNormalization,
+                playback: @escaping PlayCallback) {
+        self.sampleRate = sampleRate
+        self.bufferSize = bufferSize
+        self.normalizationMethod = normalizationMethod
+        self.playback = playback
+    }
+    
     ///default configuration, mainly for init purpose
     public static let DEFAULT:APUConfiguration = APUConfiguration(
         sampleRate: 441000,
