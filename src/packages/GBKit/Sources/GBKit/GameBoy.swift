@@ -1,3 +1,5 @@
+import Foundation
+
 public class GameBoy {
     ///underlaying motherboard
     public let motherboard:Motherboard = Motherboard()
@@ -35,5 +37,26 @@ public class GameBoy {
     ///update method should be called every frame
     public func update() {
         self.motherboard.update()
+    }
+    
+    /// current framebuffer
+    public var frameBuffer:Data {
+        self.motherboard.ppu.frameBuffer
+    }
+    
+    /// current audio buffer
+    public var audioBuffer:[AudioSample] {
+        self.motherboard.apu.audioBuffer
+    }
+    
+    /// apu configuration
+    public var apuConfiguration:APUConfiguration {
+        set {
+            self.motherboard.apu.configuration = newValue
+        }
+        
+        get {
+            self.motherboard.apu.configuration
+        }
     }
 }

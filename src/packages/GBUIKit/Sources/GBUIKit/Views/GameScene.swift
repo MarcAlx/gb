@@ -40,7 +40,7 @@ class GameScene: SKScene {
     /// called every frame, for framerate see SpriteView initialization
     override func update(_ currentTime: TimeInterval) {
         // update screen with framebuffer
-        self.screen.texture = SKTexture(data: self.gVM.gb.motherboard.ppu.frameBuffer,
+        self.screen.texture = SKTexture(data: self.gVM.gb.frameBuffer,
                                         size: CGSize(width: GBConstants.ScreenWidth,
                                                      height: GBConstants.ScreenHeight))
         //to avoid pixel tearing
