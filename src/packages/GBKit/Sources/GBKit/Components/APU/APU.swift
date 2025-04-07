@@ -1,4 +1,46 @@
+//not normalized audio sample (int value randed from 0 to 255
+typealias RawAudioSample = (L:Int, R:Int)
+
+//An audio sample that holds both L and R channel values
+public typealias AudioSample = (L:Float, R:Float)
+
+///Function to be passed that will play input sample buffer, it's your responsability to interleaved L and R channel sample
+public typealias PlayCallback = (_ samples:[AudioSample]) -> Void
+
+///how AudioSampleNormalization are normalized
+public enum AudioSampleNormalization {
+    ///samples values ranged from 0 to 255
+    case RAW
+    ///samples will be normalized as values ranged from -1.0 to 1.0
+    case FLOAT_MINUS_1_TO_1
+}
+
+///Configuration to provide to APU,
+public struct APUConfiguration {
+    ///Audio sample rate (in Hz)
+    ///n.b as in 44100Hz or 48000Hz
+    public let sampleRate:Int
+    
+    ///Amount of sample to store
+    public let bufferSize:Int
+    
+    ///normalization method
+    public let normalizationMethod:AudioSampleNormalization
+    
+    ///Callback tha will be called once buffer size has been riched
+    public let playback:PlayCallback
+    
+    ///default configuration, mainly for init purpose
+    public static let DEFAULT:APUConfiguration = APUConfiguration(
+        sampleRate: 441000,
+        bufferSize: 256,
+        normalizationMethod: .RAW,
+        playback: { _ in } )
+}
+
 public class APU: Component, Clockable {
+    ///buffer filled with 0.0 to express silence
+    public private(set) var SILENT_BUFFER:[AudioSample] = []
     
     public private(set) var cycles:Int = 0
     
@@ -13,12 +55,47 @@ public class APU: Component, Clockable {
     private let channel3:WaveChannel
     private let channel4:NoiseChannel
     
+    //rate (in M tick) at which we sample
+    private var sampleTickRate:Int = 0
+    
+    private var _configuration:APUConfiguration = APUConfiguration.DEFAULT
+    public var configuration:APUConfiguration {
+        set {
+            //on configuration set update silent buffer with proper size
+            self.SILENT_BUFFER = Array(0 ..< newValue.bufferSize ).map { _ in (L: 0.0, R: 0.0) }
+            //reset audio buffer
+            self._audioBuffer = self.SILENT_BUFFER
+            //init sample rate, we will tick every sampleRate fraction of CPUSpeed (both are expressed in the same unit Hz)
+            self.sampleTickRate = GBConstants.CPUSpeed / newValue.sampleRate
+        }
+        get {
+            self._configuration
+        }
+    }
+    
+    ///to avoid useless computation when normalized is prompted, map each value from 0 to 255 with its counterpart between 0.0 and 1.0
+    private let byteToFloatMap:[Float] = Array(0 ..< Int(Byte.max)+1 ).map { Float($0) / 255.0 }
+    
+    private var _audioBuffer:[AudioSample] = []
+    /// last commited audio buffer, ready to play
+    public var audioBuffer:[AudioSample] {
+        get {
+            //return a copy to avoid concurrent access
+            return self._audioBuffer.map { $0 }
+        }
+    }
+    
+    //next audio buffer (note that this buffer is not normalized)
+    private var nextBuffer:[RawAudioSample] = []
+    
     init(mmu:MMU) {
         self.mmu = mmu
         self.channel1 = Sweep(mmu: self.mmu)
         self.channel2 = Pulse(mmu: self.mmu)
         self.channel3 = Wave(mmu: self.mmu)
         self.channel4 = Noise(mmu: self.mmu)
+        //ensure configuration related properties are set on init
+        self.configuration = APUConfiguration.DEFAULT
     }
     
     public func tick(_ masterCycles: Int, _ frameCycles: Int) {
@@ -36,6 +113,32 @@ public class APU: Component, Clockable {
         }
         
         self.cycles = self.cycles &+ GBConstants.MCycleLength
+        
+        //cycles tick is a multiple of sample tick rate -> store sample
+        if(self.cycles % self.sampleTickRate == 0) {
+            //store sample
+            self.nextBuffer.append(self.sample())
+            //buffer size has been reached commit
+            if(self.nextBuffer.count >= self.configuration.bufferSize){
+                //commit buffer
+                self.commitBuffer()
+                //playback
+                self.configuration.playback(self.audioBuffer)
+                //ready for next buffer
+                self.nextBuffer = []
+            }
+        }
+    }
+    
+    /// set current buffer as ready to use
+    private func commitBuffer() {
+        //convert raw audio buffer to normalized buffer
+        switch(self.configuration.normalizationMethod){
+        case .RAW:
+            self._audioBuffer = self.nextBuffer.map { (L:Float($0.L), R:Float($0.R)) }
+        case .FLOAT_MINUS_1_TO_1:
+            self._audioBuffer = self.nextBuffer.map { (L:self.byteToFloatMap[$0.L], R:self.byteToFloatMap[$0.L]) }
+        }
     }
     
     private func stepFrameSequencer(){
@@ -86,7 +189,7 @@ public class APU: Component, Clockable {
     }
     
     /// return L and R sample by mixing each channel amplitude
-    func sample() -> (L:Int, R:Int) {
+    func sample() -> RawAudioSample {
         let panning = self.mmu.getAPUChannelPanning()
         let volume  = self.mmu.getMasterVolume()
         //todo handle VIN (audio comming from cartridge)
