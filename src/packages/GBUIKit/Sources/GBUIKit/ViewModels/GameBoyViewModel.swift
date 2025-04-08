@@ -31,7 +31,7 @@ public class GameBoyViewModel:ObservableObject {
     public init() {
         let gb = GameBoy();
         self.gb = gb
-        self.workQueue = DispatchQueue(label: "gb serial queue", qos:.userInitiated)
+        self.workQueue = DispatchQueue(label: "gb serial queue", qos:.userInteractive)
         //init audio playback
         self.audioManager = AudioManager(frequency: 48_000 /*48KHz*/, gb: gb)
         //init video rendering
