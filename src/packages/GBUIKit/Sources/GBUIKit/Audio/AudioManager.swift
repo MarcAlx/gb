@@ -7,10 +7,10 @@ class AudioManager {
     @EnvironmentObject private var lVM:LoggingViewModel
     
     /// engine that will ensure audio rendering
-    private let engine = AVAudioEngine()
+    private let engine:AVAudioEngine = AVAudioEngine()
     
     /// player that will ensure playback
-    private let playerNode = AVAudioPlayerNode()
+    private let playerNode:AVAudioPlayerNode = AVAudioPlayerNode()
     
     // audio sample rate
     private let sampleRate: Int
@@ -18,9 +18,21 @@ class AudioManager {
     /// two channels L and R
     private let channels: AVAudioChannelCount = 2
     
+    /// gameboy to which audio is setup
     private let gameboy: GameBoy
     
+    /// workQueue to ensure high qos dispatch
+    private let workQueue:DispatchQueue
+    
+    /// samples ready to play
+    private var audioQueue:[[AudioSample]] = []
+    
+    /// number of sample required for playing
+    private let queueFloor = 10
+    
     init(frequency:Int, gb:GameBoy) {
+        
+        self.workQueue = DispatchQueue(label: "gb audio queue", qos:.userInteractive)
         self.sampleRate = frequency
         self.gameboy = gb
         
@@ -28,6 +40,7 @@ class AudioManager {
         do {
             try AVAudioSession.sharedInstance().setCategory(.playback, mode: .default)
             try AVAudioSession.sharedInstance().setActive(true)
+            //try AVAudioSession.sharedInstance().setPreferredIOBufferDuration(1024/44100.0)
         } catch {
             self.lVM.log("Failed to set up AVAudioSession: \(error)")
         }
@@ -37,6 +50,7 @@ class AudioManager {
         guard let format = AVAudioFormat(standardFormatWithSampleRate: Double(sampleRate), channels: channels) else {
             fatalError("Unable to create audio format")
         }
+        
         engine.connect(playerNode, to: engine.mainMixerNode, format: format)
         
         // Start the engine.
@@ -52,18 +66,53 @@ class AudioManager {
         //configure APU
         self.gameboy.apuConfiguration = APUConfiguration(
             sampleRate: self.sampleRate,
-            bufferSize: 1024,
+            bufferSize: 512,
             normalizationMethod: .FLOAT_MINUS_1_TO_1,
-            playback: self.playBack)
+            playback: self.enqueueBuffer)
+        
+        self.workQueue.sync {
+            self.playerNode.play()
+        }
     }
     
-    /// called by APU once buffer size has been reached
-    func playBack(buffer:[AudioSample]){
+    ///queue a buffer
+    private func enqueueBuffer(buffer:[AudioSample]) {
+        //store sample
+        self.audioQueue.append(buffer)
+        //we have enough sample queued -> play
+        if(self.audioQueue.count>self.queueFloor){
+            self.playBack()
+        }
+    }
+    
+    /// dequeue and play next buffer
+    private func playBack(){
+        if(self.audioQueue.count>0){
+            //remove sample to play
+            let next = self.audioQueue.removeFirst()
+            //prepare
+            let toPlay = self.convertAudioSamples(buffer: next)
+            //schedule play on workqueue
+            self.workQueue.sync {
+                //schedule doesn't cancel current playback but queue it
+                playerNode.scheduleBuffer(toPlay, completionHandler: {
+                    //for debug purpose log if there's no sample queued after a sample is played
+                    if(self.audioQueue.count==0){
+                        print("pause")
+                    }
+                })
+            }
+        }
+    }
+    
+    /// convert audio samples to AVAudioPCMBuffer
+    private func convertAudioSamples(buffer:[AudioSample]) -> AVAudioPCMBuffer {
         // Calculate number of frames from the sample count.
         let frameCount = AVAudioFrameCount(buffer.count)
         guard let format = AVAudioFormat(standardFormatWithSampleRate: Double(sampleRate), channels: channels),
-              let res = AVAudioPCMBuffer(pcmFormat: format, frameCapacity: frameCount) else {
-            return
+              let res = AVAudioPCMBuffer(pcmFormat: format, frameCapacity: frameCount)
+        else {
+            return AVAudioPCMBuffer()
         }
         
         res.frameLength = frameCount
@@ -79,11 +128,6 @@ class AudioManager {
             }
         }
         
-        // Schedule the buffer for playback.
-        playerNode.scheduleBuffer(res, completionHandler: nil)
-        // If not already playing, start playback.
-        if !playerNode.isPlaying {
-            playerNode.play()
-        }
+        return res
     }
 }
