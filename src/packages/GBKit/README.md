@@ -6,9 +6,9 @@ Core package to emulate GameBoy.
 
 - (Done) CPU
 - (Done) PPU
+- (In development) APU, status: audio is produced yet innacurate (goal is to pass dmg-sound test roms)
 - (TODO) MBC handling
 - (TODO) Finish unit tests
-- (Next) APU
 - (Next) Move from `XCTest` to new Swift `Testing`
 - (Later) GBC Support
 
@@ -16,7 +16,7 @@ Core package to emulate GameBoy.
 
 ![](./doc/architecture.png)
 
-From a game rom, inputs and 60fps timing GBKit produces video frames and audio (upcoming).
+From a game rom, inputs, audio configuration and 60fps timing GBKit produces video frames and audio buffers.
 
 ### Components dependency tree
 
@@ -26,6 +26,7 @@ graph TB;
   MB[MotherBoard]
   CPU[CPU]
   MMU[MMU]
+  APU[APU]
   IO[I/O interface]
   JOY[JoyPad]
   R[Registers]
@@ -39,6 +40,7 @@ graph TB;
   MB --> MMU;
   MB --> PPU;
   MB --> JOY;
+  MB --> APU;
   MB --> TIM;
 
   MMU --> IO;
@@ -49,6 +51,7 @@ graph TB;
   PPU --> MMU;
   JOY --> MMU;
   TIM --> MMU;
+  APU --> MMU;
 
   PPU --> PM;
 ```
@@ -65,6 +68,53 @@ graph TB;
 _n.b 1 T cycle = 4 M cycle_
 
 ## Quality 
+
+### Test roms
+
+#### CPU
+
+Passing : 
+
+ - 01-special.gb
+ - 03-op sp,hl.gb
+ - 04-op r,imm.gb
+ - 05-op rp.gb
+ - 06-ld r,r.gb
+ - 07-jr,jp,call,ret,rst.gb
+ - 08-misc instrs.gb
+ - 09-op r,r.gb
+ - 10-bit ops.gb
+ - 11-op a,(hl).gb
+
+ Non passing :
+
+ - 02-interrupts.gb
+
+ #### PPU
+
+  Passing :
+  
+  - [DMG Acid2](https://github.com/mattcurrie/dmg-acid2)
+
+ #### APU (WIP)
+
+  Passing :
+  
+  - None
+
+  Non passing :
+  - 01-registers.gb 
+  - 02-len ctr.gb 
+  - 03-trigger.gb 
+  - 04-sweep.gb 
+  - 05-sweep details.gb 
+  - 06-overflow on trigger.gb 
+  - 07-len sweep period sync.gb 
+  - 08-len ctr during power.gb 
+  - 09-wave read while on.gb 
+  - 10-wave trigger while on.gb 
+  - 11-regs after power.gb 
+  - 12-wave write while on.gb
 
 ### gameboy doctor
 

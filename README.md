@@ -8,7 +8,7 @@ With controller supports and palette customization!
 
 **Status** Games that don't need MBC supports or advance CPU tricks work, e.g Tetris, Tennis...
 
-**Work in progress** (still under active development) MBC and Audio coming (ETA: when its done!). For now limited to GB, GBC support planned.
+**Work in progress** (still under active development) MBC and Audio (playing but innacurate) (ETA: when its done!). For now limited to GB, GBC support planned.
 
 ## Compatibility
 
@@ -35,7 +35,7 @@ This project is (for now) a mono repo that holds the following:
 
 ## Roadmap
 
-1. Finalize GBKit (`./packages/GBKit`) (MBC, APU...)
+1. Finalize GBKit (`./packages/GBKit`) (MBC, APU (needs to pass audio test to improve overhall audio feeling))
 
 2. Finalize GBUIKit (`./packages/GBKit`) (Keyboard support for macCatalyst,...)
 
