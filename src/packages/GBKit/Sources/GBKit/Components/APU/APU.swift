@@ -32,8 +32,7 @@ public struct APUConfiguration {
     
     public init(sampleRate: Int,
                 bufferSize: Int,
-                normalizationMethod:
-                AudioSampleNormalization,
+                normalizationMethod: AudioSampleNormalization,
                 playback: PlayCallback?) {
         self.sampleRate = sampleRate
         self.bufferSize = bufferSize
