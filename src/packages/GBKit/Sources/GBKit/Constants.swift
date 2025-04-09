@@ -4,8 +4,8 @@ public struct GameBoyConstants {
     // CPU speed in hertz
     public let CPUSpeed:Int = 4_194_304
 
-    // length of a T cycle in M cycle
-    public let TCycleLength:Int = 4
+    // length of an M cycle in T cycle, 1 M cycle = 4 T cycles
+    public let MCycleLength:Int = 4
 
     public let ScreenWidth:Int = 160
     public let ScreenHeight:Int = 144
@@ -48,7 +48,7 @@ public struct GameBoyConstants {
     // MCycles than occurs each frame
     public let MCyclesPerFrame:Int
     
-    // DMA transfer duration in M cycles
+    // DMA transfer duration in T cycles
     public let DMADuration:Int = 640
 
     // Exact GB frame rate (likely ignored, rounded to 60 by CADisplayLink)
@@ -63,8 +63,102 @@ public struct GameBoyConstants {
     //opcode to lookup for extended instructions
     public let ExtentedInstructionSetOpcode:Byte = 0xCB
     
-    //Div timer frequency in M cycle
+    //Div timer frequency in T cycle
     public let DivTimerFrequency:Int = 64;
+    
+    //APU frame sequencer frequency, 512hz
+    public let APUFrameSequencerFrequency:Int = 512
+    
+    //APU is slower than CPU by this divider
+    public let APUSpeedDivider:Int = 2
+    
+    //Channel with Enveloppe are slower relative to APU
+    public let EnveloppeRelativeSpeedDivider:Int = 2
+    
+    //Speed divider relative to CPU speed
+    public let EnveloppeAbsoluteSpeedDivider:Int
+    
+    //length on an APU frame sequencer step
+    public let APUFrameSequencerStepLength:Int
+    
+    //value used to determine audio channel frequency
+    public let APUPeriodDivider:Int = 2048
+    
+    //duty patterns indexed to their matching NR11 and NR21 value
+    public let DutyPatterns:[[Byte]] = [
+        [0, 0, 0, 0, 0, 0, 0, 1], //00 -> 12,5%
+        [0, 0, 0, 0, 0, 0, 1, 1], //01 -> 25%
+        [0, 0, 0, 0, 1, 1, 1, 1], //10 -> 50%
+        [1, 1, 1, 1, 1, 1, 0, 0], //11 -> 75%
+    ]
+    
+    //length timer duration (on entry for each channel)
+    public let DefaultLengthTimer:[Int] = [
+        64,
+        64,
+        256,//wave channel has longer duration
+        64
+    ]
+    
+    //mask for NRX1 register to extract length
+    public let NRX1_lengthMask:[Byte] = [
+        0b0011_1111,
+        0b0011_1111,
+        0b1111_1111,///channel 3 takes full 8 bits
+        0b0011_1111
+    ]
+    
+    //helps in converting wave 4bits value to effective value
+    public let WaveShiftValue:[Int] = [
+        4, // 4bits shifted by 4 means 0
+        0, // 4bits shifted by 0 means "keep value"
+        1, // 4bits shifted by 1 means "divide by 2" (keep 50%)
+        2  // 4bits shifted by 2 means "divide by 2 then by 2" (keep 25%)
+    ]
+    
+    //value used to convert Noise divisor code to noise effective divisor
+    public let APUNoiseDivisor:[Int] = [
+        8,
+        16,
+        32,
+        48,
+        64,
+        80,
+        96,
+        112
+    ]
+    
+    //register to control audio channels (trigger / enable length)
+    public let AudioChannelControlRegisters:[Short] = [
+        IOAddresses.AUDIO_NR14.rawValue,
+        IOAddresses.AUDIO_NR24.rawValue,
+        IOAddresses.AUDIO_NR34.rawValue,
+        IOAddresses.AUDIO_NR44.rawValue
+    ]
+    
+    //register to control enveloppe
+    public let EnvelopeControlRegisters:[Short] = [
+        IOAddresses.AUDIO_NR12.rawValue,
+        IOAddresses.AUDIO_NR22.rawValue,
+        //no channel 3 is intentionnal, it doesn't support enveloppe
+        IOAddresses.AUDIO_NR42.rawValue,
+    ]
+    
+    //register to control wave duty
+    public let WaveDutyRegisters:[Short] = [
+        IOAddresses.AUDIO_NR11.rawValue,
+        IOAddresses.AUDIO_NR21.rawValue,
+        //no channel 3 is intentionnal, it doesn't support wave duty
+        //no channel 4 is intentionnal, it doesn't support wave duty
+    ]
+    
+    //register to control period
+    public let PeriodRegisters:[Short] = [
+        IOAddresses.AUDIO_NR13.rawValue,
+        IOAddresses.AUDIO_NR23.rawValue,
+        IOAddresses.AUDIO_NR33.rawValue,
+        //no channel 4 is intentionnal, it doesn't support period
+    ]
 
     public let NintendoLogo:[Byte] = [
         0xCE, 0xED, 0x66, 0x66, 0xCC, 0x0D, 0x00, 0x0B, 0x03, 0x73, 0x00, 0x83, 0x00, 0x0C, 0x00, 0x0D,
@@ -317,6 +411,8 @@ public struct GameBoyConstants {
         self.FrameDuration = 1/ExactFrameRate
         self.ROMBankSizeInBytes = ROMBankSize * 1024
         self.VBLANK_TRIGGER = ScreenHeight * MCyclesPerScanline //Vblank is triggered after all line has been rendered
+        self.APUFrameSequencerStepLength =  CPUSpeed / APUFrameSequencerFrequency
+        self.EnveloppeAbsoluteSpeedDivider = APUSpeedDivider * EnveloppeRelativeSpeedDivider
     }
 }
 
@@ -430,6 +526,8 @@ enum MMUAddresses:Short {
     case PROHIBITED_AREA               = 0xFEA0
     case PROHIBITED_AREA_END           = 0xFEFF
     case IO_REGISTERS                  = 0xFF00
+    case WAVE_RAM                      = 0xFF30 // inside IO registers
+    case WAVE_RAM_END                  = 0xFF3F // inside IO registers
     case IO_REGISTERS_END              = 0xFF7F
     case HIGH_RAM                      = 0xFF80
     case HIGH_RAM_END                  = 0xFFFE
@@ -450,6 +548,7 @@ public enum MMUAddressSpaces {
     static let PROHIBITED_AREA = MMUAddresses.PROHIBITED_AREA.rawValue...MMUAddresses.PROHIBITED_AREA_END.rawValue
     static let OBJECT_ATTRIBUTE_MEMORY:ClosedRange<Short> = MMUAddresses.OBJECT_ATTRIBUTE_MEMORY.rawValue...MMUAddresses.OBJECT_ATTRIBUTE_MEMORY_END.rawValue
     static let IO_REGISTERS = MMUAddresses.IO_REGISTERS.rawValue...MMUAddresses.IO_REGISTERS_END.rawValue
+    static let WAVE_RAM = MMUAddresses.WAVE_RAM.rawValue...MMUAddresses.WAVE_RAM_END.rawValue
     static let HIGH_RAM:ClosedRange<Short> = MMUAddresses.HIGH_RAM.rawValue...MMUAddresses.HIGH_RAM_END.rawValue
     static let WINDOW_TILE_MAP_AREA_0:ClosedRange<Short> = 0x9800...0x9BFF
     static let WINDOW_TILE_MAP_AREA_1:ClosedRange<Short> = 0x9C00...0x9FFF
@@ -533,7 +632,7 @@ public enum StandardColorPalettes {
     static let MGB = ColorPalette([Color(0xFF, 0xFF, 0xFF),Color(0xA9, 0xA9, 0xA9),Color(0x54, 0x54, 0x54),Color(0x00, 0x00, 0x00)])
 }
 
-/// PPU Timings of each mode (in M cycles)
+/// PPU Timings of each mode (in T cycles)
 enum PPUTimings:Int {
     case OAM_SEARCH_LENGTH = 80
     case PIXEL_RENDER_LENGTH = 172

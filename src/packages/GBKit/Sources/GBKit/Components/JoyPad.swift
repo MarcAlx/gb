@@ -31,8 +31,17 @@ public enum ButtonModifiers: Byte {
     case A_RIGHT_PRESSED    = 0b1111_1110
 }
 
+/// defines  properties used by JoyPad that must be available
+public protocol JoyPadInterface {
+    ///stores current buttons state, should be updated by JoyPad
+    var BUTTONS_STATE:Byte { get set }
+    
+    ///stores current dpad state, should be updated by JoyPad
+    var DPAD_STATE:Byte { get set }
+}
+
 /// wraps button logic
-public class JoyPadInterface : Component {
+public class JoyPad : Component {
     
     private let ints:InterruptsControlInterface
     
@@ -70,8 +79,8 @@ public class JoyPadInterface : Component {
             self.checkDPADConsistency()
         }
         
-        self.mmu.buttonsState = self.getButtonGroupState(group: .BUTTONS)
-        self.mmu.dpadState = self.getButtonGroupState(group: .DPAD)
+        self.mmu.BUTTONS_STATE = self.getButtonGroupState(group: .BUTTONS)
+        self.mmu.DPAD_STATE = self.getButtonGroupState(group: .DPAD)
     }
     
     /// true if button pressed

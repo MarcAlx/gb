@@ -3,11 +3,7 @@ import GBKit
 
 /// button to enter/leave fullscreen
 struct FullScreenButton: View {
-    @ObservedObject private var mVM:MainViewModel
-    
-    public init( mVM:MainViewModel) {
-        self.mVM = mVM
-    }
+    @EnvironmentObject private var mVM:MainViewModel
     
     var body: some View {
         Button {
@@ -25,13 +21,8 @@ struct FullScreenButton: View {
 
 ///button to insert cartridge
 struct InsertButton: View {
-    @ObservedObject private var mVM:MainViewModel
-    @ObservedObject private var gVM:GameBoyViewModel
-    
-    public init(gVM:GameBoyViewModel, mVM:MainViewModel) {
-        self.gVM = gVM
-        self.mVM = mVM
-    }
+    @EnvironmentObject private var mVM:MainViewModel
+    @EnvironmentObject private var gVM:GameBoyViewModel
     
     var body: some View {
         Button {
@@ -44,11 +35,7 @@ struct InsertButton: View {
 
 ///button to turn on / off
 struct OnOffSwitch: View {
-    @ObservedObject private var gVM:GameBoyViewModel
-    
-    public init(gVM:GameBoyViewModel) {
-        self.gVM = gVM
-    }
+    @EnvironmentObject private var gVM:GameBoyViewModel
     
     var body: some View {
         Toggle(isOn: self.$gVM.isOn){
@@ -67,16 +54,12 @@ struct OnOffSwitch: View {
 
 /// DPad control, works with a GameBoyVIewModel
 struct DPad: View {
-    @ObservedObject private var gVM:GameBoyViewModel
+    @EnvironmentObject private var gVM:GameBoyViewModel
     
     private let buttonSize:CGFloat = 50
     private let dPadBGColor = Color.gray
     private let dPadFGColor = Color.black
-    
-    public init(gVM:GameBoyViewModel) {
-        self.gVM = gVM
-    }
-    
+
     var body: some View {
         Grid(horizontalSpacing: 0, verticalSpacing: 0) {
             GridRow{
@@ -167,7 +150,7 @@ struct DPad: View {
 
 /// A B Start Select  control, works with a GameBoyVIewModel
 struct ABStartSelect: View {
-    @ObservedObject private var gVM:GameBoyViewModel
+    @EnvironmentObject private var gVM:GameBoyViewModel
     
     private let buttonSize:CGFloat = 50
     private let startSelectBGColor = Color.black
@@ -175,10 +158,6 @@ struct ABStartSelect: View {
     private let ABHolderBGColor = Color.gray
     private let ABBGColor = Color.red
     private let ABFGColor = Color.black
-    
-    public init(gVM:GameBoyViewModel) {
-        self.gVM = gVM
-    }
     
     var body: some View {
         VStack {

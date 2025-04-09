@@ -53,6 +53,17 @@ graph TB;
   PPU --> PM;
 ```
 
+## Timing equivalency
+
+|   Timing (s)  |   Timing (ms)  |   CPU Speed (Hz/M cycle)  |   Audio frequency (Hz)  |   FPS     |  Note             |
+|---------------|----------------|---------------------------|-------------------------|-----------|-------------------|
+|   1           |   1000         |   4 194 304               |   44100                 |   60      |   60 fps          |
+|   0,000022    |   0,022        |   ~95                     |   1                     |   0,0013  |   Per audio frame |
+|   0,023       |   23           |   97280                   |   1024                  |   1,39    |   Audio latency   |
+|   0,01668     |   16,67        |   69905                   |   735                   |   1       |   1 fps           |
+
+_n.b 1 T cycle = 4 M cycle_
+
 ## Quality 
 
 ### gameboy doctor
@@ -113,6 +124,11 @@ This project contains some unit tests, objective is to test each core fonction o
 - [PyBoy (python)](https://github.com/Baekalfen/PyBoy)
 - [Mooney gb (rust)](https://github.com/Gekkio/mooneye-gb)
 - [SameBoy (c)](https://github.com/LIJI32/SameBoy)
+- [retroboy (rust)](https://github.com/smparsons/retroboy)
+- [Kokoboy (kotlin)](https://github.com/BluestormDNA/Kocoboy)
+- [GhostBoy (c++)](https://github.com/GhostSonic21/GhostBoy)
+- [AXWGameBoy (go)](https://github.com/ArcticXWolf/AXWGameboy)
+- [Argentum (rust)](https://github.com/NightShade256/Argentum)
 
 ### Worth reading articles
 
@@ -141,6 +157,8 @@ This project contains some unit tests, objective is to test each core fonction o
 - [Demystifying the GameBoy/SM83’s DAA Instruction](https://blog.ollien.com/posts/gb-daa/)
 - [Game Boy Sound Emulation](https://nightshade256.github.io/2021/03/27/gb-sound-emulation.html)
 - [Gameboy sound hardware](https://gbdev.gg8.se/wiki/articles/Gameboy_sound_hardware)
+- [GBSOUND.txt](https://www.devrs.com/gb/files/hosted/GBSOUND.txt)
+- [Nitty Gritty Gameboy Cycle Timing.txt](http://blog.kevtris.org/blogfiles/Nitty%20Gritty%20Gameboy%20VRAM%20Timing.txt)
 
 ### forums / threads / questions
 
@@ -174,6 +192,7 @@ This project contains some unit tests, objective is to test each core fonction o
 
 - [understanding half carry](https://gist.github.com/meganesu/9e228b6b587decc783aa9be34ae27841)
 - [Two's complement](https://en.wikipedia.org/wiki/Two%27s_complement)
+- [A Digital Media Primer for Geeks](https://xiph.org/video/vid1.shtml)
 
 ### Quality
 

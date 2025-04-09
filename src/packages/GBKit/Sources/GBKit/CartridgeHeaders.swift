@@ -3,7 +3,7 @@
  * - parametery byte : input
  * - returns size in KiB
  */
-private func computeROMSizeFromHeaderByte(byte:UInt8) -> Int {
+private func computeROMSizeFromHeaderByte(byte:Byte) -> Int {
     return 32 * (1 << byte)
 }
 
@@ -12,7 +12,7 @@ private func computeROMSizeFromHeaderByte(byte:UInt8) -> Int {
  * - parametery byte : input
  * - returns size in KiB
  */
-private func computeRAMSizeFromHeaderByte(byte:UInt8) -> Int {
+private func computeRAMSizeFromHeaderByte(byte:Byte) -> Int {
     switch(byte) {
     case 0x02:
         return 8
@@ -30,7 +30,7 @@ private func computeRAMSizeFromHeaderByte(byte:UInt8) -> Int {
 /**
  * compute header checksum from cartridge data
  */
-private func computeHeaderChecksum(data:[UInt8]) -> UInt8 {
+private func computeHeaderChecksum(data:[Byte]) -> Byte {
     var checksum:UInt16 = 0;
     for address in CHAddresses.TITLE.rawValue...CHAddresses.MASK_ROM_VERSION_NUMBER.rawValue {
         checksum += UInt16(~data[address])
@@ -42,7 +42,7 @@ private func computeHeaderChecksum(data:[UInt8]) -> UInt8 {
 /**
  * compute cartridge cheksum, from data array, toExclude is an optional array of addresses to exclude
  */
-private func computeChecksum(data:[UInt8],toExclude:[Int] = []) -> UInt16 {
+private func computeChecksum(data:[Byte],toExclude:[Int] = []) -> UInt16 {
     var checksum:UInt32 = 0
     for address in 0..<data.count {
         if(!toExclude.contains(address)) {

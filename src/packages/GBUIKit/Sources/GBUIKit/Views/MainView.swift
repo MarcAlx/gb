@@ -13,10 +13,10 @@ public enum MainViewTabs {
 }
 
 struct MainView: View {
-    @ObservedObject private var mVM:MainViewModel = MainViewModel()
-    @ObservedObject private var lVM:LoggingViewModel
-    @ObservedObject private var eVM:ErrorViewModel
-    @ObservedObject private var gVM:GameBoyViewModel
+    @EnvironmentObject private var mVM:MainViewModel
+    @EnvironmentObject private var lVM:LoggingViewModel
+    @EnvironmentObject private var eVM:ErrorViewModel
+    @EnvironmentObject private var gVM:GameBoyViewModel
     
     @State private var paletetteManager:PaletteManager = PaletteManager.sharedInstance
     
@@ -28,16 +28,6 @@ struct MainView: View {
     @State private var customPaletteColor1:SwiftUI.Color = PaletteManager.sharedInstance.customPalette[1].toSWiftUIColor()
     @State private var customPaletteColor2:SwiftUI.Color = PaletteManager.sharedInstance.customPalette[2].toSWiftUIColor()
     @State private var customPaletteColor3:SwiftUI.Color = PaletteManager.sharedInstance.customPalette[3].toSWiftUIColor()
-    
-    public init(gVM:GameBoyViewModel,
-                eVM:ErrorViewModel,
-                lVM:LoggingViewModel) {
-        self.gVM = gVM
-        self.eVM = eVM
-        self.lVM = lVM
-        self.gVM.errorViewModel = self.eVM
-        self.mVM.screenBackground = paletetteManager.currentPalette[0].toSWiftUIColor()
-    }
     
     var body: some View {
         VStack{
@@ -59,7 +49,7 @@ struct MainView: View {
                     .frame(minWidth: 0, maxWidth: .infinity)
                     
                     //fullscreen button
-                    FullScreenButton(mVM: self.mVM)
+                    FullScreenButton()
                 }
             }
             
@@ -70,8 +60,8 @@ struct MainView: View {
                     VStack {
                         if(orientation.isPortrait || ProcessInfo.processInfo.isMacCatalystApp || UIDevice.current.userInterfaceIdiom == .pad){
                             HStack{
-                                InsertButton(gVM: self.gVM, mVM: self.mVM)
-                                OnOffSwitch(gVM: self.gVM)
+                                InsertButton()
+                                OnOffSwitch()
                             }
                             .padding(10)
                         }
@@ -80,25 +70,25 @@ struct MainView: View {
                                || ProcessInfo.processInfo.isMacCatalystApp){
                                 HStack{
                                     VStack{
-                                        FullScreenButton(mVM: self.mVM).padding([.bottom], 20) .hidden(!self.mVM.isFullScreen)
-                                        DPad(gVM: self.gVM)
+                                        FullScreenButton().padding([.bottom], 20)                                   .hidden(!self.mVM.isFullScreen)
+                                        DPad()
                                     }
                                 }.frame(alignment: .leading)
                             }
-                            GameScreen(mVM: self.mVM, gVM: self.gVM).frame(maxWidth: .infinity, alignment: .center)//only one screen
+                            GameScreen().frame(maxWidth: .infinity, alignment: .center) //only one screen
                             if(orientation.isLandscape
                                || ProcessInfo.processInfo.isMacCatalystApp){
                                 HStack{
-                                    ABStartSelect(gVM: self.gVM)
+                                    ABStartSelect()
                                 }.frame(alignment: .trailing)
                             }
                         }
                         if(orientation.isPortrait){
                             Spacer()
                             HStack {
-                                DPad(gVM: self.gVM)
+                                DPad()
                                 Spacer()
-                                ABStartSelect(gVM: self.gVM)
+                                ABStartSelect()
                             }
                         }
                     }
@@ -182,6 +172,10 @@ struct MainView: View {
                 }.hidden(currentTab != .Settings)
             }
         }.frame(minWidth: 0, maxWidth: .infinity)
+        //on appear init screenbg
+        .onAppear {
+            self.mVM.screenBackground = paletetteManager.currentPalette[0].toSWiftUIColor()
+        }
         //handle orientation change
         .onRotate { newOrientation in
             orientation = newOrientation
@@ -211,7 +205,5 @@ struct MainView: View {
 }
 
 #Preview {
-    MainView(gVM: GameBoyViewModel(),
-             eVM: ErrorViewModel(),
-             lVM: LoggingViewModel()).padding(25)
+    MainView().padding(25)
 }

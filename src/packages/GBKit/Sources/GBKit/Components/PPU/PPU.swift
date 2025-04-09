@@ -13,7 +13,7 @@ public class PPU: Component, Clockable {
     private static let blankFrame:Data = Data(repeating: 0xFF, count: GBConstants.PixelCount*4)//color are stored with 4 components rgba
     
     private let mmu:MMU
-    private let ios:IOInterface
+    private let ios:LCDInterface
     private let interrupts:InterruptsControlInterface
     private let pManager:PaletteManager
     
@@ -153,9 +153,9 @@ public class PPU: Component, Clockable {
             ios.writeLCDStatMode(newMode)
         }
         
-        //operate at 4 m cycles speed as it's 1t cycle (minimal)
-        self.frameSync = self.frameSync &+ 4
-        self.cycles = self.cycles &+ 4
+        //operate at 4 t cycles speed as it's 1m cycle (minimal)
+        self.frameSync = self.frameSync &+ GBConstants.MCycleLength
+        self.cycles = self.cycles &+ GBConstants.MCycleLength
     }
     
     /// scan LY line then render to frame buffer

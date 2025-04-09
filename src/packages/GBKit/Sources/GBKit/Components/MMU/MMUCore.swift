@@ -25,19 +25,22 @@ public class MMUCore:Component, Clockable {
     }
     
     ///stores current buttons state, should be updated by JoyPad
-    public var buttonsState:Byte = 0
+    var buttonsState:Byte = 0
     
     ///stores current dpad state, should be updated by JoyPad
-    public var dpadState:Byte = 0
+    var dpadState:Byte = 0
+    
+    ///length timers for each APU channels, holds inside MMU to avoid having an APU reference inside MMU
+    var lengthTimers:[Int] = GBConstants.DefaultLengthTimer
 
     public init(){
     }
     
     public func tick(_ masterCycles: Int, _ frameCycles: Int) {
         if(isDMATransferInProgress){
-            self.dmaCounter = self.dmaCounter - GBConstants.TCycleLength
+            self.dmaCounter = self.dmaCounter - GBConstants.MCycleLength
         }
-        self.cycles = self.cycles &+ GBConstants.TCycleLength
+        self.cycles = self.cycles &+ GBConstants.MCycleLength
     }
     
     ///subscript to dispatch address to its corresponding location
@@ -123,6 +126,31 @@ public class MMUCore:Component, Clockable {
             case IOAddresses.LCD_LYC.rawValue:
                 self.onLYCSet(newValue)
                 self.ram[address] = newValue
+                break
+            //updating NR11 must init length timer for channel 1
+            case IOAddresses.AUDIO_NR11.rawValue:
+                self.initLengthTimer(AudioChannelId.CH1, newValue)
+                self.ram[address] = newValue
+                break
+            //updating NR21 must init length timer for channel 2
+            case IOAddresses.AUDIO_NR21.rawValue:
+                self.initLengthTimer(AudioChannelId.CH2, newValue)
+                self.ram[address] = newValue
+                break
+                //updating NR31 must init length timer for channel 3
+            case IOAddresses.AUDIO_NR31.rawValue:
+                self.initLengthTimer(AudioChannelId.CH3, newValue)
+                self.ram[address] = newValue
+                break
+            //updating NR41 must init length timer for channel 4
+            case IOAddresses.AUDIO_NR41.rawValue:
+                self.initLengthTimer(AudioChannelId.CH4, newValue)
+                self.ram[address] = newValue
+                break
+            //only bit 7 of NR52 is R/W
+            case IOAddresses.AUDIO_NR41.rawValue:
+                self.ram[address] = self.ram[address] & NegativeByteMask.Bit_7.rawValue // clear actual bit 7
+                                  | newValue & ByteMask.Bit_7.rawValue                  // keep only bit 7 of new value
                 break
             //default to ram
             default:
@@ -221,5 +249,14 @@ public class MMUCore:Component, Clockable {
         self.ram[MMUAddressSpacesInt.OBJECT_ATTRIBUTE_MEMORY] = self.ram[sourceRange]
         self.dmaCounter = GBConstants.DMADuration
         self.currentDMATransferRange = sourceRange
+    }
+    
+    /// initis length timer for a given channel using value from an NRX1 register
+    private func initLengthTimer(_ channel: AudioChannelId, _ nrx1Value:Byte){
+        //get channel index
+        let chIdx:Int = AudioChannelId.CH1.rawValue;
+        //timer is set to Default values minus masked part of nrx1 value
+        self.lengthTimers[chIdx] = GBConstants.DefaultLengthTimer[chIdx]
+                                 - Int((nrx1Value & GBConstants.NRX1_lengthMask[chIdx]))
     }
 }
