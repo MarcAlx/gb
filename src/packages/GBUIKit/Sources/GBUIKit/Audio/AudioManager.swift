@@ -30,6 +30,9 @@ class AudioManager {
     /// number of sample required for playing
     private let queueFloor = 10
     
+    /// buffer size
+    private let bufferSize = 1024
+    
     init(frequency:Int, gb:GameBoy) {
         
         self.workQueue = DispatchQueue(label: "gb audio queue", qos:.userInteractive)
@@ -40,7 +43,7 @@ class AudioManager {
         do {
             try AVAudioSession.sharedInstance().setCategory(.playback, mode: .default)
             try AVAudioSession.sharedInstance().setActive(true)
-            //try AVAudioSession.sharedInstance().setPreferredIOBufferDuration(1024/44100.0)
+            try AVAudioSession.sharedInstance().setPreferredIOBufferDuration(TimeInterval(self.bufferSize/self.sampleRate))
         } catch {
             self.lVM.log("Failed to set up AVAudioSession: \(error)")
         }
@@ -66,13 +69,9 @@ class AudioManager {
         //configure APU
         self.gameboy.apuConfiguration = APUConfiguration(
             sampleRate: self.sampleRate,
-            bufferSize: 512,
+            bufferSize: self.bufferSize,
             normalizationMethod: .FLOAT_MINUS_1_TO_1,
             playback: self.enqueueBuffer)
-        
-        self.workQueue.sync {
-            self.playerNode.play()
-        }
     }
     
     ///queue a buffer
@@ -80,27 +79,33 @@ class AudioManager {
         //store sample
         self.audioQueue.append(buffer)
         //we have enough sample queued -> play
-        if(self.audioQueue.count>self.queueFloor){
+        //not playing or enough buffer
+        if self.playerNode.isPlaying == false || self.audioQueue.count > self.queueFloor {
             self.playBack()
         }
     }
     
     /// dequeue and play next buffer
     private func playBack(){
-        if(self.audioQueue.count>0){
+        //prevent playback if no sample
+        //guard self.audioQueue.count > 0 else { return }
+        while(self.audioQueue.count > 0){
             //remove sample to play
             let next = self.audioQueue.removeFirst()
             //prepare
             let toPlay = self.convertAudioSamples(buffer: next)
             //schedule play on workqueue
-            self.workQueue.sync {
+            self.workQueue.async {
                 //schedule doesn't cancel current playback but queue it
-                playerNode.scheduleBuffer(toPlay, completionHandler: {
-                    //for debug purpose log if there's no sample queued after a sample is played
-                    if(self.audioQueue.count==0){
-                        print("pause")
-                    }
+                self.playerNode.scheduleBuffer(toPlay, completionHandler: {
+                    //try playback once schedule
+                    self.playBack()
                 })
+                
+                //only start playing when we have start scheduling
+                if(!self.playerNode.isPlaying) {
+                    self.playerNode.play()
+                }
             }
         }
     }
