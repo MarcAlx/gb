@@ -33,7 +33,7 @@ public class GameBoyViewModel:ObservableObject {
         self.gb = gb
         self.workQueue = DispatchQueue(label: "gb serial queue", qos:.userInteractive)
         //init audio playback
-        self.audioManager = AudioManager(frequency: 48_000 /*48KHz*/, gb: gb)
+        self.audioManager = AudioManager(frequency: 44_100 /*44,1 KHz*/, gb: gb)
         //init video rendering
         self.initDisplayLink()
     }
