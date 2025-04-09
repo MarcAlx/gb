@@ -53,6 +53,17 @@ graph TB;
   PPU --> PM;
 ```
 
+## Timing equivalency
+
+|   Timing (s)  |   Timing (ms)  |   CPU Speed (Hz/M cycle)  |   Audio frequency (Hz)  |   FPS     |  Note             |
+|---------------|----------------|---------------------------|-------------------------|-----------|-------------------|
+|   1           |   1000         |   4 194 304               |   44100                 |   60      |   60 fps          |
+|   0,000022    |   0,022        |   ~95                     |   1                     |   0,0013  |   Per audio frame |
+|   0,023       |   23           |   97280                   |   1024                  |   1,39    |   Audio latency   |
+|   0,01668     |   16,67        |   69905                   |   735                   |   1       |   1 fps           |
+
+_n.b 1 T cycle = 4 M cycle_
+
 ## Quality 
 
 ### gameboy doctor
