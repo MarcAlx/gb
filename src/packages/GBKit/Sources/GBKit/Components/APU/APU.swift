@@ -101,6 +101,9 @@ public class APU: Component, Clockable {
     //next audio buffer (note that this buffer is not normalized)
     private var nextBuffer:[RawAudioSample] = []
     
+    //timer to generate timer
+    private var sampleTimer = 0
+    
     init(mmu:MMU) {
         self.mmu = mmu
         self.channel1 = Sweep(mmu: self.mmu)
@@ -126,9 +129,12 @@ public class APU: Component, Clockable {
         }
         
         self.cycles = self.cycles &+ GBConstants.MCycleLength
+        self.sampleTimer += GBConstants.MCycleLength
         
-        //cycles tick is a multiple of sample tick rate -> store sample
-        if(self.cycles % self.sampleTickRate == 0) {
+        //sample timer has been reached -> sample
+        if(self.sampleTimer >= self.sampleTickRate) {
+            //reset timer
+            self.sampleTimer = 0
             //store sample
             self.nextBuffer.append(self.sample())
             //buffer size has been reached commit
