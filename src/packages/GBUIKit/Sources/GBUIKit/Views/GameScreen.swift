@@ -18,7 +18,11 @@ struct GameScreen: View {
             //border
             .overlay(RoundedRectangle(cornerRadius: 10).stroke(.black, lineWidth: 1))
             //game view
-            SpriteView(scene: GameScene().withSetup(gVM: self.gVM, size:  CGSize(width: GBConstants.ScreenWidth, height: GBConstants.ScreenHeight), fpsDisplayed: true),preferredFramesPerSecond: GBUIConstants.PreferredFrameRate)
+            SpriteView(scene: GameScene(gb: self.gVM.gb,
+                                        size:  CGSize(width: GBConstants.ScreenWidth,
+                                                      height: GBConstants.ScreenHeight),
+                                        fpsDisplayed: true),
+                       preferredFramesPerSecond: GBUIConstants.PreferredFrameRate)
                 .aspectRatio(1.0, contentMode: .fit)
                 .padding(10)
         }.padding(10)

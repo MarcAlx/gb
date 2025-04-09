@@ -75,7 +75,7 @@ struct MainView: View {
                                     }
                                 }.frame(alignment: .leading)
                             }
-                            GameScreen().frame(maxWidth: .infinity, alignment: .center)//only one screen
+                            GameScreen().frame(maxWidth: .infinity, alignment: .center) //only one screen
                             if(orientation.isLandscape
                                || ProcessInfo.processInfo.isMacCatalystApp){
                                 HStack{
