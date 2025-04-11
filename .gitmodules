@@ -1,0 +1,3 @@
+[submodule "src/packages/GBKit"]
+	path = src/packages/GBKit
+	url = https://github.com/MarcAlx/GBKit

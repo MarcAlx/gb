@@ -10,6 +10,8 @@ With controller supports and palette customization!
 
 **Work in progress** (still under active development) MBC and Audio (playing but innacurate) (ETA: when its done!). For now limited to GB, GBC support planned.
 
+This repo holds the front-end logic of the emulator for back-end logic (emulation code), see [GBKit](https://github.com/MarcAlx/GBKit).
+
 ## Compatibility
 
 This projects aims at being compatible with the following platforms:
