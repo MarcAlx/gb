@@ -39,13 +39,15 @@ let package = Package(
         )
     ],
     dependencies: [
-        .package(path: "../../packages/GBUIKit")
+        .package(path: "../../packages/GBUIKit"),
+        .package(path: "../../packages/GBKit")
     ],
     targets: [
         .executableTarget(
             name: "AppModule",
             dependencies: [
-                .product(name: "GBUIKit", package: "GBUIKit")
+                .product(name: "GBUIKit", package: "GBUIKit"),
+                .product(name: "GBKit", package: "GBKit")
             ],
             path: "."
         )
