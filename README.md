@@ -29,9 +29,9 @@ _n.b [Swift Playgrounds](https://www.apple.com/fr/swift/playgrounds/) is also su
 
 ## Structure
 
-This project is (for now) a mono repo that holds the following:
+This project/repo is (for now) organiseed as follow:
 
-- A core package package `GBKit` in `./packages/GBKit` (where the magic happens)
+- A core package package (as a submodule with its own repo) `GBKit` in `./packages/GBKit` (where the magic happens)
 - A SwiftUI package `GBUIKit` in `./packages/GBUIKit` (SwiftUI frontend)
 - The emulator app in `./src/app` (the macOS/iOS/iPadOS app itself)
 
@@ -41,7 +41,7 @@ This project is (for now) a mono repo that holds the following:
 
 2. Finalize GBUIKit (`./packages/GBKit`) (Keyboard support for macCatalyst,...)
 
-3. Release GBKit (`./packages/GBKit`) as a standalone Swift Package (with its own git) read to use in any Swift emulator project.
+~~3. Release GBKit (`./packages/GBKit`) as a standalone Swift Package (with its own git) read to use in any Swift emulator project.~~ -> see [GBKit](https://github.com/MarcAlx/GBKit)
 
 4. Release GBUIKit (`./packages/GBUIKit`) as a standalone Swift Package (with its own git) read to use in any Swift emulator project.
 
