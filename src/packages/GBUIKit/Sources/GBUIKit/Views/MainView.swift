@@ -29,6 +29,12 @@ struct MainView: View {
     @State private var customPaletteColor2:SwiftUI.Color = PaletteManager.sharedInstance.customPalette[2].toSWiftUIColor()
     @State private var customPaletteColor3:SwiftUI.Color = PaletteManager.sharedInstance.customPalette[3].toSWiftUIColor()
     
+    
+    @State private var isAudioChannel1Enabled:Bool = true
+    @State private var isAudioChannel2Enabled:Bool = true
+    @State private var isAudioChannel3Enabled:Bool = true
+    @State private var isAudioChannel4Enabled:Bool = true
+    
     var body: some View {
         VStack{
             if(!self.mVM.isFullScreen){
@@ -165,6 +171,21 @@ struct MainView: View {
                                 if(PaletteManager.sharedInstance.paletteIndex == .CUSTOM){
                                     PaletteManager.sharedInstance.setCurrentPalette(palette: .CUSTOM)
                                 }
+                            }
+                        }
+                        
+                        Section(header: Text("Audio channels")){
+                            Toggle("Channel 1 (Sweep)", isOn: self.$isAudioChannel1Enabled).onChange(of: isAudioChannel1Enabled) { newValue in
+                                self.gVM.gb.apuConfiguration.isChannel1Enabled = newValue
+                            }
+                            Toggle("Channel 2 (Pulse)", isOn: self.$isAudioChannel2Enabled).onChange(of: isAudioChannel2Enabled) { newValue in
+                                self.gVM.gb.apuConfiguration.isChannel2Enabled = newValue
+                            }
+                            Toggle("Channel 3 (Wave)",  isOn: self.$isAudioChannel3Enabled).onChange(of: isAudioChannel3Enabled) { newValue in
+                                self.gVM.gb.apuConfiguration.isChannel3Enabled = newValue
+                            }
+                            Toggle("Channel 4 (Noise)", isOn: self.$isAudioChannel4Enabled).onChange(of: isAudioChannel4Enabled) { newValue in
+                                self.gVM.gb.apuConfiguration.isChannel4Enabled = newValue
                             }
                         }
                     }
