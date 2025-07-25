@@ -29,7 +29,8 @@ struct MainView: View {
     @State private var customPaletteColor2:SwiftUI.Color = PaletteManager.sharedInstance.customPalette[2].toSWiftUIColor()
     @State private var customPaletteColor3:SwiftUI.Color = PaletteManager.sharedInstance.customPalette[3].toSWiftUIColor()
     
-    
+    @State private var mainVolume:Float = 0.5
+
     @State private var isAudioChannel1Enabled:Bool = true
     @State private var isAudioChannel2Enabled:Bool = true
     @State private var isAudioChannel3Enabled:Bool = true
@@ -174,7 +175,20 @@ struct MainView: View {
                             }
                         }
                         
-                        Section(header: Text("Audio channels")){
+                        Section(header: Text("Audio")){
+                            HStack{
+                                Text("Main volume")
+                                Spacer(minLength: 400)
+                                Slider(value: self.$mainVolume, in: 0...1) {
+                                    
+                                } minimumValueLabel: {
+                                    Text("0").font(.title2).fontWeight(.thin)
+                                } maximumValueLabel: {
+                                    Text("100%").font(.title2).fontWeight(.thin)
+                                }.onChange(of: mainVolume) { newValue in
+                                    self.gVM.audioManager.volume = newValue
+                                }
+                            }
                             Toggle("Channel 1 (Sweep)", isOn: self.$isAudioChannel1Enabled).onChange(of: isAudioChannel1Enabled) { newValue in
                                 self.gVM.gb.apuConfiguration.isChannel1Enabled = newValue
                             }

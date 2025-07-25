@@ -33,6 +33,19 @@ class AudioManager {
     /// buffer size
     private let bufferSize = 1024
     
+    //main volume
+    private var _volume:Float = 0.5
+    public var volume:Float {
+        get {
+            self._volume
+        }
+        set {
+            self._volume = newValue
+            self.engine.mainMixerNode.volume = self.volume
+            self.playerNode.volume = self.volume
+        }
+    }
+    
     init(frequency:Int, gb:GameBoy) {
         
         self.workQueue = DispatchQueue(label: "gb audio queue", qos:.userInteractive)
@@ -63,8 +76,8 @@ class AudioManager {
             self.lVM.log("Error starting engine: \(error)")
         }
         
-        self.engine.mainMixerNode.volume = 1.0
-        self.playerNode.volume = 1.0
+        self.engine.mainMixerNode.volume = self.volume
+        self.playerNode.volume = self.volume
         
         //configure APU
         self.gameboy.apuConfiguration = APUConfiguration(
