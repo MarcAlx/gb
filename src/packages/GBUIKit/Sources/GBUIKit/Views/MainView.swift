@@ -36,6 +36,10 @@ struct MainView: View {
     @State private var isAudioChannel3Enabled:Bool = true
     @State private var isAudioChannel4Enabled:Bool = true
     
+    @State private var isPPULayerBGEnabled:Bool = true
+    @State private var isPPULayerWINEnabled:Bool = true
+    @State private var isPPULayerOBJEnabled:Bool = true
+    
     var body: some View {
         VStack{
             if(!self.mVM.isFullScreen){
@@ -172,6 +176,18 @@ struct MainView: View {
                                 if(VideoManager.sharedInstance.paletteIndex == .CUSTOM){
                                     VideoManager.sharedInstance.setCurrentPalette(palette: .CUSTOM, ppu: self.gVM.gb.motherboard.ppu)
                                 }
+                            }
+                        }
+                        
+                        Section(header: Text("PPU layers")){
+                            Toggle("BG", isOn: self.$isPPULayerBGEnabled).onChange(of: isPPULayerBGEnabled) { newValue in
+                                self.gVM.gb.ppuConfiguration.isBGEnabled = newValue
+                            }
+                            Toggle("WIN", isOn: self.$isPPULayerWINEnabled).onChange(of: isPPULayerWINEnabled) { newValue in
+                                self.gVM.gb.ppuConfiguration.isWINEnabled = newValue
+                            }
+                            Toggle("OBJ",  isOn: self.$isPPULayerOBJEnabled).onChange(of: isPPULayerOBJEnabled) { newValue in
+                                self.gVM.gb.ppuConfiguration.isOBJEnabled = newValue
                             }
                         }
                         
