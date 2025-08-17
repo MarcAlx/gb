@@ -35,6 +35,7 @@ struct MainView: View {
     @State private var isAudioChannel2Enabled:Bool = true
     @State private var isAudioChannel3Enabled:Bool = true
     @State private var isAudioChannel4Enabled:Bool = true
+    @State private var isAudioHPFEnabled:Bool = true
     
     @State private var isPPULayerBGEnabled:Bool = true
     @State private var isPPULayerWINEnabled:Bool = true
@@ -216,6 +217,9 @@ struct MainView: View {
                             }
                             Toggle("Channel 4 (Noise)", isOn: self.$isAudioChannel4Enabled).onChange(of: isAudioChannel4Enabled) { newValue in
                                 self.gVM.gb.apuConfiguration.isChannel4Enabled = newValue
+                            }
+                            Toggle("High Pass Filter", isOn: self.$isAudioHPFEnabled).onChange(of: isAudioHPFEnabled) { newValue in
+                                self.gVM.gb.apuConfiguration.isHPFEnabled = newValue
                             }
                         }
                     }
