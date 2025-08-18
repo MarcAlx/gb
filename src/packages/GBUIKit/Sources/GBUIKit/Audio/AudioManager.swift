@@ -98,28 +98,29 @@ class AudioManager {
         }
     }
     
-    /// dequeue and play next buffer
-    private func playBack(){
-        //prevent playback if no sample
-        //guard self.audioQueue.count > 0 else { return }
-        while(self.audioQueue.count > 0){
-            //remove sample to play
-            let next = self.audioQueue.removeFirst()
-            //prepare
-            let toPlay = self.convertAudioSamples(buffer: next)
-            //schedule play on workqueue
-            self.workQueue.async {
-                //schedule doesn't cancel current playback but queue it
-                self.playerNode.scheduleBuffer(toPlay, completionHandler: {
-                    //try playback once schedule
-                    self.playBack()
-                })
-                
-                //only start playing when we have start scheduling
-                if(!self.playerNode.isPlaying) {
-                    self.playerNode.play()
-                }
-            }
+    /// start playback
+    private func playBack() {
+        // wait for queue to be filled before playing
+        for _ in 0..<self.queueFloor {
+            scheduleNextBuffer()
+        }
+        self.playerNode.play()
+    }
+    
+    /// schedule next buffer
+    private func scheduleNextBuffer() {
+        //nothing to play, do nothing
+        guard !self.audioQueue.isEmpty else { return }
+        
+        let next = self.audioQueue.removeFirst()
+        let toPlay = self.convertAudioSamples(buffer: next)
+        
+        //schedule play on workqueue
+        self.workQueue.async {
+            self.playerNode.scheduleBuffer(toPlay, completionHandler: { [weak self] in
+                //once completed, schedule next
+                self?.scheduleNextBuffer()
+            })
         }
     }
     
