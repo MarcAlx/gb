@@ -83,7 +83,6 @@ class AudioManager {
         self.gameboy.apuConfiguration = APUConfiguration(
             sampleRate: self.sampleRate,
             bufferSize: self.bufferSize,
-            normalizationMethod: .FLOAT_MINUS_1_TO_1,
             playback: self.enqueueBuffer)
     }
     
