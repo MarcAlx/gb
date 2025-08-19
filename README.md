@@ -37,7 +37,7 @@ This project/repo is (for now) organiseed as follow:
 
 ## Roadmap
 
-1. Finalize GBKit (`./packages/GBKit`) (MBC, APU (needs to pass audio test to improve overhall audio feeling))
+1. Finalize GBKit (`./packages/GBKit`) (MBC, APU (needs to improve overhall audio feeling))
 
 2. Finalize GBUIKit (`./packages/GBKit`) (Keyboard support for macCatalyst,...)
 
@@ -45,11 +45,13 @@ This project/repo is (for now) organiseed as follow:
 
 4. Release GBUIKit (`./packages/GBUIKit`) as a standalone Swift Package (with its own git) read to use in any Swift emulator project.
 
-5. Add support for GBC
+5. Better frontend controls (keyboard, buttons made in SceneKit to avoid SwiftUI performance drop)
 
-6. Create another front-end based on [SDL](https://www.libsdl.org) via [SwiftSDL](https://github.com/KevinVitale/SwiftSDL)
+6. Add support for GBC
 
-7. Restore supports for [Swift Playgrounds](https://www.apple.com/fr/swift/playgrounds/) implies to reference GBKit and GBUIKit as dependencies.
+7. Create another front-end based on [SDL](https://www.libsdl.org) via [SwiftSDL](https://github.com/KevinVitale/SwiftSDL)
+
+8. Restore supports for [Swift Playgrounds](https://www.apple.com/fr/swift/playgrounds/) implies to reference GBKit and GBUIKit as dependencies.
 
 ## Screenshots
 
