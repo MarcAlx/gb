@@ -8,7 +8,7 @@ With controller supports and palette customization!
 
 **Status** Games that don't need MBC supports or advance CPU tricks work, e.g Tetris, Tennis...
 
-**Work in progress** (still under active development) MBC and Audio (playing but innacurate) (ETA: when its done!). For now limited to GB, GBC support planned.
+**Work in progress** (still under active development, MBC under development) (ETA: when its done!). For now limited to GB, GBC support planned.
 
 This repo holds the front-end logic of the emulator for back-end logic (emulation code), see [GBKit](https://github.com/MarcAlx/GBKit).
 
@@ -37,7 +37,7 @@ This project/repo is (for now) organiseed as follow:
 
 ## Roadmap
 
-1. Finalize GBKit (`./packages/GBKit`) (MBC, APU (needs to improve overhall audio feeling))
+1. Finalize GBKit (`./packages/GBKit`) (MBC)
 
 2. Finalize GBUIKit (`./packages/GBKit`) (Keyboard support for macCatalyst,...)
 
