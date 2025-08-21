@@ -33,6 +33,19 @@ class AudioManager {
     /// buffer size
     private let bufferSize = 1024
     
+    //main volume
+    private var _volume:Float = 0.5
+    public var volume:Float {
+        get {
+            self._volume
+        }
+        set {
+            self._volume = newValue
+            self.engine.mainMixerNode.volume = self.volume
+            self.playerNode.volume = self.volume
+        }
+    }
+    
     init(frequency:Int, gb:GameBoy) {
         
         self.workQueue = DispatchQueue(label: "gb audio queue", qos:.userInteractive)
@@ -63,14 +76,13 @@ class AudioManager {
             self.lVM.log("Error starting engine: \(error)")
         }
         
-        self.engine.mainMixerNode.volume = 1.0
-        self.playerNode.volume = 1.0
+        self.engine.mainMixerNode.volume = self.volume
+        self.playerNode.volume = self.volume
         
         //configure APU
         self.gameboy.apuConfiguration = APUConfiguration(
             sampleRate: self.sampleRate,
             bufferSize: self.bufferSize,
-            normalizationMethod: .FLOAT_MINUS_1_TO_1,
             playback: self.enqueueBuffer)
     }
     
@@ -85,28 +97,29 @@ class AudioManager {
         }
     }
     
-    /// dequeue and play next buffer
-    private func playBack(){
-        //prevent playback if no sample
-        //guard self.audioQueue.count > 0 else { return }
-        while(self.audioQueue.count > 0){
-            //remove sample to play
-            let next = self.audioQueue.removeFirst()
-            //prepare
-            let toPlay = self.convertAudioSamples(buffer: next)
-            //schedule play on workqueue
-            self.workQueue.async {
-                //schedule doesn't cancel current playback but queue it
-                self.playerNode.scheduleBuffer(toPlay, completionHandler: {
-                    //try playback once schedule
-                    self.playBack()
-                })
-                
-                //only start playing when we have start scheduling
-                if(!self.playerNode.isPlaying) {
-                    self.playerNode.play()
-                }
-            }
+    /// start playback
+    private func playBack() {
+        // wait for queue to be filled before playing
+        for _ in 0..<self.queueFloor {
+            scheduleNextBuffer()
+        }
+        self.playerNode.play()
+    }
+    
+    /// schedule next buffer
+    private func scheduleNextBuffer() {
+        //nothing to play, do nothing
+        guard !self.audioQueue.isEmpty else { return }
+        
+        let next = self.audioQueue.removeFirst()
+        let toPlay = self.convertAudioSamples(buffer: next)
+        
+        //schedule play on workqueue
+        self.workQueue.async {
+            self.playerNode.scheduleBuffer(toPlay, completionHandler: { [weak self] in
+                //once completed, schedule next
+                self?.scheduleNextBuffer()
+            })
         }
     }
     

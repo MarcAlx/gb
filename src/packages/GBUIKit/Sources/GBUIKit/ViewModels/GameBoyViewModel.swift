@@ -16,7 +16,7 @@ public class GameBoyViewModel:ObservableObject {
     private var pButtons:Set<JoyPadButtons> = Set<JoyPadButtons>()
     
     /// for audio playback
-    private let audioManager:AudioManager
+    let audioManager:AudioManager
     
     /*
      * used to act at every frame

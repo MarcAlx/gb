@@ -18,16 +18,28 @@ struct MainView: View {
     @EnvironmentObject private var eVM:ErrorViewModel
     @EnvironmentObject private var gVM:GameBoyViewModel
     
-    @State private var paletetteManager:PaletteManager = PaletteManager.sharedInstance
+    @State private var videoManager:VideoManager = VideoManager.sharedInstance
     
     @State private var orientation = UIDevice.current.orientation
     @State private var currentTab:MainViewTabs = MainViewTabs.Game
-    @State private var currentPaletteIndex:PalettesIndexes = PaletteManager.sharedInstance.paletteIndex
+    @State private var currentPaletteIndex:PalettesIndexes = VideoManager.sharedInstance.paletteIndex
     
-    @State private var customPaletteColor0:SwiftUI.Color = PaletteManager.sharedInstance.customPalette[0].toSWiftUIColor()
-    @State private var customPaletteColor1:SwiftUI.Color = PaletteManager.sharedInstance.customPalette[1].toSWiftUIColor()
-    @State private var customPaletteColor2:SwiftUI.Color = PaletteManager.sharedInstance.customPalette[2].toSWiftUIColor()
-    @State private var customPaletteColor3:SwiftUI.Color = PaletteManager.sharedInstance.customPalette[3].toSWiftUIColor()
+    @State private var customPaletteColor0:SwiftUI.Color = VideoManager.sharedInstance.customPalette[0].toSWiftUIColor()
+    @State private var customPaletteColor1:SwiftUI.Color = VideoManager.sharedInstance.customPalette[1].toSWiftUIColor()
+    @State private var customPaletteColor2:SwiftUI.Color = VideoManager.sharedInstance.customPalette[2].toSWiftUIColor()
+    @State private var customPaletteColor3:SwiftUI.Color = VideoManager.sharedInstance.customPalette[3].toSWiftUIColor()
+    
+    @State private var mainVolume:Float = 0.5
+
+    @State private var isAudioChannel1Enabled:Bool = true
+    @State private var isAudioChannel2Enabled:Bool = true
+    @State private var isAudioChannel3Enabled:Bool = true
+    @State private var isAudioChannel4Enabled:Bool = true
+    @State private var isAudioHPFEnabled:Bool = true
+    
+    @State private var isPPULayerBGEnabled:Bool = true
+    @State private var isPPULayerWINEnabled:Bool = true
+    @State private var isPPULayerOBJEnabled:Bool = true
     
     var body: some View {
         VStack{
@@ -129,42 +141,85 @@ struct MainView: View {
                             }
                             .pickerStyle(.menu)
                             .onChange(of: currentPaletteIndex) { newValue in
-                                PaletteManager.sharedInstance.setCurrentPalette(palette: newValue)
+                                VideoManager.sharedInstance.setCurrentPalette(palette: newValue, ppu: self.gVM.gb.motherboard.ppu)
                                 //adapt screen background
-                                self.mVM.screenBackground = PaletteManager.sharedInstance.currentPalette[0].toSWiftUIColor()
+                                self.mVM.screenBackground = self.gVM.gb.ppuConfiguration.palette[0].toSWiftUIColor()
                             }
                         }
                         
                         Section(header: Text("Custom palette configuration")){
                             ColorPicker("Color 1", selection: self.$customPaletteColor0, supportsOpacity: false).onChange(of: customPaletteColor0) { newValue in
-                                PaletteManager.sharedInstance.customPalette[0]=GBKit.Color.fromSWiftUIColor(newValue)
+                                VideoManager.sharedInstance.customPalette[0]=GBKit.Color.fromSWiftUIColor(newValue)
                                 //re-apply custom palette if active in order to see change
-                                if(PaletteManager.sharedInstance.paletteIndex == .CUSTOM){
-                                    PaletteManager.sharedInstance.setCurrentPalette(palette: .CUSTOM)
+                                if(VideoManager.sharedInstance.paletteIndex == .CUSTOM){
+                                    VideoManager.sharedInstance.setCurrentPalette(palette: .CUSTOM, ppu: self.gVM.gb.motherboard.ppu)
                                     //adapt screen background
-                                    self.mVM.screenBackground = PaletteManager.sharedInstance.currentPalette[0].toSWiftUIColor()
+                                    self.mVM.screenBackground = self.gVM.gb.ppuConfiguration.palette[0].toSWiftUIColor()
                                 }
                             }
                             ColorPicker("Color 2", selection: self.$customPaletteColor1, supportsOpacity: false).onChange(of: customPaletteColor1) { newValue in
-                                PaletteManager.sharedInstance.customPalette[1]=GBKit.Color.fromSWiftUIColor(newValue)
+                                VideoManager.sharedInstance.customPalette[1]=GBKit.Color.fromSWiftUIColor(newValue)
                                 //re-apply custom palette if active in order to see change
-                                if(PaletteManager.sharedInstance.paletteIndex == .CUSTOM){
-                                    PaletteManager.sharedInstance.setCurrentPalette(palette: .CUSTOM)
+                                if(VideoManager.sharedInstance.paletteIndex == .CUSTOM){
+                                    VideoManager.sharedInstance.setCurrentPalette(palette: .CUSTOM, ppu: self.gVM.gb.motherboard.ppu)
                                 }
                             }
                             ColorPicker("Color 3", selection: self.$customPaletteColor2, supportsOpacity: false).onChange(of: customPaletteColor2) { newValue in
-                                PaletteManager.sharedInstance.customPalette[2]=GBKit.Color.fromSWiftUIColor(newValue)
+                                VideoManager.sharedInstance.customPalette[2]=GBKit.Color.fromSWiftUIColor(newValue)
                                 //re-apply custom palette if active in order to see change
-                                if(PaletteManager.sharedInstance.paletteIndex == .CUSTOM){
-                                    PaletteManager.sharedInstance.setCurrentPalette(palette: .CUSTOM)
+                                if(VideoManager.sharedInstance.paletteIndex == .CUSTOM){
+                                    VideoManager.sharedInstance.setCurrentPalette(palette: .CUSTOM, ppu: self.gVM.gb.motherboard.ppu)
                                 }
                             }
                             ColorPicker("Color 4", selection: self.$customPaletteColor3, supportsOpacity: false).onChange(of: customPaletteColor3) { newValue in
-                                PaletteManager.sharedInstance.customPalette[3]=GBKit.Color.fromSWiftUIColor(newValue)
+                                VideoManager.sharedInstance.customPalette[3]=GBKit.Color.fromSWiftUIColor(newValue)
                                 //re-apply custom palette if active in order to see change
-                                if(PaletteManager.sharedInstance.paletteIndex == .CUSTOM){
-                                    PaletteManager.sharedInstance.setCurrentPalette(palette: .CUSTOM)
+                                if(VideoManager.sharedInstance.paletteIndex == .CUSTOM){
+                                    VideoManager.sharedInstance.setCurrentPalette(palette: .CUSTOM, ppu: self.gVM.gb.motherboard.ppu)
                                 }
+                            }
+                        }
+                        
+                        Section(header: Text("PPU layers")){
+                            Toggle("BG", isOn: self.$isPPULayerBGEnabled).onChange(of: isPPULayerBGEnabled) { newValue in
+                                self.gVM.gb.ppuConfiguration.isBGEnabled = newValue
+                            }
+                            Toggle("WIN", isOn: self.$isPPULayerWINEnabled).onChange(of: isPPULayerWINEnabled) { newValue in
+                                self.gVM.gb.ppuConfiguration.isWINEnabled = newValue
+                            }
+                            Toggle("OBJ",  isOn: self.$isPPULayerOBJEnabled).onChange(of: isPPULayerOBJEnabled) { newValue in
+                                self.gVM.gb.ppuConfiguration.isOBJEnabled = newValue
+                            }
+                        }
+                        
+                        Section(header: Text("Audio")){
+                            HStack{
+                                Text("Main volume")
+                                Spacer(minLength: 400)
+                                Slider(value: self.$mainVolume, in: 0...1) {
+                                    
+                                } minimumValueLabel: {
+                                    Text("0").font(.title2).fontWeight(.thin)
+                                } maximumValueLabel: {
+                                    Text("100%").font(.title2).fontWeight(.thin)
+                                }.onChange(of: mainVolume) { newValue in
+                                    self.gVM.audioManager.volume = newValue
+                                }
+                            }
+                            Toggle("Channel 1 (Sweep)", isOn: self.$isAudioChannel1Enabled).onChange(of: isAudioChannel1Enabled) { newValue in
+                                self.gVM.gb.apuConfiguration.isChannel1Enabled = newValue
+                            }
+                            Toggle("Channel 2 (Pulse)", isOn: self.$isAudioChannel2Enabled).onChange(of: isAudioChannel2Enabled) { newValue in
+                                self.gVM.gb.apuConfiguration.isChannel2Enabled = newValue
+                            }
+                            Toggle("Channel 3 (Wave)",  isOn: self.$isAudioChannel3Enabled).onChange(of: isAudioChannel3Enabled) { newValue in
+                                self.gVM.gb.apuConfiguration.isChannel3Enabled = newValue
+                            }
+                            Toggle("Channel 4 (Noise)", isOn: self.$isAudioChannel4Enabled).onChange(of: isAudioChannel4Enabled) { newValue in
+                                self.gVM.gb.apuConfiguration.isChannel4Enabled = newValue
+                            }
+                            Toggle("High Pass Filter", isOn: self.$isAudioHPFEnabled).onChange(of: isAudioHPFEnabled) { newValue in
+                                self.gVM.gb.apuConfiguration.isHPFEnabled = newValue
                             }
                         }
                     }
@@ -174,7 +229,7 @@ struct MainView: View {
         }.frame(minWidth: 0, maxWidth: .infinity)
         //on appear init screenbg
         .onAppear {
-            self.mVM.screenBackground = paletetteManager.currentPalette[0].toSWiftUIColor()
+            self.mVM.screenBackground = self.gVM.gb.ppuConfiguration.palette[0].toSWiftUIColor()
         }
         //handle orientation change
         .onRotate { newOrientation in
