@@ -6,6 +6,8 @@ struct GameScreen: View {
     @EnvironmentObject private var mVM:MainViewModel
     @EnvironmentObject private var gVM:GameBoyViewModel
     
+    @Binding var withFPS:Bool;
+    
     var body: some View {
         ZStack {
             //background that should match bg palette, part of GB design (screen is larger than framebuffer)
@@ -21,10 +23,11 @@ struct GameScreen: View {
             SpriteView(scene: GameScene(gb: self.gVM.gb,
                                         size:  CGSize(width: GBConstants.ScreenWidth,
                                                       height: GBConstants.ScreenHeight),
-                                        fpsDisplayed: true),
+                                        fpsDisplayed: self.withFPS),
                        preferredFramesPerSecond: GBUIConstants.PreferredFrameRate)
                 .aspectRatio(1.0, contentMode: .fit)
                 .padding(10)
+                .id(self.withFPS)//to ensure spriteview redraw on withfps change
         }.padding(10)
     }
 }

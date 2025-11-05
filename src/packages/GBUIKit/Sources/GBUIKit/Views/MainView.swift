@@ -41,6 +41,8 @@ struct MainView: View {
     @State private var isPPULayerWINEnabled:Bool = true
     @State private var isPPULayerOBJEnabled:Bool = true
     
+    @State private var isFPSDisplayed:Bool = true
+    
     var body: some View {
         VStack{
             if(!self.mVM.isFullScreen){
@@ -87,7 +89,7 @@ struct MainView: View {
                                     }
                                 }.frame(alignment: .leading)
                             }
-                            GameScreen().frame(maxWidth: .infinity, alignment: .center) //only one screen
+                            GameScreen(withFPS: self.$isFPSDisplayed).frame(maxWidth: .infinity, alignment: .center) //only one screen
                             if(orientation.isLandscape
                                || ProcessInfo.processInfo.isMacCatalystApp){
                                 HStack{
@@ -221,6 +223,9 @@ struct MainView: View {
                             Toggle("High Pass Filter", isOn: self.$isAudioHPFEnabled).onChange(of: isAudioHPFEnabled) { newValue in
                                 self.gVM.gb.apuConfiguration.isHPFEnabled = newValue
                             }
+                        }
+                        Section(header: Text("Debug")) {
+                            Toggle("Display FPS", isOn: self.$isFPSDisplayed)
                         }
                     }
                     Spacer()
