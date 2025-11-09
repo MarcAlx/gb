@@ -56,11 +56,6 @@ struct MainView: View {
                 VStack {
                     VStack {
                         Form {
-                            Section(header: Text("log.section.pressedButtons".localized)) {
-                                ForEach(self.gVM.pressedButtons.sorted{$0.hashValue < $1.hashValue}, id: \.hashValue){ b in
-                                    Text(b.rawValue)
-                                }
-                            }
                             Section(header: Text("log.section.log".localized)) {
                                 ScrollView {
                                     ForEach(self.lVM.messages) { log in

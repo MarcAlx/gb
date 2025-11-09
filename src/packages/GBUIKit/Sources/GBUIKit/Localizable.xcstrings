@@ -210,17 +210,6 @@
         }
       }
     },
-    "log.section.pressedButtons" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Pressed buttons "
-          }
-        }
-      }
-    },
     "mainVolume.max" : {
       "extractionState" : "manual",
       "localizations" : {
