@@ -2,14 +2,29 @@ import SwiftUI
 import GBKit
 import SpriteKit
 
+/// button mapping configuration
+class ButtonMapping: ObservableObject {
+    @Published var forButtonA:Int = UIKeyboardHIDUsage.keyboardX.rawValue
+    @Published var forButtonB:Int = UIKeyboardHIDUsage.keyboardC.rawValue
+    @Published var forButtonStart:Int = UIKeyboardHIDUsage.keyboardSpacebar.rawValue
+    @Published var forButtonSelect:Int = UIKeyboardHIDUsage.keyboardV.rawValue
+    @Published var forButtonUp:Int = UIKeyboardHIDUsage.keyboardUpArrow.rawValue
+    @Published var forButtonDown:Int = UIKeyboardHIDUsage.keyboardDownArrow.rawValue
+    @Published var forButtonLeft:Int = UIKeyboardHIDUsage.keyboardLeftArrow.rawValue
+    @Published var forButtonRight:Int = UIKeyboardHIDUsage.keyboardRightArrow.rawValue
+}
+
 /// focusable SKView that watches key presses
 class FocusableSKView: SKView {
     private var gVM:GameBoyViewModel = GameBoyViewModel()
     
     override var canBecomeFirstResponder: Bool { true }
     
-    public func withGVM(gvm:GameBoyViewModel)-> FocusableSKView{
+    private var buttonMapping:ButtonMapping = ButtonMapping()
+    
+    public func with(gvm:GameBoyViewModel, andMapping:ButtonMapping)-> FocusableSKView{
         self.gVM = gvm
+        self.buttonMapping = andMapping
         return self
     }
     
@@ -24,35 +39,35 @@ class FocusableSKView: SKView {
     private func checkKeys(_ presses: Set<UIPress>, pressed:Bool){
         for press in presses {
             if let key = press.key {
-                if(key.keyCode == UIKeyboardHIDUsage.keyboardLeftArrow)
+                if(key.keyCode.rawValue == self.buttonMapping.forButtonLeft)
                 {
                     self.gVM.setButtonState(.LEFT, pressed)
                 }
-                else if(key.keyCode == UIKeyboardHIDUsage.keyboardRightArrow)
+                else if(key.keyCode.rawValue == self.buttonMapping.forButtonRight)
                 {
                     self.gVM.setButtonState(.RIGHT, pressed)
                 }
-                else if(key.keyCode == UIKeyboardHIDUsage.keyboardUpArrow)
+                else if(key.keyCode.rawValue == self.buttonMapping.forButtonUp)
                 {
                     self.gVM.setButtonState(.UP, pressed)
                 }
-                else if(key.keyCode == UIKeyboardHIDUsage.keyboardDownArrow)
+                else if(key.keyCode.rawValue == self.buttonMapping.forButtonDown)
                 {
                     self.gVM.setButtonState(.DOWN, pressed)
                 }
-                else if(key.keyCode == UIKeyboardHIDUsage.keyboardX)
+                else if(key.keyCode.rawValue == self.buttonMapping.forButtonA)
                 {
                     self.gVM.setButtonState(.A, pressed)
                 }
-                else if(key.keyCode == UIKeyboardHIDUsage.keyboardC)
+                else if(key.keyCode.rawValue == self.buttonMapping.forButtonB)
                 {
                     self.gVM.setButtonState(.B, pressed)
                 }
-                else if(key.keyCode == UIKeyboardHIDUsage.keyboardSpacebar)
+                else if(key.keyCode.rawValue == self.buttonMapping.forButtonStart)
                 {
                     self.gVM.setButtonState(.START, pressed)
                 }
-                else if(key.keyCode == UIKeyboardHIDUsage.keyboardV)
+                else if(key.keyCode.rawValue == self.buttonMapping.forButtonSelect)
                 {
                     self.gVM.setButtonState(.SELECT, pressed)
                 }
@@ -73,9 +88,10 @@ class FocusableSKView: SKView {
 struct FocusedSpriteKitView: UIViewRepresentable {
     
     @EnvironmentObject private var gVM:GameBoyViewModel
+    @EnvironmentObject private var buttonMapping:ButtonMapping
     
     func makeUIView(context: Context) -> FocusableSKView {
-        let view = FocusableSKView().withGVM(gvm: self.gVM)
+        let view = FocusableSKView().with(gvm: self.gVM, andMapping: self.buttonMapping)
         
         // Delay focus slightly to ensure the view is in window
         DispatchQueue.main.async {

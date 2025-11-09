@@ -17,6 +17,7 @@ struct MainView: View {
     @EnvironmentObject private var lVM:LoggingViewModel
     @EnvironmentObject private var eVM:ErrorViewModel
     @EnvironmentObject private var gVM:GameBoyViewModel
+    @EnvironmentObject private var buttonMapping:ButtonMapping
     
     @State private var videoManager:VideoManager = VideoManager.sharedInstance
     
@@ -42,6 +43,12 @@ struct MainView: View {
     @State private var isPPULayerOBJEnabled:Bool = true
     
     @State private var isFPSDisplayed:Bool = true
+    
+    var keyValues: some View {
+        ForEach(Array(keyboardKeys.keys).sorted(), id: \.self) { key in
+            Text(key).tag(keyboardKeys[key]!)
+        }
+    }
     
     var body: some View {
         NavigationStack {
@@ -221,6 +228,42 @@ struct MainView: View {
                                         self.gVM.gb.apuConfiguration.isHPFEnabled = newValue
                                     }
                                 }
+                                
+                                Section(header: Text("settings.section.buttonMapping".localized)) {
+                                    Picker("joypad.A".localized, selection: self.$buttonMapping.forButtonA) {
+                                        keyValues
+                                    }
+                                    .pickerStyle(.menu)
+                                    Picker("joypad.B".localized, selection: self.$buttonMapping.forButtonB) {
+                                        keyValues
+                                    }
+                                    .pickerStyle(.menu)
+                                    Picker("joypad.Start".localized, selection: self.$buttonMapping.forButtonStart) {
+                                        keyValues
+                                    }
+                                    .pickerStyle(.menu)
+                                    Picker("joypad.Select".localized, selection: self.$buttonMapping.forButtonSelect) {
+                                        keyValues
+                                    }
+                                    .pickerStyle(.menu)
+                                    Picker("joypad.Up".localized, selection: self.$buttonMapping.forButtonUp) {
+                                        keyValues
+                                    }
+                                    .pickerStyle(.menu)
+                                    Picker("joypad.Down".localized, selection: self.$buttonMapping.forButtonDown) {
+                                        keyValues
+                                    }
+                                    .pickerStyle(.menu)
+                                    Picker("joypad.Left".localized, selection: self.$buttonMapping.forButtonLeft) {
+                                        keyValues
+                                    }
+                                    .pickerStyle(.menu)
+                                    Picker("joypad.Right".localized, selection: self.$buttonMapping.forButtonRight) {
+                                        keyValues
+                                    }
+                                    .pickerStyle(.menu)
+                                }
+                                
                                 Section(header: Text("settings.section.debug".localized)) {
                                     Toggle("setting.displayFPS".localized, isOn: self.$isFPSDisplayed)
                                 }

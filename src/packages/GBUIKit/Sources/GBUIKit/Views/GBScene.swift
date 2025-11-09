@@ -8,6 +8,7 @@ public struct GBScene: Scene {
     @StateObject private var eVM:ErrorViewModel = ErrorViewModel()
     @StateObject private var gVM:GameBoyViewModel = GameBoyViewModel()
     @StateObject private var mVM:MainViewModel = MainViewModel()
+    @StateObject private var buttonMapping:ButtonMapping = ButtonMapping()
     
     @FocusState private var isFocused: Bool
     
@@ -22,6 +23,7 @@ public struct GBScene: Scene {
                           .environmentObject(self.lVM)
                           .environmentObject(self.gVM)
                           .environmentObject(self.eVM)
+                          .environmentObject(self.buttonMapping)
             }
             .onAppear {
                 GBLogService.gbLogger = self.lVM
