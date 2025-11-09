@@ -20,9 +20,6 @@ let package = Package(
         .target(
             name: "GBUIKit",
             dependencies: [.product(name: "GBKit", package: "GBKit")]),
-        .testTarget(
-            name: "GBUIKitTests",
-            dependencies: ["GBUIKit","GBKit"]),
     ],
     swiftLanguageVersions: [
         .v5,
