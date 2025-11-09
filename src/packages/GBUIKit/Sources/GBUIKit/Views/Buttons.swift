@@ -114,7 +114,7 @@ struct InsertButton: View {
         Button {
             self.mVM.fileImporterPresented = true
         } label: {
-            Label("insert cartridge",systemImage: "square.and.arrow.down")
+            Label("button.insertCartridge".localized,systemImage: "square.and.arrow.down")
         }.disabled(self.gVM.isOn)
     }
 }
@@ -125,7 +125,7 @@ struct OnOffSwitch: View {
     
     var body: some View {
         Toggle(isOn: self.$gVM.isOn){
-            Label(self.gVM.isOn ? "Turn off" : "Turn on",
+            Label(self.gVM.isOn ? "toggle.isOn.true".localized : "toggle.isOn.false".localized,
                   systemImage: self.gVM.isOn ? "lightswitch.off" : "lightswitch.on" ).frame(maxWidth: .infinity, alignment: .trailing)
         }.onChange(of: self.gVM.isOn) { value in
             if(value)  {

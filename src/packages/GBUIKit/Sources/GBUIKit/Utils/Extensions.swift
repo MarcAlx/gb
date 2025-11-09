@@ -88,3 +88,11 @@ extension GBKit.Color {
     }
     
 }
+
+public extension String {
+    
+    /// Returns the localized string from the package's bundle.
+    var localized: String {
+        NSLocalizedString(self, bundle: .module, comment: "")
+    }
+}
