@@ -257,7 +257,7 @@ struct MainView: View {
              }
              }
              }
-             }*/
+             }*///TODO use accessory on iOS 26
             //.toolbarStyle(.automatic)
             //on appear init screenbg
             .onAppear {
