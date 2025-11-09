@@ -19,7 +19,10 @@ let package = Package(
         // Targets can depend on other targets in this package, and on products in packages this package depends on.
         .target(
             name: "GBUIKit",
-            dependencies: [.product(name: "GBKit", package: "GBKit")]),
+            dependencies: [.product(name: "GBKit", package: "GBKit")],
+            resources: [
+                    .process("Localizable.xcstrings")
+            ],),
     ],
     swiftLanguageVersions: [
         .v5,

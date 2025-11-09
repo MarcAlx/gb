@@ -49,7 +49,7 @@ struct MainView: View {
                 VStack {
                     VStack {
                         Form {
-                            Section(header: Text("Pressed buttons ")) {
+                            Section(header: Text("label.pressedButtons", bundle:.module)) {
                                 ForEach(self.gVM.pressedButtons.sorted{$0.hashValue < $1.hashValue}, id: \.hashValue){ b in
                                     Text(b.rawValue)
                                 }
