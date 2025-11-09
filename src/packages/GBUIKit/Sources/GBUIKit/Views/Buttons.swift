@@ -13,6 +13,12 @@ class FocusableSKView: SKView {
         return self
     }
     
+    override func didMoveToWindow() {
+        super.didMoveToWindow()
+        //ensure always first responder
+        self.becomeFirstResponder()
+    }
+    
     //TODO add Keyboard mapper (Button -> UIKeyboardHIDUsage)
     
     private func checkKeys(_ presses: Set<UIPress>, pressed:Bool){
