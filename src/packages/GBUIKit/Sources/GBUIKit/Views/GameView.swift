@@ -15,15 +15,15 @@ struct GameView: View {
                                || UIDevice.current.userInterfaceIdiom == .pad)){
                 HStack{
                     HStack {
-                        InsertButton()
+                        FullScreenButton()
                     }
                     .frame(maxWidth: .infinity, alignment: .leading)
 
                     HStack {
-                        FullScreenButton()
+                        InsertButton()
                     }
                     .frame(maxWidth: .infinity, alignment: .center)
-
+                    
                     HStack {
                         OnOffSwitch()
                     }
