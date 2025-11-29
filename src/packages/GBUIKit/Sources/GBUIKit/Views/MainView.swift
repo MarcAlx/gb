@@ -17,6 +17,7 @@ struct MainView: View {
     @EnvironmentObject private var lVM:LoggingViewModel
     @EnvironmentObject private var eVM:ErrorViewModel
     @EnvironmentObject private var gVM:GameBoyViewModel
+    @EnvironmentObject private var buttonMapping:ButtonMapping
     
     @State private var videoManager:VideoManager = VideoManager.sharedInstance
     
@@ -43,103 +44,53 @@ struct MainView: View {
     
     @State private var isFPSDisplayed:Bool = true
     
-    var body: some View {
-        VStack{
-            if(!self.mVM.isFullScreen){
-                //tab bar
-                HStack{
-                    //todo determine if useful
-                    Button {
-                    } label: {
-                        Label("",systemImage: "info.circle")
+    @State private var selectedTab: MainViewTabs = .Game
+    
+    var keyValues: some View {
+        ForEach(Array(keyboardKeys.keys).sorted(), id: \.self) { key in
+            Text(key).tag(keyboardKeys[key]!)
+        }
+    }
+    
+    @ViewBuilder
+    func LogView() -> some View {
+        VStack {
+            VStack {
+                Form {
+                    Section(header: Text("log.section.log".localized)) {
+                        ScrollView {
+                            ForEach(self.lVM.messages) { log in
+                                Text(log.message).font(.system(.body, design: .monospaced))
+                            }
+                        }
                     }
-                    //tabs
-                    Picker("Selection", selection: $currentTab) {
-                        Text("Log").tag(MainViewTabs.Log)
-                        Text("Game").tag(MainViewTabs.Game)
-                        Text("Settings").tag(MainViewTabs.Settings)
+                }
+            }
+        }
+    }
+    
+    @ViewBuilder
+    func SettingsView() -> some View {
+        VStack {
+            HStack{
+                Spacer()
+                Button(action: {
+                    if let url = URL(string: "https://github.com/MarcAlx/gb"){
+                        EnvironmentValues().openURL(url)
                     }
-                    .pickerStyle(.segmented)
-                    .frame(minWidth: 0, maxWidth: .infinity)
-                    
-                    //fullscreen button
-                    FullScreenButton()
+                }) {
+                    Label("button.info".localized, systemImage: "info.circle")
                 }
             }
             
-            //tabs content
-            ZStack{
-                //game tab
-                VStack {
-                    VStack {
-                        if(orientation.isPortrait || ProcessInfo.processInfo.isMacCatalystApp || UIDevice.current.userInterfaceIdiom == .pad){
-                            HStack{
-                                InsertButton()
-                                OnOffSwitch()
-                            }
-                            .padding(10)
-                        }
-                        HStack{
-                            if(orientation.isLandscape
-                               || ProcessInfo.processInfo.isMacCatalystApp){
-                                HStack{
-                                    VStack{
-                                        FullScreenButton().padding([.bottom], 20)                                   .hidden(!self.mVM.isFullScreen)
-                                        DPad()
-                                    }
-                                }.frame(alignment: .leading)
-                            }
-                            GameScreen(withFPS: self.$isFPSDisplayed).frame(maxWidth: .infinity, alignment: .center) //only one screen
-                            if(orientation.isLandscape
-                               || ProcessInfo.processInfo.isMacCatalystApp){
-                                HStack{
-                                    ABStartSelect()
-                                }.frame(alignment: .trailing)
-                            }
-                        }
-                        if(orientation.isPortrait){
-                            Spacer()
-                            HStack {
-                                DPad()
-                                Spacer()
-                                ABStartSelect()
-                            }
-                        }
-                    }
-                }.frame(minWidth: 0,
-                        maxWidth: .infinity,
-                        minHeight: 0,
-                        maxHeight: .infinity,
-                        alignment: .topLeading
-                )
-                .hidden(currentTab != .Game)
-                
-                //log tab
+            VStack {
                 VStack {
                     Form {
-                        Section(header: Text("Pressed buttons ")) {
-                            ForEach(self.gVM.pressedButtons.sorted{$0.hashValue < $1.hashValue}, id: \.hashValue){ b in
-                                Text(b.rawValue)
-                            }
-                        }
-                        Section(header: Text("Log")) {
-                            ScrollView {
-                                ForEach(self.lVM.messages) { log in
-                                    Text(log.message).font(.system(.body, design: .monospaced))
-                                }
-                            }
-                        }
-                    }
-                }.hidden(currentTab != .Log)
-                
-                //settings tab
-                VStack {
-                    Form {
-                        Section(header: Text("Active palette")) {
-                            Picker("Active", selection: $currentPaletteIndex) {
-                                Text("DMG").tag(PalettesIndexes.DMG)
-                                Text("MGB").tag(PalettesIndexes.MGB)
-                                Text("Custom").tag(PalettesIndexes.CUSTOM)
+                        Section(header: Text("settings.section.activePalette".localized)) {
+                            Picker("setting.activepalette".localized, selection: $currentPaletteIndex) {
+                                Text("palette.dmg".localized).tag(PalettesIndexes.DMG)
+                                Text("palette.mgb".localized).tag(PalettesIndexes.MGB)
+                                Text("palette.custom".localized).tag(PalettesIndexes.CUSTOM)
                             }
                             .pickerStyle(.menu)
                             .onChange(of: currentPaletteIndex) { newValue in
@@ -149,8 +100,8 @@ struct MainView: View {
                             }
                         }
                         
-                        Section(header: Text("Custom palette configuration")){
-                            ColorPicker("Color 1", selection: self.$customPaletteColor0, supportsOpacity: false).onChange(of: customPaletteColor0) { newValue in
+                        Section(header: Text("settings.section.customPalette".localized)){
+                            ColorPicker("setting.custompalette.color1".localized, selection: self.$customPaletteColor0, supportsOpacity: false).onChange(of: customPaletteColor0) { newValue in
                                 VideoManager.sharedInstance.customPalette[0]=GBKit.Color.fromSWiftUIColor(newValue)
                                 //re-apply custom palette if active in order to see change
                                 if(VideoManager.sharedInstance.paletteIndex == .CUSTOM){
@@ -159,21 +110,21 @@ struct MainView: View {
                                     self.mVM.screenBackground = self.gVM.gb.ppuConfiguration.palette[0].toSWiftUIColor()
                                 }
                             }
-                            ColorPicker("Color 2", selection: self.$customPaletteColor1, supportsOpacity: false).onChange(of: customPaletteColor1) { newValue in
+                            ColorPicker("setting.custompalette.color2".localized, selection: self.$customPaletteColor1, supportsOpacity: false).onChange(of: customPaletteColor1) { newValue in
                                 VideoManager.sharedInstance.customPalette[1]=GBKit.Color.fromSWiftUIColor(newValue)
                                 //re-apply custom palette if active in order to see change
                                 if(VideoManager.sharedInstance.paletteIndex == .CUSTOM){
                                     VideoManager.sharedInstance.setCurrentPalette(palette: .CUSTOM, ppu: self.gVM.gb.motherboard.ppu)
                                 }
                             }
-                            ColorPicker("Color 3", selection: self.$customPaletteColor2, supportsOpacity: false).onChange(of: customPaletteColor2) { newValue in
+                            ColorPicker("setting.custompalette.color3".localized, selection: self.$customPaletteColor2, supportsOpacity: false).onChange(of: customPaletteColor2) { newValue in
                                 VideoManager.sharedInstance.customPalette[2]=GBKit.Color.fromSWiftUIColor(newValue)
                                 //re-apply custom palette if active in order to see change
                                 if(VideoManager.sharedInstance.paletteIndex == .CUSTOM){
                                     VideoManager.sharedInstance.setCurrentPalette(palette: .CUSTOM, ppu: self.gVM.gb.motherboard.ppu)
                                 }
                             }
-                            ColorPicker("Color 4", selection: self.$customPaletteColor3, supportsOpacity: false).onChange(of: customPaletteColor3) { newValue in
+                            ColorPicker("setting.custompalette.color4".localized, selection: self.$customPaletteColor3, supportsOpacity: false).onChange(of: customPaletteColor3) { newValue in
                                 VideoManager.sharedInstance.customPalette[3]=GBKit.Color.fromSWiftUIColor(newValue)
                                 //re-apply custom palette if active in order to see change
                                 if(VideoManager.sharedInstance.paletteIndex == .CUSTOM){
@@ -182,85 +133,173 @@ struct MainView: View {
                             }
                         }
                         
-                        Section(header: Text("PPU layers")){
-                            Toggle("BG", isOn: self.$isPPULayerBGEnabled).onChange(of: isPPULayerBGEnabled) { newValue in
+                        Section(header: Text("settings.section.ppulayer".localized)){
+                            Toggle("layer.bg".localized, isOn: self.$isPPULayerBGEnabled).onChange(of: isPPULayerBGEnabled) { newValue in
                                 self.gVM.gb.ppuConfiguration.isBGEnabled = newValue
                             }
-                            Toggle("WIN", isOn: self.$isPPULayerWINEnabled).onChange(of: isPPULayerWINEnabled) { newValue in
+                            Toggle("layer.win".localized, isOn: self.$isPPULayerWINEnabled).onChange(of: isPPULayerWINEnabled) { newValue in
                                 self.gVM.gb.ppuConfiguration.isWINEnabled = newValue
                             }
-                            Toggle("OBJ",  isOn: self.$isPPULayerOBJEnabled).onChange(of: isPPULayerOBJEnabled) { newValue in
+                            Toggle("layer.obj".localized,  isOn: self.$isPPULayerOBJEnabled).onChange(of: isPPULayerOBJEnabled) { newValue in
                                 self.gVM.gb.ppuConfiguration.isOBJEnabled = newValue
                             }
                         }
                         
-                        Section(header: Text("Audio")){
+                        Section(header: Text("settings.section.audio".localized)){
                             HStack{
-                                Text("Main volume")
+                                Text("setting.mainvolume".localized)
                                 Spacer(minLength: 400)
                                 Slider(value: self.$mainVolume, in: 0...1) {
                                     
                                 } minimumValueLabel: {
-                                    Text("0").font(.title2).fontWeight(.thin)
+                                    Text("mainVolume.min".localized).font(.title2).fontWeight(.thin)
                                 } maximumValueLabel: {
-                                    Text("100%").font(.title2).fontWeight(.thin)
+                                    Text("mainVolume.max".localized).font(.title2).fontWeight(.thin)
                                 }.onChange(of: mainVolume) { newValue in
                                     self.gVM.audioManager.volume = newValue
                                 }
                             }
-                            Toggle("Channel 1 (Sweep)", isOn: self.$isAudioChannel1Enabled).onChange(of: isAudioChannel1Enabled) { newValue in
+                            Toggle("apu.channel1".localized, isOn: self.$isAudioChannel1Enabled).onChange(of: isAudioChannel1Enabled) { newValue in
                                 self.gVM.gb.apuConfiguration.isChannel1Enabled = newValue
                             }
-                            Toggle("Channel 2 (Pulse)", isOn: self.$isAudioChannel2Enabled).onChange(of: isAudioChannel2Enabled) { newValue in
+                            Toggle("apu.channel2".localized, isOn: self.$isAudioChannel2Enabled).onChange(of: isAudioChannel2Enabled) { newValue in
                                 self.gVM.gb.apuConfiguration.isChannel2Enabled = newValue
                             }
-                            Toggle("Channel 3 (Wave)",  isOn: self.$isAudioChannel3Enabled).onChange(of: isAudioChannel3Enabled) { newValue in
+                            Toggle("apu.channel3".localized,  isOn: self.$isAudioChannel3Enabled).onChange(of: isAudioChannel3Enabled) { newValue in
                                 self.gVM.gb.apuConfiguration.isChannel3Enabled = newValue
                             }
-                            Toggle("Channel 4 (Noise)", isOn: self.$isAudioChannel4Enabled).onChange(of: isAudioChannel4Enabled) { newValue in
+                            Toggle("apu.channel4".localized, isOn: self.$isAudioChannel4Enabled).onChange(of: isAudioChannel4Enabled) { newValue in
                                 self.gVM.gb.apuConfiguration.isChannel4Enabled = newValue
                             }
-                            Toggle("High Pass Filter", isOn: self.$isAudioHPFEnabled).onChange(of: isAudioHPFEnabled) { newValue in
+                            Toggle("apu.hpf".localized, isOn: self.$isAudioHPFEnabled).onChange(of: isAudioHPFEnabled) { newValue in
                                 self.gVM.gb.apuConfiguration.isHPFEnabled = newValue
                             }
                         }
-                        Section(header: Text("Debug")) {
-                            Toggle("Display FPS", isOn: self.$isFPSDisplayed)
+                        
+                        Section(header: Text("settings.section.buttonMapping".localized)) {
+                            Picker("joypad.A".localized, selection: self.$buttonMapping.forButtonA) {
+                                keyValues
+                            }
+                            .pickerStyle(.menu)
+                            Picker("joypad.B".localized, selection: self.$buttonMapping.forButtonB) {
+                                keyValues
+                            }
+                            .pickerStyle(.menu)
+                            Picker("joypad.Start".localized, selection: self.$buttonMapping.forButtonStart) {
+                                keyValues
+                            }
+                            .pickerStyle(.menu)
+                            Picker("joypad.Select".localized, selection: self.$buttonMapping.forButtonSelect) {
+                                keyValues
+                            }
+                            .pickerStyle(.menu)
+                            Picker("joypad.Up".localized, selection: self.$buttonMapping.forButtonUp) {
+                                keyValues
+                            }
+                            .pickerStyle(.menu)
+                            Picker("joypad.Down".localized, selection: self.$buttonMapping.forButtonDown) {
+                                keyValues
+                            }
+                            .pickerStyle(.menu)
+                            Picker("joypad.Left".localized, selection: self.$buttonMapping.forButtonLeft) {
+                                keyValues
+                            }
+                            .pickerStyle(.menu)
+                            Picker("joypad.Right".localized, selection: self.$buttonMapping.forButtonRight) {
+                                keyValues
+                            }
+                            .pickerStyle(.menu)
+                        }
+                        
+                        Section(header: Text("settings.section.debug".localized)) {
+                            Toggle("setting.displayFPS".localized, isOn: self.$isFPSDisplayed)
                         }
                     }
                     Spacer()
-                }.hidden(currentTab != .Settings)
+                }
             }
-        }.frame(minWidth: 0, maxWidth: .infinity)
-        //on appear init screenbg
-        .onAppear {
-            self.mVM.screenBackground = self.gVM.gb.ppuConfiguration.palette[0].toSWiftUIColor()
         }
-        //handle orientation change
-        .onRotate { newOrientation in
-            orientation = newOrientation
+    }
+    
+    var body: some View {
+        if(self.mVM.isFullScreen){
+            GameView(fullScreen: self.$mVM.isFullScreen, fps: self.$isFPSDisplayed)
         }
-        //file importer
-        .fileImporter(isPresented: self.$mVM.fileImporterPresented, allowedContentTypes:[.data], onCompletion: { (res) in
-            switch res {
-            case .success(let fileUrl):
-                do {
-                    GBLogService.log(LogCategory.TOP_LEVEL,"user select : "+fileUrl.path)
-                    let fileUrl = try res.get()
-                    guard fileUrl.startAccessingSecurityScopedResource() else { return }
-                    if let data = try? Data(contentsOf: fileUrl) {
-                        let cart = try Cartridge(data: data)
-                        self.gVM.insert(cartridge: cart)
-                        GBLogService.log(LogCategory.TOP_LEVEL, cart.describe())
+        else {
+            TabView(selection: $selectedTab) {
+                LogView()
+                .tabItem {
+                    Label("tab.log".localized, systemImage: "text.page")
+                }
+                .tag(MainViewTabs.Log)
+                
+                GameView(fullScreen: self.$mVM.isFullScreen, fps: self.$isFPSDisplayed)
+                .tabItem {
+                    Label("tab.game".localized, systemImage: "gamecontroller")
+                }
+                .tag(MainViewTabs.Game)
+
+                SettingsView()
+                .tabItem {
+                    Label("tab.settings".localized, systemImage: "gear")
+                }
+                .tag(MainViewTabs.Settings)
+            }.toolbar {
+                if(self.currentTab == MainViewTabs.Game
+                   && (orientation.isPortrait || ProcessInfo.processInfo.isMacCatalystApp || UIDevice.current.userInterfaceIdiom == .pad)){
+                    ToolbarItem(placement: .confirmationAction) {
+                        InsertButton()
                     }
-                    fileUrl.stopAccessingSecurityScopedResource()
-                } catch {
+                    ToolbarItem(placement: .cancellationAction) {
+                        OnOffSwitch()
+                    }
+                }
+                if(self.currentTab == MainViewTabs.Settings) {
+                    ToolbarItem(placement: .topBarTrailing) {
+                        Button(action: {
+                            if let url = URL(string: "https://github.com/MarcAlx/gb"){
+                                EnvironmentValues().openURL(url)
+                            }
+                        }) {
+                            Label("button.info", systemImage: "info.circle")
+                        }
+                    }
+                }
+            }
+            
+            //TODO use accessory on iOS 26
+            //.toolbarStyle(.automatic)
+            
+            //on appear init screenbg
+            .onAppear {
+                self.mVM.screenBackground = self.gVM.gb.ppuConfiguration.palette[0].toSWiftUIColor()
+            }
+            //handle orientation change
+            .onRotate { newOrientation in
+                orientation = newOrientation
+            }
+            //file importer
+            .fileImporter(isPresented: self.$mVM.fileImporterPresented, allowedContentTypes:[.data], onCompletion: { (res) in
+                switch res {
+                case .success(let fileUrl):
+                    do {
+                        GBLogService.log(LogCategory.TOP_LEVEL,"user select : "+fileUrl.path)
+                        let fileUrl = try res.get()
+                        guard fileUrl.startAccessingSecurityScopedResource() else { return }
+                        if let data = try? Data(contentsOf: fileUrl) {
+                            let cart = try Cartridge(data: data)
+                            self.gVM.insert(cartridge: cart)
+                            GBLogService.log(LogCategory.TOP_LEVEL, cart.describe())
+                        }
+                        fileUrl.stopAccessingSecurityScopedResource()
+                    } catch {
+                        self.eVM.submit(error: error)
+                    }
+                case .failure(let error):
                     self.eVM.submit(error: error)
                 }
-            case .failure(let error):
-                self.eVM.submit(error: error)
-            }
-        })
+            })
+        }
     }
 }
 

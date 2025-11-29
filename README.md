@@ -60,6 +60,15 @@ This project/repo is (for now) organiseed as follow:
 | <img src="./screenshots/views/iOS-dmg-palette.png" width="200"> |  <img src="./screenshots/views/iOS-mgb-palette.png" width="200"> |  <img src="./screenshots/views/iOS-game-custom-palette.png" width="200"> | <img src="./screenshots/views/iOS-landscape-fullscreen.png" width="400"> | <img src="./screenshots/views/iOS-settings.png" width="200"> | <img src="./screenshots/views/iPadOS-tetris.png" width="400"> | <img src="./screenshots/views/macOS-tennis.png" width="400"> |
 
 
+## Troobleshooting
+
+
+If after changing version configuration xcode still throw error do the following and relaunch xcode: 
+
+```
+rm -rf ~/Library/Developer/Xcode/DerivedData
+```
+
 ## side notes
 
 Game Boy and Nintendo are used under [nominative use](https://en.wikipedia.org/wiki/Nominative_use). As for logo's bytes inclusion please read [Sega v. Accolade](https://en.wikipedia.org/wiki/Sega_v._Accolade).

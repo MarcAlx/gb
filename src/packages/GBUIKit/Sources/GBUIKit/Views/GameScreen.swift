@@ -19,6 +19,8 @@ struct GameScreen: View {
             .aspectRatio(1.0, contentMode: .fit)
             //border
             .overlay(RoundedRectangle(cornerRadius: 10).stroke(.black, lineWidth: 1))
+            //for keyboard handling
+            FocusedSpriteKitView().opacity(0)//if hidden with .hidden() it's not considered and keyboard is not captured
             //game view
             SpriteView(scene: GameScene(gb: self.gVM.gb,
                                         size:  CGSize(width: GBConstants.ScreenWidth,

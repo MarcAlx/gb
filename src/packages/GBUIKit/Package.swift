@@ -3,7 +3,7 @@ import PackageDescription
 
 let package = Package(
     name: "GBUIKit",
-    platforms: [.iOS(.v16),.macCatalyst(.v16)],
+    platforms: [.iOS("18.0"), .macCatalyst("18.0")],
     products: [
         // Products define the executables and libraries a package produces, and make them visible to other packages.
         .library(
@@ -19,10 +19,10 @@ let package = Package(
         // Targets can depend on other targets in this package, and on products in packages this package depends on.
         .target(
             name: "GBUIKit",
-            dependencies: [.product(name: "GBKit", package: "GBKit")]),
-        .testTarget(
-            name: "GBUIKitTests",
-            dependencies: ["GBUIKit","GBKit"]),
+            dependencies: [.product(name: "GBKit", package: "GBKit")],
+            resources: [
+                    .process("Localizable.xcstrings")
+            ],),
     ],
     swiftLanguageVersions: [
         .v5,

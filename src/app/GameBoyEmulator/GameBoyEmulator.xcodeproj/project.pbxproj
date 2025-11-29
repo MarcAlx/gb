@@ -9,6 +9,7 @@
 /* Begin PBXBuildFile section */
 		C2133E012BACDB1700B45917 /* GBUIKit in Frameworks */ = {isa = PBXBuildFile; productRef = C2133E002BACDB1700B45917 /* GBUIKit */; };
 		C2133E092BACE31200B45917 /* GameBoyEmulatorTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = C2133E082BACE31200B45917 /* GameBoyEmulatorTests.swift */; };
+		C247B6922EC0F0870096285E /* GBKit in Frameworks */ = {isa = PBXBuildFile; productRef = C247B6912EC0F0870096285E /* GBKit */; };
 		C285FF592BAC5C6A004860D8 /* GBKit in Frameworks */ = {isa = PBXBuildFile; productRef = C285FF582BAC5C6A004860D8 /* GBKit */; };
 		C285FF5B2BAC5DC4004860D8 /* GBKit in Frameworks */ = {isa = PBXBuildFile; productRef = C285FF5A2BAC5DC4004860D8 /* GBKit */; };
 		C2A55E1D2BAC5B0800FCFFD3 /* GameBoyEmulatorApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = C2A55E1C2BAC5B0800FCFFD3 /* GameBoyEmulatorApp.swift */; };
@@ -51,6 +52,7 @@
 			files = (
 				C285FF5B2BAC5DC4004860D8 /* GBKit in Frameworks */,
 				C285FF592BAC5C6A004860D8 /* GBKit in Frameworks */,
+				C247B6922EC0F0870096285E /* GBKit in Frameworks */,
 				C2133E012BACDB1700B45917 /* GBUIKit in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -142,6 +144,7 @@
 				C285FF582BAC5C6A004860D8 /* GBKit */,
 				C285FF5A2BAC5DC4004860D8 /* GBKit */,
 				C2133E002BACDB1700B45917 /* GBUIKit */,
+				C247B6912EC0F0870096285E /* GBKit */,
 			);
 			productName = GameBoyEmulator;
 			productReference = C2A55E192BAC5B0800FCFFD3 /* GameBoyEmulator.app */;
@@ -176,8 +179,8 @@
 			);
 			mainGroup = C2A55E102BAC5B0800FCFFD3;
 			packageReferences = (
-				C285FF572BAC5C6A004860D8 /* XCLocalSwiftPackageReference "../../packages/GBKit" */,
-				C2133DFF2BACDB1700B45917 /* XCLocalSwiftPackageReference "../../packages/GBUIKit" */,
+				C247B6902EC0F0870096285E /* XCLocalSwiftPackageReference "../../packages/GBKit" */,
+				C247B6932EC0F09B0096285E /* XCLocalSwiftPackageReference "../../packages/GBUIKit" */,
 			);
 			productRefGroup = C2A55E1A2BAC5B0800FCFFD3 /* Products */;
 			projectDirPath = "";
@@ -244,7 +247,7 @@
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				GENERATE_INFOPLIST_FILE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 15.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 18.0;
 				MACOSX_DEPLOYMENT_TARGET = 17.0;
 				MARKETING_VERSION = 1.0;
 				PRODUCT_BUNDLE_IDENTIFIER = marcalx.GameBoyEmulatorTests;
@@ -269,7 +272,7 @@
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				GENERATE_INFOPLIST_FILE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 15.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 18.0;
 				MACOSX_DEPLOYMENT_TARGET = 17.0;
 				MARKETING_VERSION = 1.0;
 				PRODUCT_BUNDLE_IDENTIFIER = marcalx.GameBoyEmulatorTests;
@@ -341,7 +344,7 @@
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
 				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
-				MACOSX_DEPLOYMENT_TARGET = "$(RECOMMENDED_MACOSX_DEPLOYMENT_TARGET)";
+				MACOSX_DEPLOYMENT_TARGET = 15.0;
 				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
 				MTL_FAST_MATH = YES;
 				ONLY_ACTIVE_ARCH = YES;
@@ -398,7 +401,7 @@
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
 				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
-				MACOSX_DEPLOYMENT_TARGET = "$(RECOMMENDED_MACOSX_DEPLOYMENT_TARGET)";
+				MACOSX_DEPLOYMENT_TARGET = 15.0;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				MTL_FAST_MATH = YES;
 				SWIFT_COMPILATION_MODE = wholemodule;
@@ -427,13 +430,14 @@
 				"INFOPLIST_KEY_UIStatusBarStyle[sdk=iphonesimulator*]" = UIStatusBarStyleDefault;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
-				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 18.0;
 				LD_RUNPATH_SEARCH_PATHS = "@executable_path/Frameworks";
 				"LD_RUNPATH_SEARCH_PATHS[sdk=macosx*]" = "@executable_path/../Frameworks";
-				MACOSX_DEPLOYMENT_TARGET = 14.0;
+				MACOSX_DEPLOYMENT_TARGET = 15.0;
 				MARKETING_VERSION = 1.0;
 				PRODUCT_BUNDLE_IDENTIFIER = marcalx.GameBoyEmulator;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				REGISTER_APP_GROUPS = YES;
 				SDKROOT = auto;
 				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
 				SUPPORTS_MACCATALYST = YES;
@@ -465,13 +469,14 @@
 				"INFOPLIST_KEY_UIStatusBarStyle[sdk=iphonesimulator*]" = UIStatusBarStyleDefault;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
-				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 18.0;
 				LD_RUNPATH_SEARCH_PATHS = "@executable_path/Frameworks";
 				"LD_RUNPATH_SEARCH_PATHS[sdk=macosx*]" = "@executable_path/../Frameworks";
-				MACOSX_DEPLOYMENT_TARGET = 14.0;
+				MACOSX_DEPLOYMENT_TARGET = 15.0;
 				MARKETING_VERSION = 1.0;
 				PRODUCT_BUNDLE_IDENTIFIER = marcalx.GameBoyEmulator;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				REGISTER_APP_GROUPS = YES;
 				SDKROOT = auto;
 				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
 				SUPPORTS_MACCATALYST = YES;
@@ -514,13 +519,13 @@
 /* End XCConfigurationList section */
 
 /* Begin XCLocalSwiftPackageReference section */
-		C2133DFF2BACDB1700B45917 /* XCLocalSwiftPackageReference "../../packages/GBUIKit" */ = {
-			isa = XCLocalSwiftPackageReference;
-			relativePath = ../../packages/GBUIKit;
-		};
-		C285FF572BAC5C6A004860D8 /* XCLocalSwiftPackageReference "../../packages/GBKit" */ = {
+		C247B6902EC0F0870096285E /* XCLocalSwiftPackageReference "../../packages/GBKit" */ = {
 			isa = XCLocalSwiftPackageReference;
 			relativePath = ../../packages/GBKit;
+		};
+		C247B6932EC0F09B0096285E /* XCLocalSwiftPackageReference "../../packages/GBUIKit" */ = {
+			isa = XCLocalSwiftPackageReference;
+			relativePath = ../../packages/GBUIKit;
 		};
 /* End XCLocalSwiftPackageReference section */
 
@@ -528,6 +533,10 @@
 		C2133E002BACDB1700B45917 /* GBUIKit */ = {
 			isa = XCSwiftPackageProductDependency;
 			productName = GBUIKit;
+		};
+		C247B6912EC0F0870096285E /* GBKit */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = GBKit;
 		};
 		C285FF582BAC5C6A004860D8 /* GBKit */ = {
 			isa = XCSwiftPackageProductDependency;
