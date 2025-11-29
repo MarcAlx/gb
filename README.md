@@ -6,9 +6,9 @@ With controller supports and palette customization!
 
 <img src="./screenshots/views/features-showcase.gif" width="200">
 
-**Status** Games that don't need MBC supports or advance CPU tricks work, e.g Tetris, Tennis...
+**Status** Games that don't rely on advance CPU tricks or MBC-2-3-4-5 work, e.g Super Mario Land, Kirby Dream Land, Tetris, Tennis, F1 Race...
 
-**Under active development** (MBC support on the way!, ETA: when its done!). For now limited to GB, GBC support planned.
+**Under active development** (MBC-2-3-4-5 support on the way!, ETA: when its done!). For now limited to GB, GBC support planned.
 
 This repo holds the front-end logic of the emulator for back-end logic (emulation code), see [GBKit](https://github.com/MarcAlx/GBKit).
 
@@ -37,15 +37,15 @@ This project/repo is (for now) organiseed as follow:
 
 ## Roadmap
 
-1. Finalize GBKit (`./packages/GBKit`) (MBC)
+1. Finalize GBKit (`./packages/GBKit`) (MBC-2-3-4-5)
 
-2. Finalize GBUIKit (`./packages/GBKit`) (Keyboard support for macCatalyst,...)
+2. Finalize GBUIKit (`./packages/GBKit`) ~~(Keyboard support for macCatalyst,...)~~
 
 ~~3. Release GBKit (`./packages/GBKit`) as a standalone Swift Package (with its own git) read to use in any Swift emulator project.~~ -> see [GBKit](https://github.com/MarcAlx/GBKit)
 
 4. Release GBUIKit (`./packages/GBUIKit`) as a standalone Swift Package (with its own git) read to use in any Swift emulator project.
 
-5. Better frontend controls (keyboard, buttons made in SceneKit to avoid SwiftUI performance drop)
+~~5. Better frontend controls (keyboard, buttons made in SceneKit to avoid SwiftUI performance drop)~~
 
 6. Add support for GBC
 
@@ -61,7 +61,6 @@ This project/repo is (for now) organiseed as follow:
 
 
 ## Troobleshooting
-
 
 If after changing version configuration xcode still throw error do the following and relaunch xcode: 
 
