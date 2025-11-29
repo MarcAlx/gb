@@ -78,7 +78,7 @@ struct MainView: View {
                             InsertButton()
                             OnOffSwitch()
                             
-                        }
+                        }.padding(5)
                     }
                     VStack {
                         VStack {
