@@ -100,19 +100,20 @@ struct MainView: View {
                                     }.frame(alignment: .trailing)
                                 }
                             }
-                            if(orientation.isPortrait){
-                                Spacer()
-                                HStack {
-                                    DPad()
-                                    Spacer()
-                                    ABStartSelect()
-                                }
-                            }
                         }.frame(minWidth: 0,
                                 maxWidth: .infinity,
                                 minHeight: 0,
                                 maxHeight: .infinity,
                                 alignment: .topLeading)
+                        
+                        if(orientation.isPortrait){
+                            Spacer()
+                            HStack {
+                                DPad()
+                                Spacer()
+                                ABStartSelect()
+                            }.padding([.bottom], 20)
+                        }
                     }
                 }
                 .tabItem {

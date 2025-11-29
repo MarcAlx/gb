@@ -324,11 +324,12 @@ class DPadScene: ButtonGroup {
         
         self.backgroundColor = .white
         
-        var Circle = SKShapeNode(circleOfRadius: 100 ) // Size of Circle
-        Circle.position = CGPointMake(frame.midX, frame.midY)  //Middle of Screen
-        Circle.strokeColor = UIColor.clear
-        Circle.fillColor = .darkGray
-        self.addChild(Circle)
+        //round bg (for now hidden)
+        var bg = SKShapeNode(circleOfRadius: 100 ) // Size of Circle
+        bg.position = CGPointMake(frame.midX, frame.midY)  //Middle of Screen
+        bg.strokeColor = UIColor.clear
+        bg.fillColor = UIColor.clear
+        self.addChild(bg)
         
         let bgColor:UIColor = .gray
         let fgColor:UIColor = .black
@@ -343,10 +344,10 @@ class DPadScene: ButtonGroup {
         center.strokeColor = .clear
         self.addChild(center)
         
-        let left  = CGPoint(x: 0.5 * Double(buttonSize), y: 1.5*Double(buttonSize))
-        let up    = CGPoint(x: 1.5*Double(buttonSize)  , y:  2.5 * Double(buttonSize))
-        let down  = CGPoint(x: 1.5*Double(buttonSize),   y: 0.5 * Double(buttonSize))
-        let right = CGPoint(x: 2.5 * Double(buttonSize), y: 1.5*Double(buttonSize))
+        let left  = CGPoint(x: 0.5 * Double(buttonSize), y: 1.5 * Double(buttonSize))
+        let up    = CGPoint(x: 1.5 * Double(buttonSize), y: 2.5 * Double(buttonSize))
+        let down  = CGPoint(x: 1.5 * Double(buttonSize), y: 0.5 * Double(buttonSize))
+        let right = CGPoint(x: 2.5 * Double(buttonSize), y: 1.5 * Double(buttonSize))
         
         self.upButton   = self.buildSymbolButton(up,    buttonSize, "arrowtriangle.up",    .UP,   bgColor, fgColor, pressedColor)
         self.downButton = self.buildSymbolButton(down,  buttonSize, "arrowtriangle.down",  .DOWN, bgColor, fgColor, pressedColor)
@@ -382,10 +383,10 @@ class ABStartSelectScene: ButtonGroup {
         let startSelectFGColor:UIColor = UIColor(red: 35/255.0,green: 37/255.0,blue: 127/255.0,alpha: 1.0)
         let startSelectColorPressed:UIColor = UIColor(red: 206/255.0,green: 206/255.0,blue: 206/255.0,alpha: 1.0)
         
-        let left  = CGPoint(x: 0.5 * Double(buttonSize), y: 1.5*Double(buttonSize))
-        let up    = CGPoint(x: 1.5*Double(buttonSize)  , y:  2.5 * Double(buttonSize))
-        let down  = CGPoint(x: 1.5*Double(buttonSize),   y: 0.5 * Double(buttonSize))
-        let right = CGPoint(x: 2.5 * Double(buttonSize), y: 1.5*Double(buttonSize))
+        let left  = CGPoint(x: 0.9 * Double(buttonSize), y: 2.0 * Double(buttonSize))
+        let up    = CGPoint(x: 1.9 * Double(buttonSize), y: 3.0 * Double(buttonSize))
+        let down  = CGPoint(x: 2.0 * Double(buttonSize), y: 1.0 * Double(buttonSize))
+        let right = CGPoint(x: 3.0 * Double(buttonSize), y: 2.0 * Double(buttonSize))
         self.aButton = self.buildRoundButton(down,       buttonSize, "A", .A, abColor, abFGColor, abColorPressed)
         self.bButton = self.buildRoundButton(right,      buttonSize, "B", .B,abColor, abFGColor, abColorPressed)
         self.selectButton = self.buildSmallButton(left,  buttonSize, "select", .SELECT,startSelectColor, startSelectFGColor, startSelectColorPressed)
@@ -402,7 +403,8 @@ struct DPad: View {
     @EnvironmentObject private var gVM:GameBoyViewModel
 
     var body: some View {
-        SpriteView(scene: DPadScene(size: CGSize(width: 200, height: 200)).withGVM(gvm: gVM), preferredFramesPerSecond: 60).frame(width: 200, height: 200)
+        SpriteView(scene: DPadScene(size: CGSize(width: 200, height: 200)).withGVM(gvm: gVM),
+                   preferredFramesPerSecond: 60).frame(width: 200, height: 200)
     }
 }
 
@@ -410,7 +412,8 @@ struct ABStartSelect: View {
     @EnvironmentObject private var gVM:GameBoyViewModel
 
     var body: some View {
-        SpriteView(scene: ABStartSelectScene(size: CGSize(width: 200, height: 200)).withGVM(gvm: gVM), preferredFramesPerSecond: 60).frame(width: 200, height: 200)
+        SpriteView(scene: ABStartSelectScene(size: CGSize(width: 200, height: 200)).withGVM(gvm: gVM),
+                   preferredFramesPerSecond: 60).frame(width: 200, height: 200)
     }
 }
 
