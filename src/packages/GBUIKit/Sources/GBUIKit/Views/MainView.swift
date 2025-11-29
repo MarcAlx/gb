@@ -274,28 +274,28 @@ struct MainView: View {
             }
             .tabViewStyle(.tabBarOnly)
             //toolbar
-            /*.toolbar {
-             if(self.currentTab == MainViewTabs.Game
-             && (orientation.isPortrait || ProcessInfo.processInfo.isMacCatalystApp || UIDevice.current.userInterfaceIdiom == .pad)){
-             ToolbarItem(placement: .topBarLeading) {
-             InsertButton()
-             }
-             ToolbarItem(placement: .topBarTrailing) {
-             OnOffSwitch()
-             }
-             }
-             if(self.currentTab == MainViewTabs.Settings) {
-             ToolbarItem(placement: .topBarTrailing) {
-             Button(action: {
-             if let url = URL(string: "https://github.com/MarcAlx/gb"){
-             EnvironmentValues().openURL(url)
-             }
-             }) {
-             Label("button.info", systemImage: "info.circle")
-             }
-             }
-             }
-             }*///TODO use accessory on iOS 26
+            .toolbar {
+                 /*if(self.currentTab == MainViewTabs.Game
+                 && (orientation.isPortrait || ProcessInfo.processInfo.isMacCatalystApp || UIDevice.current.userInterfaceIdiom == .pad)){
+                     ToolbarItem(placement: .confirmationAction) {
+                         InsertButton()
+                     }
+                     ToolbarItem(placement: .cancellationAction) {
+                         OnOffSwitch()
+                     }
+                 }
+                 if(self.currentTab == MainViewTabs.Settings) {
+                     ToolbarItem(placement: .topBarTrailing) {
+                         Button(action: {
+                             if let url = URL(string: "https://github.com/MarcAlx/gb"){
+                                 EnvironmentValues().openURL(url)
+                             }
+                         }) {
+                             Label("button.info", systemImage: "info.circle")
+                         }
+                     }
+                 }*/
+             }//TODO use accessory on iOS 26
             //.toolbarStyle(.automatic)
             //on appear init screenbg
             .onAppear {
