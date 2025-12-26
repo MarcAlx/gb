@@ -148,7 +148,9 @@ struct MainView: View {
                         Section(header: Text("settings.section.audio".localized)){
                             HStack{
                                 Text("setting.mainvolume".localized)
-                                Spacer(minLength: 400)
+                                if(UIDevice.current.userInterfaceIdiom != .phone){
+                                    Spacer(minLength: 400)
+                                }
                                 Slider(value: self.$mainVolume, in: 0...1) {
                                     
                                 } minimumValueLabel: {

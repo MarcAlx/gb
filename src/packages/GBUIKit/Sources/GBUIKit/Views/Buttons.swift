@@ -130,7 +130,7 @@ struct InsertButton: View {
         Button {
             self.mVM.fileImporterPresented = true
         } label: {
-            Label("button.insertCartridge".localized,systemImage: "square.and.arrow.down")
+            Label(UIDevice.current.userInterfaceIdiom == .phone ? "" : "button.insertCartridge".localized,systemImage: "square.and.arrow.down")
         }.disabled(self.gVM.isOn)
     }
 }
@@ -141,7 +141,7 @@ struct OnOffSwitch: View {
     
     var body: some View {
         Toggle(isOn: self.$gVM.isOn){
-            Label(self.gVM.isOn ? "toggle.isOn.true".localized : "toggle.isOn.false".localized,
+            Label(UIDevice.current.userInterfaceIdiom == .phone ? "" : (self.gVM.isOn ? "toggle.isOn.true".localized : "toggle.isOn.false".localized),
                   systemImage: self.gVM.isOn ? "lightswitch.off" : "lightswitch.on" ).frame(maxWidth: .infinity, alignment: .trailing)
         }.onChange(of: self.gVM.isOn) { value in
             if(value)  {
