@@ -6,9 +6,9 @@ With controller supports and palette customization!
 
 <img src="./screenshots/views/features-showcase.gif" width="200">
 
-**Status** Games that don't rely on advance CPU tricks or MBC-2-3-4-5 work, e.g Super Mario Land, Kirby Dream Land, Tetris, Tennis, F1 Race...
+**Status** Games that don't rely on advance CPU tricks or MBC special feature works, e.g Super Mario Land, Kirby Dream Land, Tetris, Tennis, F1 Race, Pokémon...
 
-**Under active development** (MBC-2-3-4-5 support on the way!, ETA: when its done!). For now limited to GB, GBC support planned.
+**Under active development** (full MBC-2-3-5-6-7 support on the way! now limited to RAM feature, ETA: when its done!). For now limited to GB, GBC support planned.
 
 This repo holds the front-end logic of the emulator for back-end logic (emulation code), see [GBKit](https://github.com/MarcAlx/GBKit).
 
@@ -57,7 +57,7 @@ This project/repo is (for now) organiseed as follow:
 
 | iOS (game view / DMG palette) | iOS (game view / MGB palette) | iOS (game view / custom palette) | iOS (game view / landscape fullscreen) | iOS (settings view) | iPadOS | macOS |
 | - |  - |  - | - | - | - | - |
-| <img src="./screenshots/views/iOS-dmg-palette.png" width="200"> |  <img src="./screenshots/views/iOS-mgb-palette.png" width="200"> |  <img src="./screenshots/views/iOS-game-custom-palette.png" width="200"> | <img src="./screenshots/views/iOS-landscape-fullscreen.png" width="400"> | <img src="./screenshots/views/iOS-settings.png" width="200"> | <img src="./screenshots/views/iPadOS-tetris.png" width="400"> | <img src="./screenshots/views/macOS-tennis.png" width="400"> |
+| <img src="./screenshots/views/iOS-dmg-palette.png" width="200"> |  <img src="./screenshots/views/iOS-mgb-palette.png" width="200"> |  <img src="./screenshots/views/iOS-game-custom-palette.png" width="200"> | <img src="./screenshots/views/iOS-landscape-fullscreen.png" width="400"> | <img src="./screenshots/views/iOS-settings.png" width="200"> | <img src="./screenshots/views/iPadOS-sml.png" width="400"> | <img src="./screenshots/views/macOS-pkmn.png" width="400"> |
 
 
 ## Troobleshooting
